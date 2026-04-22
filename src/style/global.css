@@ -30,6 +30,6 @@
 
 @layer components {
     .grille {
-        @apply px-6 lg:grid lg:grid-cols-(--my-grid) lg:justify-center lg:gap-12;
+        @apply lg:grid lg:grid-cols-(--my-grid) lg:m-7.5 lg:gap-[25px];
     }
 }
