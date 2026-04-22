@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+    --font-title: 'Yeseva One', system-ui;
+    --font-body: 'Inter Variable', sans-serif;
+    --font-family: 'Arvo', serif;
+
+    --text-h1d: 120px;
+    --text-h2d: 115px;
+    --text-h3d: 64px;
+    --text-h4d: 48px;
+    --text-body1d: 40px;
+    --text-body2d: 36px;
+    --text-body3d: 32px;
+    --text-smalld: 25px;
+
+    --my-grid: repeat(12, minmax(0, 70px))
+
+}
+
+@layer base {
+    body {
+        @apply font-body text-base leading-normal;
+    }
+
+    h1 {
+        @apply font-title text-h1d;
+    }
+}
+
+@layer components {
+    .grille {
+        @apply px-6 lg:grid lg:grid-cols-(--my-grid) lg:justify-center lg:gap-12;
+    }
+}
