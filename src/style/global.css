@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 @theme {
     --font-title: 'Yeseva One', system-ui;
     --font-body: 'Inter Variable', sans-serif;
@@ -12,6 +14,8 @@
     --text-body3d: 32px;
     --text-smalld: 25px;
 
+    --my-grid: repeat(12, minmax(0, 70px))
+
 }
 
 @layer base {
@@ -19,8 +23,13 @@
         @apply font-body text-base leading-normal;
     }
 
-    h1,
-    {
-    @apply text-h1d font-title;
+    h1 {
+        @apply font-title text-h1d;
+    }
 }
+
+@layer components {
+    .grille {
+        @apply px-6 lg:grid lg:grid-cols-(--my-grid) lg:justify-center lg:gap-12;
+    }
 }

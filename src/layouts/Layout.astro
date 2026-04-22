@@ -2,6 +2,8 @@
 import "../style/global.css";
 import "@fontsource-variable/inter/wght.css";
 import "@fontsource/yeseva-one";
+
+import Header from "../components/Header.astro";
 ---
 
 <!doctype html>
@@ -14,6 +16,7 @@ import "@fontsource/yeseva-one";
 		<title>Astro Basics</title>
 	</head>
 	<body>
+		<Header />
 		<slot />
 	</body>
 </html>
