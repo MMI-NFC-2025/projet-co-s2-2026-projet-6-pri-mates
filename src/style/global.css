@@ -24,8 +24,12 @@
     }
 
     h1 {
-        @apply font-title text-h1d;
+        @apply font-title text-h3d lg:text-h1d;
     }
+    h3{
+        @apply font-family text-body3d lg:text-h3d;
+    }
+
 }
 
 @layer components {

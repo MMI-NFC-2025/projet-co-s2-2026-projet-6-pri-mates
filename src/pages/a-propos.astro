@@ -1,0 +1,54 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
+import lunaImage from "../assets/image/luna.webp";
+import charlotteImage from "../assets/image/charlotte.webp";
+import yanisImage from "../assets/image/yanis.webp";
+---
+
+<Layout>
+    <main style="background-color: var(--color-creme)">
+        <h1 class="text-center">Notre projet</h1>
+        <p class="m-2">
+            Nous réalisons ce projet dans le cadre de nos études au département
+            MMI. Notre projet, une application pour apprendre la langue des
+            signes française, est conçu pour un apprentissage simple et ludique.
+            Ce projet prône l'accessibilité et l'inclusion.
+        </p>
+        <div class="background-color: bg-red-700">
+            <h3 class="text-center text-white">L'équipe</h3>
+            <div class="lg:grille">
+                <Image
+                    src={lunaImage}
+                    alt="Luna Gouraud"
+                    class="h-30 w-30 lg:h-40 lg:w-40 rounded-full p-2"
+                />
+                <p class="text-white p-2">
+                    <b>Luna Gouraud</b>
+                    <br />06 25 32 41 08
+                    <br />luna.gouraud@gmail.com
+                </p>
+                <Image
+                    src={charlotteImage}
+                    alt="Charlotte Mettetal"
+                    class="h-30 w-30 lg:h-40 lg:w-40 rounded-full p-2"
+                />
+                <p class="text-white p-2">
+                    <b>Charlotte Mettetal</b>
+                    <br />07 71 85 45 23
+                    <br />charlotte.mettetal.07@gmail.com
+                </p>
+                <Image
+                    src={yanisImage}
+                    alt="Yanis Chouhib"
+                    class="h-30 w-30 lg:h-40 lg:w-40 rounded-full p-2"
+                />
+                <p class="text-white p-2">
+                    <b>Yanis Chouhib</b>
+                    <br />07 47 12 32 66
+                    <br />yanis.forster@gmail.com
+                </p>
+            </div>
+        </div>
+    </main>
+</Layout>
