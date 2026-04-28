@@ -15,39 +15,54 @@ import yanisImage from "../assets/image/yanis.webp";
             signes française, est conçu pour un apprentissage simple et ludique.
             Ce projet prône l'accessibilité et l'inclusion.
         </p>
-        <div class="background-color: bg-red-700">
+        <div class="bg-red-700">
             <h3 class="text-center text-white">L'équipe</h3>
-            <div class="lg:grille">
-                <Image
-                    src={lunaImage}
-                    alt="Luna Gouraud"
-                    class="h-30 w-30 lg:h-40 lg:w-40 rounded-full p-2"
-                />
-                <p class="text-white p-2">
-                    <b>Luna Gouraud</b>
-                    <br />06 25 32 41 08
-                    <br />luna.gouraud@gmail.com
-                </p>
-                <Image
-                    src={charlotteImage}
-                    alt="Charlotte Mettetal"
-                    class="h-30 w-30 lg:h-40 lg:w-40 rounded-full p-2"
-                />
-                <p class="text-white p-2">
-                    <b>Charlotte Mettetal</b>
-                    <br />07 71 85 45 23
-                    <br />charlotte.mettetal.07@gmail.com
-                </p>
-                <Image
-                    src={yanisImage}
-                    alt="Yanis Chouhib"
-                    class="h-30 w-30 lg:h-40 lg:w-40 rounded-full p-2"
-                />
-                <p class="text-white p-2">
-                    <b>Yanis Chouhib</b>
-                    <br />07 47 12 32 66
-                    <br />yanis.forster@gmail.com
-                </p>
+            <div class="flex flex-col lg:flex-row">
+                <div
+                    class="flex flex-row items-center lg:flex-col lg:flex-1 p-2"
+                >
+                    <Image
+                        src={lunaImage}
+                        alt="Luna Gouraud"
+                        class="h-20 w-20 lg:h-40 lg:w-40 rounded-full mr-4 lg:mx-auto"
+                    />
+                    <div class="text-left lg:text-center">
+                        <p class="text-white p-2 m-0">
+                            <b>Luna Gouraud</b><br />06 25 32 41 08<br
+                            />luna.gouraud@gmail.com
+                        </p>
+                    </div>
+                </div>
+                <div
+                    class="flex flex-row items-center lg:flex-col lg:flex-1 p-2"
+                >
+                    <Image
+                        src={charlotteImage}
+                        alt="Charlotte Mettetal"
+                        class="h-20 w-20 lg:h-40 lg:w-40 rounded-full mr-4 lg:mx-auto"
+                    />
+                    <div class="text-left lg:text-center">
+                        <p class="text-white p-2 m-0">
+                            <b>Charlotte Mettetal</b><br />07 71 85 45 23<br
+                            />charlotte.mettetal.07@gmail.com
+                        </p>
+                    </div>
+                </div>
+                <div
+                    class="flex flex-row items-center lg:flex-col lg:flex-1 p-2"
+                >
+                    <Image
+                        src={yanisImage}
+                        alt="Yanis Chouhib"
+                        class="h-20 w-20 lg:h-40 lg:w-40 rounded-full mr-4 lg:mx-auto"
+                    />
+                    <div class="text-left lg:text-center">
+                        <p class="text-white p-2 m-0">
+                            <b>Yanis Chouhib</b><br />07 47 12 32 66<br
+                            />yanis.forster@gmail.com
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
