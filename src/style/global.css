@@ -26,7 +26,7 @@
     }
 
     h1 {
-        @apply font-title text-h1d;
+        @apply font-title text-h3d lg:text-h1d;
     }
     h4 {
         @apply font-family text-h4d;
