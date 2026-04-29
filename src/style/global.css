@@ -14,7 +14,7 @@
     --text-body3d: 32px;
     --text-smalld: 25px;
 
-    --my-grid: repeat(12, minmax(0, 70px))
+    --my-grid: repeat(12, minmax(0, 1fr));
 
 }
 
