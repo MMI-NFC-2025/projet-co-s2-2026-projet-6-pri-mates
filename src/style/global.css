@@ -14,7 +14,9 @@
     --text-body3d: 32px;
     --text-smalld: 25px;
 
-    --my-grid: repeat(12, minmax(0, 1fr));
+    --color-creme: oklch(0.9449 0.0135 97.45);
+
+    --my-grid: repeat(12, minmax(0, 70px))
 
 }
 
@@ -24,7 +26,10 @@
     }
 
     h1 {
-        @apply font-title text-h1d;
+        @apply font-title text-h3d lg:text-h1d;
+    }
+    h4 {
+        @apply font-family text-h4d;
     }
 }
 
