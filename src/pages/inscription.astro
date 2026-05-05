@@ -1,0 +1,209 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Inscription">
+    <main class="bg-creame min-h-screen py-16">
+        <div class="grille">
+            <div
+                class="col-span-full lg:col-start-4 lg:col-span-6 text-center mb-16"
+            >
+                <h1 class="font-title mb-6">Inscription</h1>
+                <p class="font-sans text-body3d">
+                    Inscrivez-vous et vous pourrez apprendre la langue des
+                    signes
+                </p>
+            </div>
+
+            <form
+                class="col-span-full lg:col-start-4 lg:col-span-6 flex flex-col gap-6"
+            >
+                <div class="flex flex-col gap-2">
+                    <label
+                        for="civilite"
+                        class="font-sans text-smalld text-rose-950"
+                        >Civilité</label
+                    >
+                    <input
+                        type="text"
+                        id="civilite"
+                        name="civilite"
+                        placeholder="Ex: Monsieur, Madame"
+                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                    />
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label
+                        for="prenom"
+                        class="font-sans text-smalld text-rose-950"
+                        >Prénom</label
+                    >
+                    <input
+                        type="text"
+                        id="prenom"
+                        name="prenom"
+                        placeholder="Ex: Jean"
+                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                    />
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label for="nom" class="font-sans text-smalld text-rose-950"
+                        >Nom</label
+                    >
+                    <input
+                        type="text"
+                        id="nom"
+                        name="nom"
+                        placeholder="Ex: Dupont"
+                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                    />
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label
+                        for="birthdate"
+                        class="font-sans text-smalld text-rose-950"
+                        >Date de naissance</label
+                    >
+                    <input
+                        type="date"
+                        id="birthdate"
+                        name="birthdate"
+                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                    />
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label
+                        for="email"
+                        class="font-sans text-smalld text-rose-950"
+                        >Adresse mail</label
+                    >
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Ex: jean.dupont@email.com"
+                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                    />
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label
+                        for="niveau"
+                        class="font-sans text-smalld text-rose-950"
+                        >Niveau en LSF</label
+                    >
+                    <input
+                        type="text"
+                        id="niveau"
+                        name="niveau"
+                        placeholder="Ex: Débutant, Intermédiaire, Avancé"
+                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                    />
+                </div>
+
+                <div class="flex items-center gap-4 mt-2">
+                    <input
+                        type="checkbox"
+                        id="cgu"
+                        name="cgu"
+                        class="w-7 h-7 accent-red-800 cursor-pointer"
+                    />
+                    <label
+                        for="cgu"
+                        class="font-sans text-smalld cursor-pointer"
+                        >J'accepte les conditions générales</label
+                    >
+                </div>
+
+                <div class="flex justify-center mt-6">
+                    <button
+                        type="submit"
+                        class="font-body bg-red-800 hover:bg-rose-950 text-white text-body3d py-4 px-12 rounded-lg"
+                    >
+                        Je crée mon compte
+                    </button>
+                </div>
+
+                <div class="relative flex items-center py-8">
+                    <div class="flex-grow border-t border-rose-950/20"></div>
+                    <span class="flex-shrink mx-4 font-sans text-slate-400"
+                        >ou</span
+                    >
+                    <div class="flex-grow border-t border-rose-950/20"></div>
+                </div>
+
+                <div class="flex flex-col gap-4 self-center w-full max-w-sm">
+                    <button
+                        type="button"
+                        id="login-google"
+                        class="font-body bg-red-800 hover:brightness-110 text-white text-smalld py-4 rounded-lg flex justify-center items-center shadow-md transition-all"
+                    >
+                        Me connecter avec Google
+                    </button>
+                    <button
+                        type="button"
+                        id="login-apple"
+                        class="font-body bg-red-800 hover:brightness-110 text-white text-smalld py-4 rounded-lg flex justify-center items-center shadow-md transition-all"
+                    >
+                        Me connecter avec Apple
+                    </button>
+                </div>
+                <script>
+                    const googleBtn = document.getElementById("login-google");
+                    const appleBtn = document.getElementById("login-apple");
+
+                    const openPopup = (url, title) => {
+                        const w = 500;
+                        const h = 600;
+                        const left = screen.width / 2 - w / 2;
+                        const top = screen.height / 2 - h / 2;
+
+                        return window.open(
+                            url,
+                            title,
+                            `width=${w},height=${h},top=${top},left=${left},toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes`,
+                        );
+                    };
+
+                
+                    googleBtn?.addEventListener("click", () => {
+                        const clientId =
+                            "635714375983-drrpdad2sfksqhk5h2prkh27j4ob3dvd.apps.googleusercontent.com";
+
+                   
+                        const redirectUri = encodeURIComponent(
+                            "http://localhost:4321/inscription",
+                        );
+
+                        const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=email%20profile`;
+
+                        openPopup(url, "Connexion Google");
+                    });
+
+                 
+                    appleBtn?.addEventListener("click", () => {
+                        alert(
+                            "Sign in with Apple nécessite un compte développeur payant (99€/an). La popup s'ouvrirait ici sur un projet réel.",
+                        );
+                        openPopup(
+                            "https://appleid.apple.com/auth/authorize",
+                            "Connexion Apple",
+                        );
+                    });
+                </script>
+            </form>
+        </div>
+    </main>
+</Layout>
+
+<style>
+    /* Style spécifique pour l'icône du calendrier sur l'input date */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        filter: invert(0.2);
+    }
+</style>

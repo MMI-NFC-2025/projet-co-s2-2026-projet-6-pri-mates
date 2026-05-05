@@ -1,0 +1,42 @@
+---
+import { Image } from "astro:assets";
+import heroImage from "../assets/image/hero.webp";
+---
+
+<section
+    class="relative h-[600px] lg:h-[800px] w-full overflow-hidden flex items-center"
+>
+    <div class="absolute inset-0 z-0">
+        <Image
+            src={heroImage}
+            alt="Tacita Hero"
+            class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-0 bg-black/50"></div>
+    </div>
+
+    <div class="grille relative z-10 items-baseline">
+        <h1 class="col-start-1 lg:col-span-4 text-white font-title">Tacita</h1>
+
+        <p
+            class="col-start-2 lg:col-start-2 lg:col-span-10 text-white font-sans text-body2d lg:text-body1d leading-tight"
+        >
+            Ne reste plus dans le silence
+        </p>
+    </div>
+</section>
+
+<style>
+    /* Optionnel : si tu veux un effet de fondu sur l'image au chargement */
+    img {
+        animation: fadeIn 1.5s ease-out;
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>
