@@ -1,8 +1,6 @@
 ---
-
-import Hero from '../components/hero.astro';
-import Layout from '../layouts/Layout.astro';
-
+import Hero from "../components/hero.astro";
+import Layout from "../layouts/Layout.astro";
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
@@ -10,5 +8,185 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout>
     <Hero />
+    <section class="bg-creme py-24">
+        <div class="grille items-start">
+            <div class="col-span-full lg:col-start-2 lg:col-span-4 text-center">
+                <p class="font-title text-h4d lg:text-h3d leading-none mb-2">
+                    400 000
+                </p>
+                <p class="font-title text-body3d lg:text-body2d leading-tight">
+                    personnes en ont besoin
+                </p>
+            </div>
 
+            <div
+                class="col-span-full lg:col-start-8 lg:col-span-4 text-center mt-12 lg:mt-0"
+            >
+                <p class="font-title text-h4d lg:text-h3d leading-none mb-2">
+                    100 000
+                </p>
+                <p class="font-title text-body3d lg:text-body2d leading-tight">
+                    la pratiquent
+                </p>
+            </div>
+
+            <div
+                class="col-span-full lg:col-start-2 lg:col-span-11 mt-20 px-4 lg:px-0"
+            >
+                <p
+                    class="font-sans text-smalld lg:text-body3d leading-relaxed text-left lg:text-left"
+                >
+                    Comblez le fossé de la communication. Apprenez la Langue des
+                    Signes Française (LSF) de manière simple, visuelle et
+                    intuitive. C'est ce que Tacita vous propose. Ainsi en
+                    apprenant la LSF, vous vous donnez une chance de comprendre
+                    et de communiquer avec des sourds, muets et malentendants.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-red-800 py-20 px-6 lg:px-0">
+        <div class="grille gap-y-8 lg:gap-y-0">
+            <!-- TITRE -->
+            <div
+                class="col-span-full lg:col-start-1 lg:col-span-12 mb-8 lg:mb-16"
+            >
+                <h2
+                    class="font-title text-white text-center text-body2d lg:text-h3d"
+                >
+                    Nos fonctionnalités
+                </h2>
+            </div>
+
+            <div
+                class="col-span-full lg:col-start-1 lg:col-span-3 bg-creme rounded-2xl p-8 shadow-xl flex flex-col gap-4 h-full"
+            >
+                <h3
+                    class="font-title text-3xl text-center border-b border-rose-950/10 pb-4"
+                >
+                    Kit de survie
+                </h3>
+                <p class="font-sans text-xl leading-relaxed">
+                    Un kit payant qui résume les leçons.<br />
+                    Un kit gratuit qui regroupe les gestes de bases.<br />
+                    En cas de trous de mémoire.
+                </p>
+            </div>
+
+            <div
+                class="col-span-full lg:col-start-5 lg:col-span-3 bg-creme rounded-2xl p-8 shadow-xl flex flex-col gap-4 h-full"
+            >
+                <h3
+                    class="font-title text-3xl text-center border-b border-rose-950/10 pb-4"
+                >
+                    Mini-jeux
+                </h3>
+                <p class="font-sans text-xl leading-relaxed">
+                    4 mini-jeux au choix : associations, quiz, memori et trouver
+                    l’intru qui viennent compléter les cours
+                </p>
+            </div>
+
+            <div
+                class="col-span-full lg:col-start-9 lg:col-span-3 bg-creme rounded-2xl p-8 shadow-xl flex flex-col gap-4 h-full"
+            >
+                <h3
+                    class="font-title text-3xl text-center border-b border-rose-950/10 pb-4"
+                >
+                    Missions
+                </h3>
+                <p class="font-sans text-xl leading-relaxed">
+                    Chaque jour, de nouvelles missions et récompenses seront
+                    disponibles
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-red-800 py-20 px-6 lg:px-0">
+        <div class="grille gap-y-8 lg:gap-y-10">
+          
+            <div
+                class="col-span-full lg:col-start-1 lg:col-span-12 text-center flex flex-col gap-6"
+            >
+                <h2 class="font-title text-white text-5xl lg:text-6xl">
+                    Nos offres
+                </h2>
+                <h3 class="font-family text-white text-2xl lg:text-3xl">
+                    Nos abonnements
+                </h3>
+            </div>
+
+            <div
+                class="col-span-full md:col-span-6 lg:col-start-3 lg:col-span-4 bg-creme rounded-2xl p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
+            >
+                <h4 class="font-body font-bold text-2xl mb-6 leading-snug">
+                    <span class="block">Premium</span>
+                    <span class="block">1 mois</span>
+                </h4>
+                <p class="font-body  text-xl leading-snug">
+                    <span class="block">5,99€</span>
+                    <span class="block">par mois</span>
+                </p>
+            </div>
+
+            <!-- Carte 2 : Premium à l'année -->
+            <div
+                class="col-span-full md:col-span-6 lg:col-start-7 lg:col-span-4 bg-creme rounded-2xl p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
+            >
+                <h4 class="font-body font-bold text-2xl mb-6 leading-snug">
+                    <span class="block">Premium</span>
+                    <span class="block">à l’année</span>
+                </h4>
+                <p class="font-body  text-xl leading-snug">
+                    <span class="block">59,99€</span>
+                    <span class="block">pour 12 mois</span>
+                </p>
+            </div>
+
+            <!-- TEXTE EXPLICATIF (Centré sur 8 colonnes) -->
+            <div
+                class="col-span-full lg:col-start-3 lg:col-span-8 text-center mt-4 mb-4 lg:my-6"
+            >
+                <p
+                    class="font-body text-white text-lg lg:text-xl leading-relaxed"
+                >
+                    Passer en mode premium vous permet de ne plus avoir de pub,
+                    jouer en illimité, modifier l’interface et pleins d’autres
+                    choses.
+                </p>
+            </div>
+
+            <!-- SOUS-TITRE : KITS -->
+            <div
+                class="col-span-full lg:col-start-1 lg:col-span-12 text-center mt-4 lg:mt-8"
+            >
+                <h3 class="font-family text-white text-2xl lg:text-3xl">
+                    Nos kits de survie téléchargeables
+                </h3>
+            </div>
+
+            <!-- LIGNE 2 : KITS DE SURVIE -->
+            <!-- Carte 3 : Kit Gratuit -->
+            <div
+                class="col-span-full md:col-span-6 lg:col-start-3 lg:col-span-4 bg-creme rounded-2xl p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
+            >
+                <h4 class="font-body font-bold text-2xl mb-6">Gratuit</h4>
+                <p class="font-body  text-xl leading-snug">
+                    Pour retrouver un résumé de vos leçons
+                </p>
+            </div>
+
+            <!-- Carte 4 : Kit Payant -->
+            <div
+                class="col-span-full md:col-span-6 lg:col-start-7 lg:col-span-4 bg-creme rounded-2xl p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
+            >
+                <h4 class="font-body font-bold text-2xl mb-6">3,99€</h4>
+                <p class="font-body text-xl leading-snug">
+                    Pour retrouver tous les signes de bases
+                </p>
+            </div>
+        </div>
+    </section>
 </Layout>
