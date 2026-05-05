@@ -1,7 +1,14 @@
 ---
 import "../style/global.css";
+import PbImage from "../components/PbImage.astro";
 ---
+
 <header class="bg-red-100">
-    <h3>Axium</h3>
+    <h3 class="m-2">Axium</h3>
     <h3>Niveau 1 | Jour 1</h3>
+    <PbImage
+        record={Utilisateur}
+        recordImage={Utilisateur?.image?.[0] || Utilisateur?.photo_profil || ""}
+        style="max-width: 100%; height: auto;"
+    />
 </header>
