@@ -106,79 +106,80 @@ import Layout from "../layouts/Layout.astro";
 
     <section class="bg-red-800 py-20 px-6 lg:px-0">
         <div class="grille gap-y-8 lg:gap-y-10">
-          
             <div
                 class="col-span-full lg:col-start-1 lg:col-span-12 text-center flex flex-col gap-6"
             >
-                <h2 class="font-title text-white text-5xl lg:text-6xl">
+                <h2 class="font-title text-white text-body2d lg:text-h3d">
                     Nos offres
                 </h2>
-                <h3 class="font-family text-white text-2xl lg:text-3xl">
-                    Nos abonnements
+                <h3 class="font-family text-white text-smalld lg:text-body2d">
+                    Abonnements
                 </h3>
             </div>
 
             <div
                 class="col-span-full md:col-span-6 lg:col-start-3 lg:col-span-4 bg-creme rounded-2xl p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
             >
-                <h4 class="font-body font-bold text-2xl mb-6 leading-snug">
+                <h4
+                    class="font-body font-bold text-mobile lg:text-smalld mb-6 leading-snug"
+                >
                     <span class="block">Premium</span>
                     <span class="block">1 mois</span>
                 </h4>
-                <p class="font-body  text-xl leading-snug">
+                <p class="font-body texte-mobilelg:text-smalld leading-snug">
                     <span class="block">5,99€</span>
                     <span class="block">par mois</span>
                 </p>
             </div>
 
-            <!-- Carte 2 : Premium à l'année -->
+            
             <div
                 class="col-span-full md:col-span-6 lg:col-start-7 lg:col-span-4 bg-creme rounded-2xl p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
             >
-                <h4 class="font-body font-bold text-2xl mb-6 leading-snug">
+                <h4
+                    class="font-body font-bold text-mobile lg:text-smalld mb-6 leading-snug"
+                >
                     <span class="block">Premium</span>
                     <span class="block">à l’année</span>
                 </h4>
-                <p class="font-body  text-xl leading-snug">
+                <p class="font-body texte-mobile lg:text-smalld leading-snug">
                     <span class="block">59,99€</span>
                     <span class="block">pour 12 mois</span>
                 </p>
             </div>
 
-            <!-- TEXTE EXPLICATIF (Centré sur 8 colonnes) -->
+            
             <div
-                class="col-span-full lg:col-start-3 lg:col-span-8 text-center mt-4 mb-4 lg:my-6"
+                class="col-span-full lg:col-start-3 lg:col-span-9 mt-4 mb-4 lg:my-6"
             >
-                <p
-                    class="font-body text-white text-lg lg:text-xl leading-relaxed"
-                >
-                    Passer en mode premium vous permet de ne plus avoir de pub,
-                    jouer en illimité, modifier l’interface et pleins d’autres
-                    choses.
+                <p class="font-body text-white lg:text-smalld leading-relaxed">
+                    Passer en mode premium vous permet de ne plus avoir de pub,<br
+                        class="hidden lg:inline"
+                    />
+                    jouer en illimité, modifier l’interface et pleins d’autres choses.
                 </p>
             </div>
 
-            <!-- SOUS-TITRE : KITS -->
+          
             <div
                 class="col-span-full lg:col-start-1 lg:col-span-12 text-center mt-4 lg:mt-8"
             >
                 <h3 class="font-family text-white text-2xl lg:text-3xl">
-                    Nos kits de survie téléchargeables
+                    Kits de survie téléchargeables
                 </h3>
             </div>
 
-            <!-- LIGNE 2 : KITS DE SURVIE -->
-            <!-- Carte 3 : Kit Gratuit -->
+           
             <div
                 class="col-span-full md:col-span-6 lg:col-start-3 lg:col-span-4 bg-creme rounded-2xl p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
             >
                 <h4 class="font-body font-bold text-2xl mb-6">Gratuit</h4>
-                <p class="font-body  text-xl leading-snug">
+                <p class="font-body text-xl leading-snug">
                     Pour retrouver un résumé de vos leçons
                 </p>
             </div>
 
-            <!-- Carte 4 : Kit Payant -->
+          
             <div
                 class="col-span-full md:col-span-6 lg:col-start-7 lg:col-span-4 bg-creme rounded-2xl p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
             >
@@ -186,6 +187,108 @@ import Layout from "../layouts/Layout.astro";
                 <p class="font-body text-xl leading-snug">
                     Pour retrouver tous les signes de bases
                 </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-creme py-24 px-6 lg:px-0" id="contact">
+        <div class="grille items-center">
+            <div
+                class="col-span-full lg:col-start-4 lg:col-span-6 flex flex-col gap-10"
+            >
+                <h2 class="font-title text-body2d lg:text-h3d text-center">
+                    Contact
+                </h2>
+
+                <form action="#" method="POST" class="flex flex-col gap-6">
+                    <!-- Prénom -->
+                    <div class="flex flex-col gap-2">
+                        <label
+                            for="prenom"
+                            class="font-sans text-xl  font-medium"
+                            >Prénom</label
+                        >
+                        <input
+                            type="text"
+                            id="prenom"
+                            name="prenom"
+                            placeholder="Ex : Léon"
+                            class="bg-white border border-slate-300 rounded-lg h-14 px-4 font-sans text-lg placeholder:text-slate-300 focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                        />
+                    </div>
+
+                    <!-- Nom -->
+                    <div class="flex flex-col gap-2">
+                        <label
+                            for="nom"
+                            class="font-sans text-xl  font-medium"
+                            >Nom</label
+                        >
+                        <input
+                            type="text"
+                            id="nom"
+                            name="nom"
+                            placeholder="Ex : Marchand"
+                            class="bg-white border border-slate-300 rounded-lg h-14 px-4 font-sans text-lg placeholder:text-slate-300 focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                        />
+                    </div>
+
+                    <!-- Email -->
+                    <div class="flex flex-col gap-2">
+                        <label
+                            for="email"
+                            class="font-sans text-xl  font-medium"
+                            >Email</label
+                        >
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Ex : leon.marchand@gmail.com"
+                            class="bg-white border border-slate-300 rounded-lg h-14 px-4 font-sans text-lg placeholder:text-slate-300 focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                        />
+                    </div>
+
+                    <!-- Objet -->
+                    <div class="flex flex-col gap-2">
+                        <label
+                            for="objet"
+                            class="font-sans text-xl  font-medium"
+                            >Objet</label
+                        >
+                        <input
+                            type="text"
+                            id="objet"
+                            name="objet"
+                            placeholder="Ex : kit de survie"
+                            class="bg-white border border-slate-300 rounded-lg h-14 px-4 font-sans text-lg placeholder:text-slate-300 focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                        />
+                    </div>
+
+                    <!-- Message -->
+                    <div class="flex flex-col gap-2">
+                        <label
+                            for="message"
+                            class="font-sans text-xl  font-medium"
+                            >Message</label
+                        >
+                        <textarea
+                            id="message"
+                            name="message"
+                            class="bg-white border border-slate-300 rounded-lg h-48 p-4 font-sans text-lg focus:ring-1 focus:ring-red-800 outline-none transition-all resize-none"
+                        ></textarea>
+                    </div>
+
+                    <!-- Bouton Envoyer -->
+                    <div class="flex justify-center mt-4">
+                        <button
+                            type="submit"
+                            class="bg-red-800 hover:bg-rose-950 text-white font-sans font-medium text-xl py-4 px-16 rounded-lg transition-all shadow-md active:scale-95"
+                        >
+                            Envoyer
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </section>
