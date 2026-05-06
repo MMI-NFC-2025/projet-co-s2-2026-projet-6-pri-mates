@@ -1,0 +1,12 @@
+---
+const { count = 4 } = Astro.props;
+---
+
+
+<div class="">
+{Array.from({ length: count }).map((_, i) => (
+        <div class="bg-creme text-black w-90 h-30 rounded-md mx-6 my-6" key={i}>
+            <div class="text-xl text-center pt-3">Défi {i + 1}</div>
+        </div>
+    ))}
+</div>
