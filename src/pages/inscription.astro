@@ -9,7 +9,7 @@ import Layout from "../layouts/Layout.astro";
                 class="col-span-full lg:col-start-4 lg:col-span-6 text-center mb-16"
             >
                 <h1 class="font-title mb-6">Inscription</h1>
-                <p class="font-sans text-body3d">
+                <p id="inscription-help" class="font-sans text-body3d">
                     Inscrivez-vous et vous pourrez apprendre la langue des
                     signes
                 </p>
@@ -17,6 +17,7 @@ import Layout from "../layouts/Layout.astro";
 
             <form
                 class="col-span-full lg:col-start-4 lg:col-span-6 flex flex-col gap-6"
+                aria-describedby="inscription-help"
             >
                 <div class="flex flex-col gap-2">
                     <label
@@ -29,7 +30,9 @@ import Layout from "../layouts/Layout.astro";
                         id="civilite"
                         name="civilite"
                         placeholder="Ex: Monsieur, Madame"
-                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                        autocomplete="honorific-prefix"
+                        required
+                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all focus-visible:ring-2 focus-visible:ring-red-800"
                     />
                 </div>
 
@@ -43,8 +46,10 @@ import Layout from "../layouts/Layout.astro";
                         type="text"
                         id="prenom"
                         name="prenom"
-                        placeholder="Ex: Jean"
-                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                        placeholder="Ex: Léon"
+                        autocomplete="given-name"
+                        required
+                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all focus-visible:ring-2 focus-visible:ring-red-800"
                     />
                 </div>
 
@@ -56,8 +61,10 @@ import Layout from "../layouts/Layout.astro";
                         type="text"
                         id="nom"
                         name="nom"
-                        placeholder="Ex: Dupont"
-                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                        placeholder="Ex: Marchand"
+                        autocomplete="family-name"
+                        required
+                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all focus-visible:ring-2 focus-visible:ring-red-800"
                     />
                 </div>
 
@@ -71,7 +78,9 @@ import Layout from "../layouts/Layout.astro";
                         type="date"
                         id="birthdate"
                         name="birthdate"
-                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                        autocomplete="bday"
+                        required
+                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all focus-visible:ring-2 focus-visible:ring-red-800"
                     />
                 </div>
 
@@ -85,8 +94,10 @@ import Layout from "../layouts/Layout.astro";
                         type="email"
                         id="email"
                         name="email"
-                        placeholder="Ex: jean.dupont@email.com"
-                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                        placeholder="Ex: leon.marchand@email.com"
+                        autocomplete="email"
+                        required
+                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all focus-visible:ring-2 focus-visible:ring-red-800"
                     />
                 </div>
 
@@ -101,7 +112,8 @@ import Layout from "../layouts/Layout.astro";
                         id="niveau"
                         name="niveau"
                         placeholder="Ex: Débutant, Intermédiaire, Avancé"
-                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all"
+                        required
+                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all focus-visible:ring-2 focus-visible:ring-red-800"
                     />
                 </div>
 
@@ -110,6 +122,7 @@ import Layout from "../layouts/Layout.astro";
                         type="checkbox"
                         id="cgu"
                         name="cgu"
+                        required
                         class="w-7 h-7 accent-red-800 cursor-pointer"
                     />
                     <label
@@ -129,11 +142,9 @@ import Layout from "../layouts/Layout.astro";
                 </div>
 
                 <div class="relative flex items-center py-8">
-                    <div class="flex-grow border-t border-rose-950/20"></div>
-                    <span class="flex-shrink mx-4 font-sans text-slate-400"
-                        >ou</span
-                    >
-                    <div class="flex-grow border-t border-rose-950/20"></div>
+                    <div class="grow border-t border-rose-950/20"></div>
+                    <span class="shrink mx-4 font-sans text-slate-400">ou</span>
+                    <div class="grow border-t border-rose-950/20"></div>
                 </div>
 
                 <div class="flex flex-col gap-4 self-center w-full max-w-sm">
@@ -156,7 +167,7 @@ import Layout from "../layouts/Layout.astro";
                     const googleBtn = document.getElementById("login-google");
                     const appleBtn = document.getElementById("login-apple");
 
-                    const openPopup = (url, title) => {
+                    const openPopup = (url: string, title: string) => {
                         const w = 500;
                         const h = 600;
                         const left = screen.width / 2 - w / 2;
