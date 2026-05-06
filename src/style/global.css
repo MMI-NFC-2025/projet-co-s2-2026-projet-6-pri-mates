@@ -13,6 +13,7 @@
     --text-body2d: 36px;
     --text-body3d: 32px;
     --text-smalld: 25px;
+    --text-tinyd: 20px;
 
     --color-creme: oklch(0.9449 0.0135 97.45);
 
@@ -31,7 +32,9 @@
     h3{
         @apply font-family text-body3d lg:text-h3d;
     }
-
+    h4 {
+        @apply font-body text-body2d lg:text-h4d;
+    }
 }
 
 @layer components {
