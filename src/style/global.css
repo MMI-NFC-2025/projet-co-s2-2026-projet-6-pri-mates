@@ -17,7 +17,7 @@
 
     --color-creme: oklch(0.9449 0.0135 97.45);
 
-    --my-grid: repeat(12, minmax(0, 70px))
+    --my-grid: repeat(12, minmax(0, 1fr))
 
 }
 

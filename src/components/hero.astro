@@ -3,23 +3,31 @@ import { Image } from "astro:assets";
 import heroImage from "../assets/image/hero.webp";
 ---
 
+
 <section
-    class="relative h-[600px] lg:h-[800px] w-full overflow-hidden flex items-center"
+    class="relative h-[200px] lg:h-[600px] w-full overflow-hidden flex items-center px-4 lg:px-0"
 >
     <div class="absolute inset-0 z-0">
+       
         <Image
             src={heroImage}
             alt="Tacita Hero"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover lg:object-center"
         />
-        <div class="absolute inset-0 bg-black/50"></div>
+        <div class="absolute inset-0 bg-black/40"></div>
     </div>
 
-    <div class="grille relative z-10 items-baseline">
-        <h1 class="col-start-1 lg:col-span-4 text-white font-title">Tacita</h1>
+    <div class="grille relative z-10 w-full">
+       
+        <h1
+            class="col-span-full lg:col-start-1 lg:col-span-12 text-white font-title text-body2d md:text-[80px] lg:text-h1d leading-none"
+        >
+            Tacita
+        </h1>
 
+       
         <p
-            class="col-start-2 lg:col-start-2 lg:col-span-10 text-white font-sans text-body2d lg:text-body1d leading-tight"
+            class="col-span-full lg:col-start-2 lg:col-span-10 text-white font-sans text-xl lg:text-4xl leading-tight -mt-1 md:-mt-2 lg:-mt-8 relative z-20"
         >
             Ne reste plus dans le silence
         </p>
@@ -27,7 +35,6 @@ import heroImage from "../assets/image/hero.webp";
 </section>
 
 <style>
-    /* Optionnel : si tu veux un effet de fondu sur l'image au chargement */
     img {
         animation: fadeIn 1.5s ease-out;
     }

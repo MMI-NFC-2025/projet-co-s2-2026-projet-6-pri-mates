@@ -1,40 +1,47 @@
 ---
 import Hero from "../components/hero.astro";
 import Layout from "../layouts/Layout.astro";
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
 <Layout>
     <Hero />
-    <section class="bg-creme py-24">
+    <section class="bg-creme py-10">
         <div class="grille items-start">
-            <div class="col-span-full lg:col-start-2 lg:col-span-4 text-center">
-                <p class="font-title text-h4d lg:text-h3d leading-none mb-2">
-                    400 000
-                </p>
-                <p class="font-title text-body3d lg:text-body2d leading-tight">
-                    personnes en ont besoin
-                </p>
-            </div>
-
             <div
-                class="col-span-full lg:col-start-8 lg:col-span-4 text-center mt-12 lg:mt-0"
+                class="col-span-full flex flex-row justify-around items-start w-full lg:grid lg:grid-cols-12 lg:gap-0"
             >
-                <p class="font-title text-h4d lg:text-h3d leading-none mb-2">
-                    100 000
-                </p>
-                <p class="font-title text-body3d lg:text-body2d leading-tight">
-                    la pratiquent
-                </p>
+                <div class="flex-1 lg:col-start-2 lg:col-span-4 text-center">
+                    <p
+                        class="font-title text-smalld lg:text-h3d leading-none mb-2"
+                    >
+                        400 000
+                    </p>
+                    <p
+                        class="font-title text-smalld lg:text-body2d leading-tight"
+                    >
+                        personnes en ont besoin
+                    </p>
+                </div>
+
+                <div class="flex-1 lg:col-start-8 lg:col-span-4 text-center">
+                    <p
+                        class="font-title text-smalld lg:text-h3d leading-none mb-2"
+                    >
+                        100 000
+                    </p>
+                    <p
+                        class="font-title text-smalld lg:text-body2d leading-tight"
+                    >
+                        personnes la <br class="hidden lg:block" /> pratique
+                    </p>
+                </div>
             </div>
 
             <div
-                class="col-span-full lg:col-start-2 lg:col-span-11 mt-20 px-4 lg:px-0"
+                class="col-span-full lg:col-start-1 lg:col-span-12 mt-10 px-4 lg:px-0"
             >
                 <p
-                    class="font-sans text-smalld lg:text-body3d leading-relaxed text-left lg:text-left"
+                    class="font-sans text-mobile lg:text-body3d leading-relaxed text-left lg:text-left"
                 >
                     Comblez le fossé de la communication. Apprenez la Langue des
                     Signes Française (LSF) de manière simple, visuelle et
@@ -46,11 +53,10 @@ import Layout from "../layouts/Layout.astro";
         </div>
     </section>
 
-    <section class="bg-red-800 py-20 px-6 lg:px-0">
-        <div class="grille gap-y-8 lg:gap-y-0">
-            <!-- TITRE -->
+    <section class="bg-red-800 pt-20 pb-8 px-6 lg:px-0">
+        <div class="grille flex flex-col gap-4 lg:grid lg:gap-y-0">
             <div
-                class="col-span-full lg:col-start-1 lg:col-span-12 mb-8 lg:mb-16"
+                class="col-span-full lg:col-start-1 lg:col-span-12 mb-4 lg:mb-16"
             >
                 <h2
                     class="font-title text-white text-center text-body2d lg:text-h3d"
@@ -60,43 +66,45 @@ import Layout from "../layouts/Layout.astro";
             </div>
 
             <div
-                class="col-span-full lg:col-start-1 lg:col-span-3 bg-creme rounded-2xl p-8 shadow-xl flex flex-col gap-4 h-full"
+                class="col-span-full lg:col-start- lg:col-span-3 bg-creme rounded-2xl p-5 lg:p-8 shadow-xl flex flex-col gap-2 lg:gap-4 h-full"
             >
                 <h3
-                    class="font-title text-3xl text-center border-b border-rose-950/10 pb-4"
+                    class="font-title text-smalld lg:text-3xl text-center border-b border-rose-950/10 pb-2 lg:pb-4"
                 >
                     Kit de survie
                 </h3>
-                <p class="font-sans text-xl leading-relaxed">
-                    Un kit payant qui résume les leçons.<br />
-                    Un kit gratuit qui regroupe les gestes de bases.<br />
-                    En cas de trous de mémoire.
+                <p class="font-sans text-base lg:text-xl leading-relaxed">
+                    Un kit payant qui résume les leçons.<br
+                        class="hidden lg:block"
+                    />
+                    Un kit gratuit qui regroupe les gestes de bases. En cas de trous
+                    de mémoire.
                 </p>
             </div>
 
             <div
-                class="col-span-full lg:col-start-5 lg:col-span-3 bg-creme rounded-2xl p-8 shadow-xl flex flex-col gap-4 h-full"
+                class="col-span-full lg:col-start-5 lg:col-span-3 bg-creme rounded-2xl p-5 lg:p-8 shadow-xl flex flex-col gap-2 lg:gap-4 h-full"
             >
                 <h3
-                    class="font-title text-3xl text-center border-b border-rose-950/10 pb-4"
+                    class="font-title text-smalld lg:text-3xl text-center border-b border-rose-950/10 pb-2 lg:pb-4"
                 >
                     Mini-jeux
                 </h3>
-                <p class="font-sans text-xl leading-relaxed">
+                <p class="font-sans text-base lg:text-xl leading-relaxed">
                     4 mini-jeux au choix : associations, quiz, memori et trouver
                     l’intru qui viennent compléter les cours
                 </p>
             </div>
 
             <div
-                class="col-span-full lg:col-start-9 lg:col-span-3 bg-creme rounded-2xl p-8 shadow-xl flex flex-col gap-4 h-full"
+                class="col-span-full lg:col-start-9 lg:col-span-3 bg-creme rounded-2xl p-5 lg:p-8 shadow-xl flex flex-col gap-2 lg:gap-4 h-full"
             >
                 <h3
-                    class="font-title text-3xl text-center border-b border-rose-950/10 pb-4"
+                    class="font-title text-smalld lg:text-3xl text-center border-b border-rose-950/10 pb-2 lg:pb-4"
                 >
                     Missions
                 </h3>
-                <p class="font-sans text-xl leading-relaxed">
+                <p class="font-sans text-base lg:text-xl leading-relaxed">
                     Chaque jour, de nouvelles missions et récompenses seront
                     disponibles
                 </p>
@@ -104,10 +112,10 @@ import Layout from "../layouts/Layout.astro";
         </div>
     </section>
 
-    <section class="bg-red-800 py-20 px-6 lg:px-0">
-        <div class="grille gap-y-8 lg:gap-y-10">
+    <section class="bg-red-800 pt-8 pb-20 px-6 lg:px-0">
+        <div class="grille lg:grid lg:gap-y-10">
             <div
-                class="col-span-full lg:col-start-1 lg:col-span-12 text-center flex flex-col gap-6"
+                class="col-span-full lg:col-start-1 lg:col-span-12 text-center flex flex-col gap-4 lg:gap-6 mb-8 lg:mb-0"
             >
                 <h2 class="font-title text-white text-body2d lg:text-h3d">
                     Nos offres
@@ -118,80 +126,97 @@ import Layout from "../layouts/Layout.astro";
             </div>
 
             <div
-                class="col-span-full md:col-span-6 lg:col-start-3 lg:col-span-4 bg-creme rounded-2xl p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
+                class="col-span-full flex flex-row justify-center gap-3 w-full mb-8 lg:mb-0 lg:contents"
             >
-                <h4
-                    class="font-body font-bold text-mobile lg:text-smalld mb-6 leading-snug"
+                <div
+                    class="flex-1 w-full max-w-40 lg:max-w-xs lg:col-start-3  lg:col-span-4 bg-creme rounded-2xl p-3 lg:p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
                 >
-                    <span class="block">Premium</span>
-                    <span class="block">1 mois</span>
-                </h4>
-                <p class="font-body texte-mobilelg:text-smalld leading-snug">
-                    <span class="block">5,99€</span>
-                    <span class="block">par mois</span>
-                </p>
+                    <h4
+                        class="font-body font-bold text-mobile lg:text-smalld mb-2 lg:mb-6 leading-snug"
+                    >
+                        <span class="block">Premium</span>
+                        <span class="block">1 mois</span>
+                    </h4>
+                    <p
+                        class="font-body text-mobile lg:text-smalld leading-snug"
+                    >
+                        <span class="block">5,99€</span>
+                        <span class="block">par mois</span>
+                    </p>
+                </div>
+
+                <div
+                    class="flex-1 w-full max-w-40 lg:max-w-xs lg:col-start-7 lg:col-span-4 bg-creme rounded-2xl p-3 lg:p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
+                >
+                    <h4
+                        class="font-body font-bold text-mobile lg:text-smalld mb-2 lg:mb-6 leading-snug"
+                    >
+                        <span class="block">Premium</span>
+                        <span class="block">à l’année</span>
+                    </h4>
+                    <p
+                        class="font-body text-mobile lg:text-smalld leading-snug"
+                    >
+                        <span class="block">59,99€</span>
+                        <span class="block">pour 12 mois</span>
+                    </p>
+                </div>
             </div>
 
-            
             <div
-                class="col-span-full md:col-span-6 lg:col-start-7 lg:col-span-4 bg-creme rounded-2xl p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
-            >
-                <h4
-                    class="font-body font-bold text-mobile lg:text-smalld mb-6 leading-snug"
-                >
-                    <span class="block">Premium</span>
-                    <span class="block">à l’année</span>
-                </h4>
-                <p class="font-body texte-mobile lg:text-smalld leading-snug">
-                    <span class="block">59,99€</span>
-                    <span class="block">pour 12 mois</span>
-                </p>
-            </div>
-
-            
-            <div
-                class="col-span-full lg:col-start-3 lg:col-span-9 mt-4 mb-4 lg:my-6"
+                class="col-span-full lg:col-start-3 lg:col-span-9 mb-8 lg:my-6"
             >
                 <p class="font-body text-white lg:text-smalld leading-relaxed">
                     Passer en mode premium vous permet de ne plus avoir de pub,<br
-                        class="hidden lg:inline"
+                        class="hidden lg:block"
                     />
                     jouer en illimité, modifier l’interface et pleins d’autres choses.
                 </p>
             </div>
 
-          
             <div
-                class="col-span-full lg:col-start-1 lg:col-span-12 text-center mt-4 lg:mt-8"
+                class="col-span-full lg:col-start-1 lg:col-span-12 text-center mb-6 lg:mb-0"
             >
                 <h3 class="font-family text-white text-2xl lg:text-3xl">
                     Kits de survie téléchargeables
                 </h3>
             </div>
 
-           
             <div
-                class="col-span-full md:col-span-6 lg:col-start-3 lg:col-span-4 bg-creme rounded-2xl p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
+                class="col-span-full flex flex-row justify-center gap-3 w-full lg:contents"
             >
-                <h4 class="font-body font-bold text-2xl mb-6">Gratuit</h4>
-                <p class="font-body text-xl leading-snug">
-                    Pour retrouver un résumé de vos leçons
-                </p>
-            </div>
+                <div
+                    class="flex-1 w-full max-w-[160px] lg:max-w-none lg:col-start-3 lg:col-span-4 bg-creme rounded-2xl p-3 lg:p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
+                >
+                    <h4
+                        class="font-body font-bold text-lg lg:text-2xl mb-2 lg:mb-6"
+                    >
+                        Gratuit
+                    </h4>
+                    <p class="font-body text-sm lg:text-xl leading-snug">
+                        Pour retrouver un résumé de vos leçons
+                    </p>
+                </div>
 
-          
-            <div
-                class="col-span-full md:col-span-6 lg:col-start-7 lg:col-span-4 bg-creme rounded-2xl p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
-            >
-                <h4 class="font-body font-bold text-2xl mb-6">3,99€</h4>
-                <p class="font-body text-xl leading-snug">
-                    Pour retrouver tous les signes de bases
-                </p>
+                <div
+                    class="flex-1 w-full max-w-40 lg:max-w-none lg:col-start-7 lg:col-span-4 bg-creme rounded-2xl p-3 lg:p-8 shadow-xl flex flex-col items-center justify-center text-center h-full hover:scale-105 transition-transform duration-300 cursor-pointer"
+                >
+                    <h4
+                        class="font-body font-bold text-lg lg:text-2xl mb-2 lg:mb-6"
+                    >
+                        3,99€
+                    </h4>
+                    <p
+                        class="font-body text-sm lg:text-xl leading-snug mt-auto"
+                    >
+                        Pour retrouver tous les signes de bases
+                    </p>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="bg-creme py-24 px-6 lg:px-0" id="contact">
+    <section class="bg-creme py-10 lg:py-20 px-6 lg:px-0" id="contact">
         <div class="grille items-center">
             <div
                 class="col-span-full lg:col-start-4 lg:col-span-6 flex flex-col gap-10"
@@ -201,12 +226,10 @@ import Layout from "../layouts/Layout.astro";
                 </h2>
 
                 <form action="#" method="POST" class="flex flex-col gap-6">
-                    <!-- Prénom -->
                     <div class="flex flex-col gap-2">
                         <label
                             for="prenom"
-                            class="font-sans text-xl  font-medium"
-                            >Prénom</label
+                            class="font-sans text-xl font-medium">Prénom</label
                         >
                         <input
                             type="text"
@@ -217,11 +240,8 @@ import Layout from "../layouts/Layout.astro";
                         />
                     </div>
 
-                    <!-- Nom -->
                     <div class="flex flex-col gap-2">
-                        <label
-                            for="nom"
-                            class="font-sans text-xl  font-medium"
+                        <label for="nom" class="font-sans text-xl font-medium"
                             >Nom</label
                         >
                         <input
@@ -233,11 +253,8 @@ import Layout from "../layouts/Layout.astro";
                         />
                     </div>
 
-                    <!-- Email -->
                     <div class="flex flex-col gap-2">
-                        <label
-                            for="email"
-                            class="font-sans text-xl  font-medium"
+                        <label for="email" class="font-sans text-xl font-medium"
                             >Email</label
                         >
                         <input
@@ -249,11 +266,8 @@ import Layout from "../layouts/Layout.astro";
                         />
                     </div>
 
-                    <!-- Objet -->
                     <div class="flex flex-col gap-2">
-                        <label
-                            for="objet"
-                            class="font-sans text-xl  font-medium"
+                        <label for="objet" class="font-sans text-xl font-medium"
                             >Objet</label
                         >
                         <input
@@ -265,12 +279,10 @@ import Layout from "../layouts/Layout.astro";
                         />
                     </div>
 
-                    <!-- Message -->
                     <div class="flex flex-col gap-2">
                         <label
                             for="message"
-                            class="font-sans text-xl  font-medium"
-                            >Message</label
+                            class="font-sans text-xl font-medium">Message</label
                         >
                         <textarea
                             id="message"
@@ -279,7 +291,6 @@ import Layout from "../layouts/Layout.astro";
                         ></textarea>
                     </div>
 
-                    <!-- Bouton Envoyer -->
                     <div class="flex justify-center mt-4">
                         <button
                             type="submit"
