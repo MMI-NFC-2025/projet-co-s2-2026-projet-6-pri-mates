@@ -53,3 +53,8 @@ export async function getImages() {
         };
     }));
 }
+
+export async function getjeux(){
+    const Jeux = await pb.collection('Jeux').getFullList();
+    return Jeux;
+}
