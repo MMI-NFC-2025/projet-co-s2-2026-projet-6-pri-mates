@@ -1,0 +1,149 @@
+---
+// 1. Imports nécessaires
+import PbImage from "../../../components/PbImage.astro";
+import { getUtilisateur } from "../../../../backend/backend.mjs";
+import LayoutFooter from "../../../layouts/Layout-footer.astro";
+
+// 2. Import des images (on garde au moins la première pour l'image par défaut)
+import imgVille from "../../../assets/image/bannière_ville.webp";
+
+// 3. Récupération des données utilisateur depuis PocketBase
+const Utilisateur = await getUtilisateur();
+---
+
+<LayoutFooter>
+    <div class="bg-[#f8f5f0] min-h-screen pb-25 font-sans">
+        <!-- ================= BANNIÈRE ================= -->
+        <div class="h-48 w-full bg-slate-800 relative">
+            <!-- Image par défaut (Ville). Sera remplacée par le script si un autre choix a été fait -->
+            <img
+                id="main-hero-img"
+                src={imgVille.src}
+                alt="Bannière de profil"
+                class="w-full h-full object-cover"
+            />
+        </div>
+
+        <!-- ================= EN-TÊTE PROFIL ================= -->
+        <div class="flex flex-col items-center -mt-14 px-4 relative z-10">
+            <!-- Balise PbImage -->
+            <PbImage
+                record={Utilisateur}
+                recordImage={Utilisateur?.image?.[0] ||
+                    Utilisateur?.photo_profil ||
+                    ""}
+                class="border-4 border-white h-28 w-28 rounded-full object-cover shadow-sm bg-slate-200 relative z-10"
+            />
+
+            <!-- Nom et Surnom -->
+            <h1 class="text-2xl font-bold mt-2 text-slate-900">
+                {Utilisateur?.prenom_utilisateur}
+                {Utilisateur?.nom_utilisateur}
+            </h1>
+            <p class="text-slate-800 text-lg">@{Utilisateur?.pseudo}</p>
+
+            <!-- BOUTON MODIFIER (Transformé en lien vers la page de modification) -->
+            <a
+                href="/application/profil/modifier"
+                class="mt-4 bg-[#a40d1a] hover:bg-red-800 text-white px-6 py-2.5 rounded-lg font-medium shadow-md active:scale-95 transition-all text-center inline-block"
+            >
+                Modifier le profil
+            </a>
+        </div>
+
+        <!-- ================= PARAMÈTRES ================= -->
+        <div class="px-6 mt-10 max-w-md mx-auto">
+            <h2 class="text-lg mb-2 text-slate-900">Paramètres</h2>
+            <ul
+                class="bg-[#4a0815] text-white rounded-xl overflow-hidden shadow-md"
+            >
+                <li class="border-b border-white/20">
+                    <a
+                        href="#"
+                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
+                        >Informations personnelles</a
+                    >
+                </li>
+                <li class="border-b border-white/20">
+                    <a
+                        href="#"
+                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
+                        >Préférences</a
+                    >
+                </li>
+                <li class="border-b border-white/20">
+                    <a
+                        href="#"
+                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
+                        >Notifications</a
+                    >
+                </li>
+                <li class="border-b border-white/20">
+                    <a
+                        href="#"
+                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
+                        >Sécurité et connexion</a
+                    >
+                </li>
+                <li>
+                    <a
+                        href="#"
+                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
+                        >Abonnement</a
+                    >
+                </li>
+            </ul>
+        </div>
+
+        <!-- ================= ASSISTANCE ================= -->
+        <div class="px-6 mt-8 mb-8 max-w-md mx-auto">
+            <h2 class="text-lg mb-2 text-slate-900">Assistance</h2>
+            <ul
+                class="bg-[#4a0815] text-white rounded-xl overflow-hidden shadow-md"
+            >
+                <li class="border-b border-white/20">
+                    <a
+                        href="#"
+                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
+                        >Contact</a
+                    >
+                </li>
+                <li>
+                    <a
+                        href="#"
+                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
+                        >Résilier mon abonnement</a
+                    >
+                </li>
+            </ul>
+        </div>
+    </div>
+</LayoutFooter>
+
+<!-- ================= SCRIPT ================= -->
+<!-- ================= SCRIPT ================= -->
+<script>
+    import PocketBase from "pocketbase";
+    // Remplace par la vraie URL de ton serveur si elle est différente
+    const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // 🔒 1. SÉCURITÉ : Vérification de la connexion
+        // Si l'utilisateur n'est pas connecté, on le renvoie vers la page de connexion
+        if (!pb.authStore.isValid) {
+            window.location.href = "/application/profil/connexion";
+            return; // On arrête l'exécution du script ici
+        }
+
+        // 🎨 2. AFFICHAGE DE LA BANNIÈRE (Ton code existant)
+        // Ce code ne s'exécutera que si l'utilisateur est bien connecté
+        const heroImg = document.getElementById(
+            "main-hero-img",
+        ) as HTMLImageElement;
+        const savedBanner = localStorage.getItem("user_banner_pref");
+
+        if (savedBanner && heroImg) {
+            heroImg.src = savedBanner;
+        }
+    });
+</script>

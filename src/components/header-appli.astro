@@ -2,17 +2,17 @@
 import "../style/global.css";
 import PbImage from "../components/PbImage.astro";
 import {
-    getUtilisateur,
+    getPseudo,
     getProgressionUtilisateur,
 } from "../../backend/backend.mjs";
 
-const Utilisateur = await getUtilisateur();
+const Utilisateur = await getPseudo();
 const stats = getProgressionUtilisateur(Utilisateur);
 ---
 
 <header class="bg-red-100 pb-4 pt-10">
     <div class="flex gap-4 items-center">
-        <h3 class="m-2">{Utilisateur.pseudo}</h3>
+        <h3 class="m-2">{Utilisateur?.pseudo}</h3>
         <p class="font-body text-tinyd p-2">
             Niveau {stats.niveau} | Jour {stats.jour}
         </p>
