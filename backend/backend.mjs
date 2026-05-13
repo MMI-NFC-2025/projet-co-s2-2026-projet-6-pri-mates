@@ -15,6 +15,19 @@ export async function getUtilisateur() {
 export function getProgressionUtilisateur(utilisateur) {
     return {
         jour: utilisateur.Jour,
-        niveau: utilisateur.Niveau 
+        niveau: utilisateur.Niveau
     };
+}
+
+export async function getNomUtilisateur() {
+    const utilisateur = await pb.collection('utilisateur').getOne('h2q4fjfbfazkgle');
+    return {
+        nom_utilisateur: utilisateur.nom_utilisateur,
+        prenom_utilisateur: utilisateur.prenom_utilisateur,
+    };
+}
+
+export async function getdefis() {
+    const Defis = await pb.collection('defis').getFullList();
+    return Defis;
 }
