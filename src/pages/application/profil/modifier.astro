@@ -3,7 +3,7 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
 import PbImage from "../../../components/PbImage.astro";
 import { getUtilisateur } from "../../../../backend/backend.mjs";
 
-// Import des bannières
+// Import des bannières (fichiers locaux)
 import imgVille from "../../../assets/image/bannière_ville.webp";
 import imgEspace from "../../../assets/image/bannière_espace.webp";
 import imgCiel from "../../../assets/image/bannière_ciel_1.webp";
@@ -19,13 +19,12 @@ const bannieres = [
 ];
 ---
 
-<LayoutFooter title="Modifier l'apparence">
+<LayoutFooter>
     <div class="bg-[#f8f5f0] min-h-screen pb-32 font-sans px-6 pt-8">
-        <!-- En-tête avec bouton retour -->
         <div class="flex items-center mb-8 max-w-md mx-auto">
             <a
                 href="/application/profil"
-                class="text-slate-900 bg-white p-2.5 rounded-full shadow-sm hover:bg-slate-100 transition-colors"
+                class="text-slate-900 bg-white p-2.5 rounded-full shadow-sm"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -47,7 +46,6 @@ const bannieres = [
         </div>
 
         <form id="form-modifier" class="max-w-md mx-auto flex flex-col gap-8">
-            <!-- SECTION PHOTO DE PROFIL -->
             <div class="flex flex-col items-center">
                 <div class="relative group cursor-pointer" id="conteneur-photo">
                     <PbImage
@@ -56,56 +54,48 @@ const bannieres = [
                         recordImage={Utilisateur?.photo_profil || ""}
                         class="border-4 border-white h-28 w-28 rounded-full object-cover shadow-sm bg-slate-200 transition-all group-hover:brightness-75"
                     />
-
                     <div
                         class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            class="h-8 w-8 text-white drop-shadow-md"
+                            class="h-8 w-8 text-white"
                             viewBox="0 0 20 20"
                             fill="currentColor"
                         >
                             <path
-                                fill-rule="evenodd"
                                 d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z"
-                                clip-rule="evenodd"></path>
+                            ></path>
                         </svg>
                     </div>
-
                     <input
                         type="file"
                         id="pdp"
                         name="pdp"
-                        accept="image/png, image/jpeg, image/webp"
+                        accept="image/*"
                         class="hidden"
                     />
                 </div>
-                <p class="text-xs text-slate-500 mt-2 font-medium">
-                    Appuyez pour modifier
-                </p>
             </div>
 
-            <!-- SECTION PSEUDO UNIQUEMENT -->
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-1">
                 <label
                     for="pseudo"
-                    class="text-sm font-bold text-slate-700 ml-1"
-                    >Ton Pseudo (@)</label
+                    class="text-sm font-medium text-slate-700 ml-1"
+                    >Pseudo (@)</label
                 >
                 <input
                     type="text"
                     id="pseudo"
                     value={Utilisateur?.pseudo}
-                    placeholder="Choisis un pseudo..."
-                    class="bg-white border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
+                    class="bg-white border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-[#a40d1a] transition-all"
                 />
             </div>
 
-            <!-- SECTION BANNIÈRE -->
             <div class="mt-2">
-                <label class="text-sm font-bold text-slate-700 ml-1 mb-2 block"
-                    >Choisis ton ambiance</label
+                <label
+                    class="text-sm font-medium text-slate-700 ml-1 mb-2 block"
+                    >Bannière du profil</label
                 >
                 <div
                     class="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory hide-scrollbar"
@@ -115,15 +105,14 @@ const bannieres = [
                             <button
                                 type="button"
                                 class="snap-center shrink-0 w-48 h-24 relative rounded-xl overflow-hidden border-[3px] border-transparent focus:border-[#a40d1a] transition-all btn-banniere"
-                                data-banniere={banniere.id}
+                                data-img={banniere.src}
                             >
                                 <img
                                     src={banniere.src}
                                     alt={banniere.nom}
                                     class="w-full h-full object-cover"
                                 />
-                                <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
-                                <div class="absolute bottom-0 inset-x-0 bg-black/60 p-1.5 text-white text-xs font-medium text-center backdrop-blur-sm">
+                                <div class="absolute bottom-0 inset-x-0 bg-black/60 p-1.5 text-white text-xs text-center">
                                     {banniere.nom}
                                 </div>
                             </button>
@@ -132,13 +121,12 @@ const bannieres = [
                 </div>
             </div>
 
-            <!-- Bouton Enregistrer -->
             <button
                 type="submit"
                 id="btn-submit"
-                class="mt-4 bg-[#a40d1a] hover:bg-red-800 text-white px-10 py-3.5 rounded-xl font-bold shadow-md text-lg active:scale-95 transition-all w-full flex justify-center items-center"
+                class="mt-4 bg-[#a40d1a] text-white py-3.5 rounded-xl font-bold shadow-md w-full"
             >
-                <span>Enregistrer le nouveau look</span>
+                <span>Enregistrer les modifications</span>
             </button>
         </form>
     </div>
@@ -156,38 +144,37 @@ const bannieres = [
 
 <script>
     import PocketBase from "pocketbase";
-    import { updateProfil, getImageUrl } from "../../../../backend/backend.mjs";
+    import { updateProfil } from "../../../../backend/backend.mjs";
 
     const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
 
     document.addEventListener("DOMContentLoaded", async () => {
-        if (!pb.authStore.isValid) {
-            window.location.href = "/application/profil/connexion";
-            return;
-        }
-
         const userId = pb.authStore.model?.id;
 
-        // 1. GESTION PHOTO DE PROFIL
-        const conteneurPhoto = document.getElementById("conteneur-photo");
+        // 1. Photo de profil
         const inputPdp = document.getElementById("pdp") as HTMLInputElement;
-        const previewPdp =
-            (document.querySelector("#preview-pdp img") as HTMLImageElement) ||
-            document.querySelector("#preview-pdp");
+        const previewPdp = document.querySelector(
+            "#preview-pdp img",
+        ) as HTMLImageElement;
+        document
+            .getElementById("conteneur-photo")
+            ?.addEventListener("click", () => inputPdp.click());
 
-        conteneurPhoto?.addEventListener("click", () => inputPdp.click());
-
-        inputPdp?.addEventListener("change", (event) => {
-            const target = event.target as HTMLInputElement;
-            const file = target.files?.[0];
-            if (file && previewPdp) {
-                previewPdp.src = URL.createObjectURL(file);
-            }
+        inputPdp?.addEventListener("change", (e) => {
+            const file = (e.target as HTMLInputElement).files?.[0];
+            if (file && previewPdp) previewPdp.src = URL.createObjectURL(file);
         });
 
-        // 2. GESTION BANNIÈRES
+        // 2. Bannière (LocalStorage - Ton code original)
         const buttonsBanniere = document.querySelectorAll(".btn-banniere");
-        let selectedBannerId = null;
+        let selectedBannerSrc = localStorage.getItem("user_banner_pref");
+
+        if (selectedBannerSrc) {
+            buttonsBanniere.forEach((btn) => {
+                if (btn.getAttribute("data-img") === selectedBannerSrc)
+                    btn.classList.add("border-[#a40d1a]");
+            });
+        }
 
         buttonsBanniere.forEach((btn) => {
             btn.addEventListener("click", (e) => {
@@ -196,98 +183,41 @@ const bannieres = [
                 );
                 const target = e.currentTarget as HTMLButtonElement;
                 target.classList.add("border-[#a40d1a]");
-
-                selectedBannerId = target.getAttribute("data-banniere");
+                selectedBannerSrc = target.getAttribute("data-img");
             });
         });
 
-        // 3. CHARGEMENT INITIAL (Pré-remplissage)
-        try {
-            const monProfil = await pb
-                .collection("utilisateur")
-                .getFirstListItem(`compte_id="${userId}"`);
+        // 3. Soumission
+        document
+            .getElementById("form-modifier")
+            ?.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const pseudo = (
+                    document.getElementById("pseudo") as HTMLInputElement
+                ).value;
+                const fichierImage = inputPdp.files?.[0] || null;
 
-            // Pseudo
-            const pseudoInput = document.getElementById(
-                "pseudo",
-            ) as HTMLInputElement;
-            if (pseudoInput && !pseudoInput.value)
-                pseudoInput.value = monProfil.pseudo || "";
+                // Sauvegarde locale de la bannière
+                if (selectedBannerSrc)
+                    localStorage.setItem("user_banner_pref", selectedBannerSrc);
 
-            // Photo
-            if (monProfil.photo_profil && previewPdp) {
-                const urlImage = await getImageUrl(
-                    monProfil,
-                    monProfil.photo_profil,
-                );
-                if (urlImage) previewPdp.src = urlImage;
-            }
+                try {
+                    // On récupère le profil utilisateur pour avoir son ID de collection
+                    const profil = await pb
+                        .collection("utilisateur")
+                        .getFirstListItem(`compte_id="${userId}"`);
 
-            // Bannière
-            if (monProfil.banniere) {
-                selectedBannerId = monProfil.banniere;
-                buttonsBanniere.forEach((btn) => {
-                    if (
-                        btn.getAttribute("data-banniere") === monProfil.banniere
-                    ) {
-                        btn.classList.add("border-[#a40d1a]");
-                    }
-                });
-            }
-        } catch (e) {
-            console.log("Erreur lors du pré-remplissage :", e);
-        }
+                    // Enregistrement Pseudo et Photo dans PocketBase
+                    await updateProfil(profil.id, {
+                        pseudo: pseudo,
+                        photo_profil: fichierImage,
+                    });
 
-        // 4. SOUMISSION DU FORMULAIRE
-        const form = document.getElementById("form-modifier");
-        const btnSubmit = document.getElementById("btn-submit");
-
-        form?.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            if (btnSubmit)
-                btnSubmit.querySelector("span")!.textContent =
-                    "Enregistrement...";
-
-            const pseudo = (
-                document.getElementById("pseudo") as HTMLInputElement
-            ).value;
-            const fichierImage =
-                inputPdp.files && inputPdp.files.length > 0
-                    ? inputPdp.files[0]
-                    : null;
-
-            // 🚨 NOTRE MOUCHARD 1 🚨
-            console.log("ID de la bannière cliquée :", selectedBannerId);
-
-            try {
-                const monProfil = await pb
-                    .collection("utilisateur")
-                    .getFirstListItem(`compte_id="${userId}"`);
-
-                const dataToUpdate = {
-                    pseudo: pseudo,
-                    photo_profil: fichierImage,
-                    banniere: selectedBannerId,
-                };
-
-                // 🚨 NOTRE MOUCHARD 2 🚨
-                console.log("Données prêtes à être envoyées :", dataToUpdate);
-
-                await updateProfil(monProfil.id, dataToUpdate);
-
-                alert("Apparence mise à jour avec succès !");
-                window.location.href = "/application/profil";
-            } catch (err: any) {
-                console.error("Erreur complète :", err);
-                if (err.data?.data?.pseudo?.code === "validation_not_unique") {
-                    alert("Ce pseudo est déjà pris par quelqu'un d'autre !");
-                } else {
-                    alert("Une erreur est survenue lors de la sauvegarde.");
+                    alert("Profil et bannière mis à jour !");
+                    window.location.href = "/application/profil";
+                } catch (error) {
+                    alert("Erreur lors de l'enregistrement");
                 }
-                if (btnSubmit)
-                    btnSubmit.querySelector("span")!.textContent =
-                        "Enregistrer le nouveau look";
-            }
-        });
+            });
     });
 </script>

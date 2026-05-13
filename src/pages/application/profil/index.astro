@@ -4,21 +4,35 @@ import PbImage from "../../../components/PbImage.astro";
 import { getUtilisateur } from "../../../../backend/backend.mjs";
 import LayoutFooter from "../../../layouts/Layout-footer.astro";
 
-// 2. Import des images (on garde au moins la première pour l'image par défaut)
 import imgVille from "../../../assets/image/bannière_ville.webp";
+import imgEspace from "../../../assets/image/bannière_espace.webp";
+import imgCiel from "../../../assets/image/bannière_ciel_1.webp";
+import imgVote from "../../../assets/image/bannière_vote.webp";
 
-// 3. Récupération des données utilisateur depuis PocketBase
 const Utilisateur = await getUtilisateur();
+
+// On crée une correspondance entre l'ID en base et l'image importée
+const bannièresImages = {
+    ville: imgVille.src,
+    espace: imgEspace.src,
+    ciel: imgCiel.src,
+    vote: imgVote.src,
+};
+
+// On définit l'image à afficher (soit celle en base, soit ville par défaut)
+const imageBanniereAffichee =
+    Utilisateur?.banniere && bannièresImages[Utilisateur.banniere]
+        ? bannièresImages[Utilisateur.banniere]
+        : imgVille.src;
 ---
 
 <LayoutFooter>
     <div class="bg-[#f8f5f0] min-h-screen pb-25 font-sans">
         <!-- ================= BANNIÈRE ================= -->
         <div class="h-48 w-full bg-slate-800 relative">
-            <!-- Image par défaut (Ville). Sera remplacée par le script si un autre choix a été fait -->
             <img
                 id="main-hero-img"
-                src={imgVille.src}
+                src={imageBanniereAffichee}
                 alt="Bannière de profil"
                 class="w-full h-full object-cover"
             />
