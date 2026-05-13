@@ -6,13 +6,13 @@ const Defis = await getdefis();
 
 
 <div class="">
-{Array.from({ length: count }).map((_, i) => (
-        <div class="bg-red-300 text-white w-90 h-30 rounded-md mx-6 my-6" key={i}>
-            <div class="text-xl text-center pt-3">Défi {i + 1}</div>
+{Defis.slice(0, count).map((defi, i) => (
+        <div class="bg-red-300 text-white w-90 h-30 rounded-md mx-6 my-6" key={defi.id}>
+            <div class="text-xl text-center pt-3">{defi.nom || `Défi ${i + 1}`}</div>
             <div class="bg-creme mx-3.5 h-px"></div>
             <div>
-                <p>{Defis.map((defi)=>{defi.todo})}</p>
-                </div>
+                <p>{defi.description || defi.todo}</p>
+            </div>
         </div>
     ))}
 </div>
