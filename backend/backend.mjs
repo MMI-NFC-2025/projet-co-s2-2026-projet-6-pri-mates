@@ -1,0 +1,33 @@
+import PocketBase from 'pocketbase';
+export const pb = new PocketBase('https://tacita-pb.charlottemettetal.fr:443');
+
+export async function getImageUrl(record, recordImage) {
+    return pb.files.getURL(record, recordImage);
+}
+
+export async function getUtilisateur() {
+    const utilisateur = await pb.collection('utilisateur').getOne('h2q4fjfbfazkgle');
+    console.table(utilisateur);
+    return utilisateur;
+}
+
+
+export function getProgressionUtilisateur(utilisateur) {
+    return {
+        jour: utilisateur.Jour,
+        niveau: utilisateur.Niveau
+    };
+}
+
+export async function getNomUtilisateur() {
+    const utilisateur = await pb.collection('utilisateur').getOne('h2q4fjfbfazkgle');
+    return {
+        nom_utilisateur: utilisateur.nom_utilisateur,
+        prenom_utilisateur: utilisateur.prenom_utilisateur,
+    };
+}
+
+export async function getdefis() {
+    const Defis = await pb.collection('defis').getFullList();
+    return Defis;
+}
