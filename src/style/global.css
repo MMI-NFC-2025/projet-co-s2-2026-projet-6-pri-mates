@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+:root {
+    --color-creme: #f8f5f0;
+    --creme: var(--color-creme);
+}
+
 @theme {
     --font-title: 'Yeseva One', system-ui;
     --font-body: 'Inter Variable', sans-serif;
@@ -18,7 +23,6 @@
     --color-creme: oklch(0.9449 0.0135 97.45);
 
     --my-grid: repeat(12, minmax(0, 1fr))
-
 }
 
 @layer base {
@@ -29,9 +33,11 @@
     h1 {
         @apply font-title text-h3d lg:text-h1d;
     }
-    h3{
+
+    h3 {
         @apply font-family text-body3d lg:text-h3d;
     }
+
     h4 {
         @apply font-body text-body2d lg:text-h4d;
     }
@@ -40,5 +46,9 @@
 @layer components {
     .grille {
         @apply lg:grid lg:grid-cols-(--my-grid) lg:m-7.5 lg:gap-[25px];
+    }
+
+    .bg-creme {
+        background-color: var(--creme, #f8f5f0);
     }
 }

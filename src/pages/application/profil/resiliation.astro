@@ -1,0 +1,124 @@
+---
+import LayoutFooter from "../../../layouts/Layout-footer.astro";
+---
+
+<LayoutFooter>
+    <div class="bg-[#f8f5f0] min-h-screen pb-32 font-sans px-6 pt-8 md:pt-12">
+        <!-- En-tête avec bouton retour (Renvoie vers abonnement) -->
+        <div class="flex items-center mb-8 max-w-2xl mx-auto">
+            <a
+                href="/application/profil/abonnement"
+                class="text-slate-900 bg-white p-1.5 rounded-full shadow-sm hover:bg-slate-100 transition-colors"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Conteneur Principal -->
+        <div
+            class="max-w-2xl mx-auto bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-slate-100 text-center"
+        >
+            <!-- Icône d'avertissement -->
+            <div
+                class="w-16 h-16 bg-red-50 text-[#a40d1a] rounded-full flex items-center justify-center mx-auto mb-6"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-8 w-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    ></path>
+                </svg>
+            </div>
+
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
+                Résilier ton abonnement ?
+            </h1>
+
+            <p
+                class="text-slate-500 mb-8 text-sm md:text-base max-w-md mx-auto"
+            >
+                Si tu résilies maintenant, tu perdras tes avantages Premium à la
+                fin de ta période de facturation en cours. Es-tu sûr de vouloir
+                nous quitter ?
+            </p>
+
+            <!-- Boutons d'action -->
+            <div class="flex flex-col gap-4 max-w-xs mx-auto">
+                <!-- Bouton pour RESTER (Mise en avant avec la couleur principale) -->
+                <button
+                    type="button"
+                    onclick="window.location.href='/application/profil/abonnement'"
+                    class="bg-[#a40d1a] hover:bg-red-800 text-white px-8 py-3.5 rounded-xl font-bold shadow-md transition-all active:scale-95 w-full"
+                >
+                    Non, je garde mon Premium
+                </button>
+
+                <!-- Bouton pour RÉSILIER (Design secondaire/fantôme) -->
+                <button
+                    type="button"
+                    id="btn-resilier"
+                    class="bg-white border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-600 px-8 py-3.5 rounded-xl font-bold transition-all active:scale-95 w-full"
+                >
+                    Oui, résilier mon offre
+                </button>
+            </div>
+        </div>
+    </div>
+</LayoutFooter>
+
+<script>
+    import PocketBase from "pocketbase";
+    const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Sécurité
+        if (!pb.authStore.isValid) {
+            window.location.href = "/application/profil/connexion";
+            return;
+        }
+
+        const btnResilier = document.getElementById("btn-resilier");
+
+        btnResilier?.addEventListener("click", () => {
+            // Fenêtre de confirmation ultime
+            const confirmation = confirm(
+                "C'est ta dernière chance. Es-tu sûr et certain de vouloir résilier ?",
+            );
+
+            if (confirmation) {
+                btnResilier.textContent = "Résiliation en cours...";
+                btnResilier.classList.add("opacity-50", "cursor-not-allowed");
+
+                // Simulation d'une annulation d'abonnement (lien avec Stripe/PocketBase à faire plus tard)
+                setTimeout(() => {
+                    alert(
+                        "Ton abonnement a bien été résilié. Tu repasseras en version gratuite à la fin du mois.",
+                    );
+
+                    // On renvoie l'utilisateur vers son profil après la résiliation
+                    window.location.href = "/application/profil";
+                }, 1000);
+            }
+        });
+    });
+</script>

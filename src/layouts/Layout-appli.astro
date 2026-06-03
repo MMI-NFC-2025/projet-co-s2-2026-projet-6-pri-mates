@@ -1,7 +1,6 @@
 ---
 import "../style/global.css";
 import "@fontsource-variable/inter/wght.css";
-import "@fontsource/yeseva-one";
 import FooterAppli from "../components/footer_appli.astro";
 
 import Header from "../components/header-appli.astro";
@@ -18,11 +17,9 @@ import Header from "../components/header-appli.astro";
 	</head>
 	<body>
 		<Header />
-		<main class="pb-24 md:pb-0">
-			<slot />
-		</main>
+		<slot />
+		<FooterAppli />
 	</body>
-	<FooterAppli/>
 </html>
 
 <style>

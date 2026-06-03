@@ -5,7 +5,7 @@ export async function getImageUrl(record, recordImage) {
     return pb.files.getURL(record, recordImage);
 }
 
-export async function getUtilisateur() {
+export async function getPseudo() {
     const utilisateur = await pb.collection('utilisateur').getOne('h2q4fjfbfazkgle');
     console.table(utilisateur);
     return utilisateur;
@@ -19,42 +19,38 @@ export function getProgressionUtilisateur(utilisateur) {
     };
 }
 
-export async function getNomUtilisateur() {
-    const utilisateur = await pb.collection('utilisateur').getOne('h2q4fjfbfazkgle');
-    return {
-        nom_utilisateur: utilisateur.nom_utilisateur,
-        prenom_utilisateur: utilisateur.prenom_utilisateur,
-    };
+
+
+
+
+// backend/backend.mjs
+export async function getUtilisateur() {
+    if (!pb.authStore.isValid || !pb.authStore.model?.id) {
+        return await pb.collection('utilisateur').getOne('h2q4fjfbfazkgle');
+    }
+
+    try {
+        return await pb
+            .collection('utilisateur')
+            .getFirstListItem(`compte_id="${pb.authStore.model.id}"`);
+    } catch (error) {
+        console.error('Profil public introuvable :', error);
+        return await pb.collection('utilisateur').getOne('h2q4fjfbfazkgle');
+    }
 }
 
-export async function getdefis() {
-    const Defis = await pb.collection('defis').getFullList();
-    return Defis;
-}
+export async function updateProfil(id, dataToUpdate) {
+    const formData = new FormData();
 
-export async function getQuestions() {
-    const Questions = await pb.collection('Questions').getFullList();
-    return Questions;
-}
+    if (dataToUpdate.pseudo) {
+        formData.append('pseudo', dataToUpdate.pseudo);
+    }
+    if (dataToUpdate.photo_profil) {
+        formData.append('photo_profil', dataToUpdate.photo_profil);
+    }
+    if (dataToUpdate.banniere) {
+        formData.append('banniere', dataToUpdate.banniere);
+    }
 
-export async function getImages() {
-    const Images = await pb.collection('Images').getFullList();
-    return await Promise.all(Images.map(async (image) => {
-        const recordImage = Array.isArray(image.image)
-            ? image.image[0]
-            : image.image || null;
-        return {
-            id: image.id,
-            nom: image.nom,
-            description: image.description_image,
-            record: image,
-            recordImage,
-            url: recordImage ? await getImageUrl(image, recordImage) : null,
-        };
-    }));
-}
-
-export async function getjeux(){
-    const Jeux = await pb.collection('Jeux').getFullList();
-    return Jeux;
+    return await pb.collection('utilisateur').update(id, formData);
 }
