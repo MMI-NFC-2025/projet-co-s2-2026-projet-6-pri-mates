@@ -17,7 +17,7 @@ const Jeux = await getjeux();
             Jeux.slice(0, count).map((jeu, i) => (
                 <div
                     class="jeu-card bg-red-300 text-white rounded-md mx-6 my-6 p-4 cursor-pointer transition-all border-4 border-transparent hover:bg-red-400"
-                    data-jeu-id={jeu.id}
+                    data-jeu-nom={jeu.jeu ? String(jeu.jeu).toLowerCase() : ""}
                     key={jeu.id}
                     role="button"
                     tabindex="0"
@@ -51,23 +51,28 @@ const Jeux = await getjeux();
     document.addEventListener("DOMContentLoaded", () => {
         const cards = Array.from(document.querySelectorAll(".jeu-card"));
         const boutonJouer = document.getElementById("bouton-jouer");
-        let selectedGameId = null;
+
+        let selectedGameName = null;
 
         const selectCard = (card) => {
-            selectedGameId = card.getAttribute("data-jeu-id");
+
+            selectedGameName = card.getAttribute("data-jeu-nom");
+
             cards.forEach((c) => {
                 const selected = c === card;
                 c.classList.toggle("border-white", selected);
                 c.classList.toggle("bg-red-500", selected);
                 c.classList.toggle("border-transparent", !selected);
             });
+
             boutonJouer.classList.remove(
                 "bg-gray-400",
                 "cursor-not-allowed",
                 "pointer-events-none",
             );
             boutonJouer.classList.add("bg-red-800", "hover:bg-rose-950");
-            boutonJouer.href = `/application/difficultes?jeu=${selectedGameId}`;
+
+            boutonJouer.href = `/application/difficultes?jeu=${selectedGameName}`;
         };
 
         cards.forEach((card) => {

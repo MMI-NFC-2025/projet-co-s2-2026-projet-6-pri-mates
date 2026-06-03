@@ -37,42 +37,40 @@ const Jeux = await getjeux();
     </div>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const cards = document.querySelectorAll(".difficulte-card");
-        const boutonCestParti = document.getElementById("bouton-cest-parti");
+document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('.difficulte-card');
+    const boutonCestParti = document.getElementById('bouton-cest-parti');
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const jeuId = urlParams.get("jeu");
+    // 1. On récupère le nom du jeu depuis l'URL (ex: "quiz", "memory")
+    const urlParams = new URLSearchParams(window.location.search);
+    const jeuNom = urlParams.get('jeu');
 
-        cards.forEach((card) => {
-            card.addEventListener("click", () => {
-                cards.forEach((c) => {
-                    c.classList.remove("border-white", "scale-105");
-                    c.classList.add("border-transparent");
-                });
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            // ... (Ici tu gardes ton code actuel pour les bordures et couleurs des cards) ...
+            
+            const difficulte = card.getAttribute('data-difficulte');
 
-                card.classList.remove("border-transparent");
-                card.classList.add("border-white", "scale-105");
+            boutonCestParti.classList.remove('bg-gray-400', 'cursor-not-allowed', 'pointer-events-none');
+            boutonCestParti.classList.add('bg-red-800', 'hover:bg-rose-950');
+            
+            // 2. L'AIGUILLAGE : On choisit la bonne page en fonction du nom du jeu
+            let urlDestination = "";
 
-                const difficulte = card.getAttribute("data-difficulte");
+            // On utilise .includes() au cas où il y aurait des accents ou des espaces (ex: "le memory")
+            if (jeuNom && jeuNom.includes('quiz')) {
+                urlDestination = `/application/quiz?difficulte=${difficulte}`;
+            } 
+            else if (jeuNom && jeuNom.includes('memory')) {
+                urlDestination = `/application/memory?difficulte=${difficulte}`;
+            } 
+            else {
+                // Pour ton troisième jeu (remplace "jeu3" par le nom de ton fichier)
+                urlDestination = `/application/jeu3?difficulte=${difficulte}`;
+            }
 
-                boutonCestParti.classList.remove(
-                    "bg-gray-400",
-                    "cursor-not-allowed",
-                    "pointer-events-none",
-                );
-                boutonCestParti.classList.add(
-                    "bg-red-800",
-                    "hover:bg-rose-950",
-                );
-
-                if (jeuId) {
-                    boutonCestParti.href = `/application/jeux_choisi?jeu=${jeuId}&difficulte=${difficulte}`;
-                } else {
-                    boutonCestParti.href = `/application/jeux_choisi?difficulte=${difficulte}`;
-                }
-            });
+            // 3. On applique l'adresse finale au bouton
+            boutonCestParti.href = urlDestination;
         });
     });
-</script>
+});
