@@ -1,5 +1,5 @@
 ---
-import LayoutFooter from "../../../layouts/Layout-footer.astro";
+import Layoutfooter from "../../../layouts/Layout-footer.astro";
 import PbImage from "../../../components/PbImage.astro";
 import { getUtilisateur } from "../../../../backend/backend.mjs";
 
@@ -19,7 +19,7 @@ const bannieres = [
 ];
 ---
 
-<LayoutFooter>
+<Layoutfooter>
     <div class="bg-[#f8f5f0] min-h-screen pb-32 font-sans px-6 pt-8">
         <div class="flex items-center mb-8 max-w-md mx-auto">
             <a
@@ -88,6 +88,7 @@ const bannieres = [
                     type="text"
                     id="pseudo"
                     value={Utilisateur?.pseudo}
+                    placeholder="Ton pseudo (ex: monpseudo)"
                     class="bg-white border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-[#a40d1a] transition-all"
                 />
             </div>
@@ -130,7 +131,7 @@ const bannieres = [
             </button>
         </form>
     </div>
-</LayoutFooter>
+</Layoutfooter>
 
 <style>
     .hide-scrollbar::-webkit-scrollbar {

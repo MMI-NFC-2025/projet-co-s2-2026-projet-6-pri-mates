@@ -1,0 +1,207 @@
+---
+import LayoutFooter from "../../../layouts/Layout-footer.astro";
+import { getUtilisateur } from "../../../../backend/backend.mjs";
+
+// On récupère les infos pour pré-remplir le formulaire
+const Utilisateur = await getUtilisateur();
+---
+
+<LayoutFooter>
+    <div class="bg-[#f8f5f0] min-h-screen pb-32 font-sans px-6 pt-8 md:pt-12">
+        <!-- En-tête avec bouton retour -->
+        <div class="flex items-center mb-8 max-w-2xl mx-auto">
+            <a
+                href="/application/profil"
+                class="text-slate-900 bg-white p-1.5 rounded-full shadow-sm hover:bg-slate-100 transition-colors"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Conteneur Principal -->
+        <div
+            class="max-w-2xl mx-auto bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-slate-100"
+        >
+            <h1
+                class="text-2xl md:text-3xl font-medium text-slate-900 mb-8 leading-tight"
+            >
+                Contactez-nous en cas de problème
+            </h1>
+
+            <form id="form-contact" class="flex flex-col gap-6">
+                <!-- Grille Prénom / Nom -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex flex-col gap-2">
+                        <label
+                            for="prenom"
+                            class="text-sm font-medium text-slate-700 ml-1"
+                            >Prénom</label
+                        >
+                        <input
+                            type="text"
+                            id="prenom"
+                            required
+                            value={Utilisateur?.prenom_utilisateur || ""}
+                            placeholder="Ton prénom"
+                            style="padding-left: 16px;"
+                            class="w-full bg-white border border-slate-300 rounded-xl pr-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
+                        />
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label
+                            for="nom"
+                            class="text-sm font-medium text-slate-700 ml-1"
+                            >Nom</label
+                        >
+                        <input
+                            type="text"
+                            id="nom"
+                            required
+                            value={Utilisateur?.nom_utilisateur || ""}
+                            placeholder="Ton nom"
+                            style="padding-left: 16px;"
+                            class="w-full bg-white border border-slate-300 rounded-xl pr-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
+                        />
+                    </div>
+                </div>
+
+                <!-- Grille Téléphone / E-mail -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex flex-col gap-2">
+                        <label
+                            for="telephone"
+                            class="text-sm font-medium text-slate-700 ml-1"
+                            >Téléphone</label
+                        >
+                        <input
+                            type="tel"
+                            id="telephone"
+                            placeholder="Ton numéro (optionnel)"
+                            style="padding-left: 16px;"
+                            class="w-full bg-white border border-slate-300 rounded-xl pr-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
+                        />
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label
+                            for="email"
+                            class="text-sm font-medium text-slate-700 ml-1"
+                            >E-mail</label
+                        >
+                        <input
+                            type="email"
+                            id="email"
+                            required
+                            placeholder="ton@email.com"
+                            style="padding-left: 16px;"
+                            class="w-full bg-white border border-slate-300 rounded-xl pr-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
+                        />
+                    </div>
+                </div>
+
+                <!-- Objet -->
+                <div class="flex flex-col gap-2">
+                    <label
+                        for="objet"
+                        class="text-sm font-medium text-slate-700 ml-1"
+                        >Objet</label
+                    >
+                    <input
+                        type="text"
+                        id="objet"
+                        required
+                        placeholder="Sujet de ton message"
+                        style="padding-left: 16px;"
+                        class="w-full bg-white border border-slate-300 rounded-xl pr-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
+                    />
+                </div>
+
+                <!-- Message -->
+                <div class="flex flex-col gap-2">
+                    <label
+                        for="message"
+                        class="text-sm font-medium text-slate-700 ml-1"
+                        >Message</label
+                    >
+                    <textarea
+                        id="message"
+                        required
+                        rows="5"
+                        placeholder="Explique ton problème en quelques lignes"
+                        style="padding-left: 16px; padding-top: 12px;"
+                        class="w-full bg-white border border-slate-300 rounded-xl pr-4 pb-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all resize-none"
+                    ></textarea>
+                </div>
+
+                <!-- Bouton Envoyer (Centré) -->
+                <div class="mt-4 flex justify-center">
+                    <button
+                        type="submit"
+                        id="btn-submit"
+                        class="bg-[#a40d1a] hover:bg-red-800 text-white px-12 py-3 rounded-xl font-medium shadow-md transition-all active:scale-95"
+                    >
+                        Envoyer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</LayoutFooter>
+
+<script>
+    import PocketBase from "pocketbase";
+    const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Sécurité
+        if (!pb.authStore.isValid) {
+            window.location.href = "/application/profil/connexion";
+            return;
+        }
+
+        // Pré-remplissage de l'e-mail depuis la session PocketBase
+        const emailInput = document.getElementById("email") as HTMLInputElement;
+        if (emailInput && pb.authStore.model?.email) {
+            emailInput.value = pb.authStore.model.email;
+        }
+
+        // Gestion de l'envoi du formulaire
+        const formContact = document.getElementById("form-contact");
+        const btnSubmit = document.getElementById("btn-submit");
+
+        formContact?.addEventListener("submit", (e) => {
+            e.preventDefault(); // Empêche la page de recharger
+
+            if (btnSubmit) btnSubmit.textContent = "Envoi en cours...";
+
+            // Simulation d'un envoi (Ici tu pourras plus tard relier à une collection 'messages' dans PocketBase)
+            setTimeout(() => {
+                alert("Ton message a bien été envoyé à l'équipe !");
+                (formContact as HTMLFormElement).reset(); // On vide le formulaire
+
+                // On remet les infos de base après avoir vidé
+                const prenom = document.getElementById(
+                    "prenom",
+                ) as HTMLInputElement;
+                const nom = document.getElementById("nom") as HTMLInputElement;
+
+                if (emailInput && pb.authStore.model?.email)
+                    emailInput.value = pb.authStore.model.email;
+                if (btnSubmit) btnSubmit.textContent = "Envoyer";
+            }, 800);
+        });
+    });
+</script>
