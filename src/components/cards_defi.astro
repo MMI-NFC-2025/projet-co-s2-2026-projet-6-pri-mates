@@ -1,0 +1,18 @@
+---
+const { count = 4 } = Astro.props;
+import {getdefis} from "../../backend/backend.mjs";
+const Defis = await getdefis();
+---
+
+
+<div class="mx-auto mt-8 grid max-w-5xl grid-cols-1 gap-6 px-6 md:grid-cols-2">
+{Defis.slice(0, count).map((defi, i) => (
+        <div class="h-30 w-full rounded-md bg-red-300 px-4 text-white">
+            <div class="text-xl text-center pt-3">{defi.nom || `Défi ${i + 1}`}</div>
+            <div class="bg-creme mx-3.5 h-px"></div>
+            <div>
+                <p>{defi.description || defi.todo}</p>
+            </div>
+        </div>
+    ))}
+</div>

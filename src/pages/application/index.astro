@@ -1,9 +1,23 @@
 ---
-import LayoutAppli from "../../layouts/Layout-appli.astro";
+import Layout from "../../layouts/Layout-appli.astro";
+import Defi from "../../components/cards_defi.astro";
+import {getUtilisateur} from "../../../backend/backend.mjs";
+const Utilisateur = await getUtilisateur();
 ---
-<LayoutAppli>
 
-</LayoutAppli>
-
-
-
+<Layout>
+    <div class="text-body2d mt-6 mx-5 text-center">
+        <p>Ravie de te revoir</p>
+        <p>{Utilisateur.pseudo} !</p>
+    </div>
+    <div class="text-center"><p class="text-tinyd">Prêt pour une nouvelle leçon ?</p></div>
+    <div class="mt-4 px-4">
+        <button type="button" class="mx-auto my-10 block w-full max-w-md rounded-xl bg-red-700 py-3 text-center text-4xl text-white">
+            Commencer
+        </button>
+    </div>
+    <div class="text-center">
+        <p class="text-body1d"> Objectifs du Jour</p>
+    </div>
+    <Defi count={4} class="" />
+</Layout>

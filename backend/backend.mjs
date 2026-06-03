@@ -42,17 +42,12 @@ export async function getUtilisateur() {
 export async function updateProfil(id, dataToUpdate) {
     const formData = new FormData();
 
-    // On ajoute le pseudo s'il y en a un
     if (dataToUpdate.pseudo) {
         formData.append('pseudo', dataToUpdate.pseudo);
     }
-
-    // On ajoute la photo s'il y en a une
     if (dataToUpdate.photo_profil) {
         formData.append('photo_profil', dataToUpdate.photo_profil);
     }
-
-    // 🚨 VÉRIFIE QUE CES 3 LIGNES SONT BIEN PRÉSENTES 🚨
     if (dataToUpdate.banniere) {
         formData.append('banniere', dataToUpdate.banniere);
     }
