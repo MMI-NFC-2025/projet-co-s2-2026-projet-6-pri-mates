@@ -28,7 +28,7 @@ const Jeux = await getjeux();
 
     <div class="flex justify-center mt-6">
         <a
-            href="#"
+            href="/application/jeux_choisi"
             id="bouton-cest-parti"
             class="font-body bg-gray-400 text-white text-body3d py-4 px-12 rounded-lg cursor-not-allowed pointer-events-none transition-colors duration-300"
         >
@@ -68,9 +68,9 @@ const Jeux = await getjeux();
                 );
 
                 if (jeuId) {
-                    boutonCestParti.href = `/application/jeu?jeu=${jeuId}&difficulte=${difficulte}`;
+                    boutonCestParti.href = `/application/jeux_choisi?jeu=${jeuId}&difficulte=${difficulte}`;
                 } else {
-                    boutonCestParti.href = `/application/jeu?difficulte=${difficulte}`;
+                    boutonCestParti.href = `/application/jeux_choisi?difficulte=${difficulte}`;
                 }
             });
         });
