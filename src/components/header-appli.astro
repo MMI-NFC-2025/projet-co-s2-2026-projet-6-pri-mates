@@ -89,20 +89,27 @@ const stats = getProgressionUtilisateur(Utilisateur);
 
                 // On remplace l'image de profil AVANT de l'afficher
                 if (imgContainer) {
-                    const imgTag = imgContainer.querySelector('img');
+                    const imgTag = imgContainer.querySelector("img");
                     if (imgTag) {
                         if (monProfil.photo_profil) {
                             // Si l'utilisateur a une photo, on l'affiche
-                            imgTag.src = pb.files.getUrl(monProfil, monProfil.photo_profil);
+                            imgTag.src = pb.files.getUrl(
+                                monProfil,
+                                monProfil.photo_profil,
+                            );
                         } else {
                             // Sinon (nouveau compte), on met une image transparente pour cacher Axium
-                            imgTag.src = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+                            imgTag.src =
+                                "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
                         }
                     }
                     imgContainer.classList.remove("opacity-0");
                 }
             } catch (error) {
-                console.error("Erreur lors du chargement du header appli :", error);
+                console.error(
+                    "Erreur lors du chargement du header appli :",
+                    error,
+                );
             }
         }
 
