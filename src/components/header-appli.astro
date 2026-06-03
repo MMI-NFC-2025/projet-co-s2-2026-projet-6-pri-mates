@@ -1,0 +1,27 @@
+---
+import "../style/global.css";
+import PbImage from "../components/PbImage.astro";
+import {
+    getUtilisateur,
+    getProgressionUtilisateur,
+} from "../../backend/backend.mjs";
+
+const Utilisateur = await getUtilisateur();
+const stats = getProgressionUtilisateur(Utilisateur);
+---
+
+<header class="bg-red-100 pb-4 pt-10">
+    <div class="flex gap-4 items-center">
+        <h3 class="m-2">{Utilisateur.pseudo}</h3>
+        <p class="font-body text-tinyd p-2">
+            Niveau {stats.niveau} | Jour {stats.jour}
+        </p>
+        <PbImage
+            record={Utilisateur}
+            recordImage={Utilisateur?.image?.[0] ||
+                Utilisateur?.photo_profil ||
+                ""}
+            class="outline-2 outline-offset-2 outline-solid outline-white h-25 w-25 rounded-full object-cover m-2"
+        />
+    </div>
+</header>
