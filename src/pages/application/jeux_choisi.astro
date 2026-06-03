@@ -1,0 +1,18 @@
+---
+import LayoutAppli from "../../layouts/Layout-appli.astro";
+import HeaderJeux from "../../components/header_jeux.astro";
+import { getjeux } from "../../../backend/backend.mjs";
+import Cartesmemory from "../../components/cartes_memory.astro";
+import CartesMemory from "../../components/cartes_memory.astro";
+
+const url = new URL(Astro.request.url);
+---
+
+<LayoutAppli>
+    <main>
+        <HeaderJeux
+            hrefQuitter="/application/jeux"
+        />
+        <CartesMemory></CartesMemory>
+    </main>
+</LayoutAppli>

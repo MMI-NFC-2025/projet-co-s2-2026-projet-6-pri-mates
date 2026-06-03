@@ -1,0 +1,13 @@
+---
+const { hrefQuitter = "/application/jeux" } = Astro.props;
+---
+<div class="bg-red-300 text-black p-4 flex items-center justify-between">
+    <div class="text-smalld font-semibold">Mémori</div>
+    <a
+        href={hrefQuitter}
+        class="text-black text-2xl font-bold leading-none"
+        aria-label="Quitter le jeu"
+    >
+        ×
+    </a>
+</div>
