@@ -18,7 +18,9 @@ import Header from "../components/header-appli.astro";
 	</head>
 	<body>
 		<Header />
-		<slot />
+		<main class="pb-24 md:pb-0">
+			<slot />
+		</main>
 	</body>
 	<FooterAppli/>
 </html>
