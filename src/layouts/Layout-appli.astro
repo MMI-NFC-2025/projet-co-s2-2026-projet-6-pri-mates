@@ -4,6 +4,7 @@ import "@fontsource-variable/inter/wght.css";
 import FooterAppli from "../components/footer_appli.astro";
 
 import Header from "../components/header-appli.astro";
+const { titre } = Astro.props;
 ---
 
 <!doctype html>
@@ -13,7 +14,7 @@ import Header from "../components/header-appli.astro";
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>{ titre }</title>
 	</head>
 	<body>
 		<Header />
