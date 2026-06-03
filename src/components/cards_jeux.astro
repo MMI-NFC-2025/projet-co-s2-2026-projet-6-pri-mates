@@ -1,35 +1,37 @@
 ﻿---
-const { count = 3 } = Astro.props;
+const { count = 3, themeActuel } = Astro.props;
 import { getjeux } from "../../backend/backend.mjs";
-const Jeux = await getjeux();
+const Jeux = (await getjeux()) as any[];
 ---
 
 <div>
     <a
-        href="/application/lecons"
-        class="block bg-red-300 text-white rounded-md mx-6 my-6 p-4 no-underline hover:opacity-90"
+        href={`/application/lecons?theme=${themeActuel}`}
+        class="block bg-red-300 text-white rounded-md mx-6 my-6 p-4 no-underline hover:opacity-90 transition-opacity"
     >
-        <div class="text-h4d text-center">Leçon</div>
+        <div class="text-h4d text-center font-bold text-2xl">Leçon</div>
     </a>
 
     <div id="liste-jeux">
         {
-            Jeux.slice(0, count).map((jeu, i) => (
+            Jeux.slice(0, count).map((jeu) => (
                 <div
                     class="jeu-card bg-red-300 text-white rounded-md mx-6 my-6 p-4 cursor-pointer transition-all border-4 border-transparent hover:bg-red-400"
-                    data-jeu-id={jeu.id}
-                    key={jeu.id}
+                    data-jeu-nom={jeu.jeu}
                     role="button"
                     tabindex="0"
                 >
-                    <div class="text-h4d text-center pointer-events-none">
+                    <div class="text-h4d text-center font-bold text-2xl pointer-events-none">
                         {jeu.jeu}
                     </div>
+
                     <details class="mt-3">
-                        <summary class="cursor-pointer border border-white rounded-full w-10 h-10 mx-auto flex items-center justify-center bg-white text-red-300 font-bold">
+                        <summary class="cursor-pointer border border-white rounded-full w-10 h-10 mx-auto flex items-center justify-center bg-white text-red-300 font-bold text-xl">
                             +
                         </summary>
-                        <div class="text-tinyd mt-3">{jeu.description}</div>
+                        <div class="text-tinyd mt-3 text-center">
+                            {jeu.description}
+                        </div>
                     </details>
                 </div>
             ))
@@ -38,8 +40,9 @@ const Jeux = await getjeux();
 
     <div class="flex justify-center mt-6">
         <a
-            href="/application/difficultes"
+            href="#"
             id="bouton-jouer"
+            data-theme={themeActuel}
             class="font-body bg-gray-400 text-white text-body3d py-4 px-12 rounded-lg cursor-not-allowed pointer-events-none transition-colors duration-300"
         >
             Jouer
@@ -49,33 +52,50 @@ const Jeux = await getjeux();
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const cards = Array.from(document.querySelectorAll(".jeu-card"));
-        const boutonJouer = document.getElementById("bouton-jouer");
-        let selectedGameId = null;
+        const cards = Array.from(
+            document.querySelectorAll(".jeu-card"),
+        ) as HTMLElement[];
+        const boutonJouer = document.getElementById(
+            "bouton-jouer",
+        ) as HTMLAnchorElement;
 
-        const selectCard = (card) => {
-            selectedGameId = card.getAttribute("data-jeu-id");
+        const theme = boutonJouer.getAttribute("data-theme");
+
+        const selectCard = (card: HTMLElement) => {
+            // On récupère le nom du jeu depuis l'attribut HTML qu'on a ajouté
+            let nomDuJeu =
+                card.getAttribute("data-jeu-nom")?.toLowerCase().trim() || "";
+
+            // Sécurité : Si PocketBase renvoie "quiz", on le force à "quizz" pour correspondre au fichier Astro
+            if (nomDuJeu === "quiz") {
+                nomDuJeu = "quizz";
+            }
+
             cards.forEach((c) => {
                 const selected = c === card;
                 c.classList.toggle("border-white", selected);
                 c.classList.toggle("bg-red-500", selected);
                 c.classList.toggle("border-transparent", !selected);
             });
+
             boutonJouer.classList.remove(
                 "bg-gray-400",
                 "cursor-not-allowed",
                 "pointer-events-none",
             );
             boutonJouer.classList.add("bg-red-800", "hover:bg-rose-950");
-            boutonJouer.href = `/application/difficultes?jeu=${selectedGameId}`;
+
+            // L'URL envoie maintenant le NOM du jeu et le THEME
+            boutonJouer.href = `/application/jeux/difficultes?jeu=${nomDuJeu}&theme=${theme}`;
         };
 
-        cards.forEach((card) => {
-            card.addEventListener("click", (event) => {
-                if (event.target.closest("summary")) return;
+        cards.forEach((card: HTMLElement) => {
+            card.addEventListener("click", (event: any) => {
+                const target = event.target as HTMLElement | null;
+                if (target?.closest("summary")) return;
                 selectCard(card);
             });
-            card.addEventListener("keydown", (event) => {
+            card.addEventListener("keydown", (event: any) => {
                 if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
                     selectCard(card);

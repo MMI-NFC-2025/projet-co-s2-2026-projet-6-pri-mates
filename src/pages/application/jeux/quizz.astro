@@ -1,0 +1,316 @@
+---
+import LayoutAppli from "../../../layouts/Layout-appli.astro";
+---
+
+<LayoutAppli>
+    <div class="bg-[#f8f5f0] min-h-screen pb-32 pt-8 px-6">
+        <div class="flex items-center mb-8 max-w-md mx-auto">
+            <a
+                id="retour-difficultes"
+                href="#"
+                class="text-slate-900 bg-white p-2.5 rounded-full shadow-sm hover:bg-slate-50 transition-colors"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+            </a>
+            <h1 id="titre-quiz" class="text-xl font-bold ml-4 text-slate-900">
+                Quiz
+            </h1>
+        </div>
+
+        <div
+            class="max-w-md mx-auto bg-white rounded-2xl shadow-sm p-6 border-2 border-slate-100 min-h-125 flex flex-col"
+        >
+            <div
+                class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100"
+            >
+                <span
+                    id="badge-difficulte"
+                    class="bg-orange-100 text-orange-700 font-bold px-3 py-1 rounded-full text-sm"
+                    >...</span
+                >
+                <span
+                    id="compteur-questions"
+                    class="text-slate-500 text-sm font-medium">0 questions</span
+                >
+            </div>
+
+            <div class="grow flex flex-col items-center justify-center w-full">
+                <div
+                    id="zone-image"
+                    class="w-full h-48 bg-slate-100 rounded-xl mb-8 flex items-center justify-center border-2 border-dashed border-slate-300 overflow-hidden"
+                >
+                    <span class="text-slate-400 font-medium"
+                        >Chargement du signe...</span
+                    >
+                </div>
+
+                <h2
+                    id="question-texte"
+                    class="text-xl font-bold text-slate-800 mb-6 text-center"
+                >
+                    Que signifie ce signe ?
+                </h2>
+
+                <div id="grille-reponses" class="grid grid-cols-2 gap-4 w-full">
+                </div>
+
+                <button
+                    id="btn-suivant"
+                    class="hidden mt-6 w-full bg-red-800 hover:bg-rose-950 text-white font-bold py-4 rounded-xl transition-all"
+                >
+                    Question suivante
+                </button>
+            </div>
+        </div>
+    </div>
+</LayoutAppli>
+
+<script>
+    const POCKETBASE_URL = "https://tacita-pb.charlottemettetal.fr";
+
+    let questionsDuQuiz: any[] = [];
+    let toutesLesImagesDispos: any[] = [];
+    let indexQuestion = 0;
+    let score = 0;
+
+    function calculerNombreQuestions(
+        total: number,
+        difficulte: string,
+    ): number {
+        if (difficulte === "facile") return Math.ceil(total * 0.3);
+        if (difficulte === "moyen") return Math.ceil(total * 0.6);
+        return total;
+    }
+
+    // 🚜 LA FONCTION BULLDOZER : Elle détruit les accents, apostrophes et espaces pour tout faire correspondre
+    function simplifierTexte(texte: string): string {
+        if (!texte) return "";
+        return texte
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "") // Enlève les accents (é devient e)
+            .replace(/[^a-z0-9]/g, ""); // Ne garde QUE les lettres (efface espaces, tirets, apostrophes)
+    }
+
+    async function chargerQuiz() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const themeUrl = (urlParams.get("theme") || "").toLowerCase().trim();
+        const difficulte = (urlParams.get("difficulte") || "")
+            .toLowerCase()
+            .trim();
+
+        document.getElementById("titre-quiz")!.textContent =
+            `Quiz : ${themeUrl.charAt(0).toUpperCase() + themeUrl.slice(1)}`;
+        document.getElementById("badge-difficulte")!.textContent =
+            difficulte.charAt(0).toUpperCase() + difficulte.slice(1);
+
+        const lienRetour = document.getElementById(
+            "retour-difficultes",
+        ) as HTMLAnchorElement;
+        if (lienRetour)
+            lienRetour.href = `/application/jeux/difficultes?jeu=quizz&theme=${themeUrl}`;
+
+        try {
+            const repQ = await fetch(
+                `${POCKETBASE_URL}/api/collections/Questions/records?perPage=200`,
+            );
+            const dataQ = await repQ.json();
+            const repI = await fetch(
+                `${POCKETBASE_URL}/api/collections/Images/records?perPage=200`,
+            );
+            const dataI = await repI.json();
+
+            const isAlp = themeUrl.includes("alp");
+            const isSal = themeUrl.includes("sal");
+
+            // Filtrage par thème
+            const questionsDb = dataQ.items.filter((q: any) => {
+                const t = (q.theme || "").toLowerCase();
+                return (
+                    (isAlp && t.includes("alp")) || (isSal && t.includes("sal"))
+                );
+            });
+
+            toutesLesImagesDispos = dataI.items.filter((i: any) => {
+                const l = (i.Lecon || "").toLowerCase();
+                return (
+                    (isAlp && l.includes("alp")) || (isSal && l.includes("sal"))
+                );
+            });
+
+            // 🧠 FUSION INFAILLIBLE
+            const questionsCompletes = questionsDb
+                .map((q: any) => {
+                    const img = toutesLesImagesDispos.find((i: any) => {
+                        const nomBrut = (i.nom || "").toLowerCase().trim();
+                        if (!nomBrut) return false;
+
+                        const nomSimple = simplifierTexte(i.nom); // ex: "silteplait" ou "z"
+                        const repSimple = simplifierTexte(q.reponse);
+                        const questSimple = simplifierTexte(q.question); // ex: "commentditonsilteplait"
+
+                        // 1. Match direct (Parfait pour l'alphabet si la réponse est "a")
+                        if (nomSimple === repSimple && nomSimple.length > 0)
+                            return true;
+
+                        // 2. Le nom est caché dans la question (Parfait pour les salutations)
+                        // On fait ça seulement si le mot a plus de 2 lettres pour éviter les bugs
+                        if (
+                            nomSimple.length > 2 &&
+                            questSimple.includes(nomSimple)
+                        )
+                            return true;
+
+                        // 3. Sécurité spéciale Alphabet (si la méthode 1 a échoué)
+                        if (nomBrut.length === 1) {
+                            const regex = new RegExp(`\\b${nomBrut}\\b`, "i");
+                            if (regex.test(q.question || "")) return true;
+                        }
+
+                        return false;
+                    });
+
+                    return {
+                        ...q,
+                        urlImage: img
+                            ? `${POCKETBASE_URL}/api/files/Images/${img.id}/${img.image}`
+                            : null,
+                        reponseCourte: img ? img.nom.trim() : "Inconnu",
+                    };
+                })
+                .filter((q: any) => q.urlImage !== null);
+
+            // On vérifie combien on en a trouvé pour de vrai
+            console.log(
+                `Thème: ${themeUrl} | Questions dans la base : ${questionsDb.length} | Images validées : ${questionsCompletes.length}`,
+            );
+
+            const nb = calculerNombreQuestions(
+                questionsCompletes.length,
+                difficulte,
+            );
+            questionsDuQuiz = questionsCompletes
+                .sort(() => Math.random() - 0.5)
+                .slice(0, nb);
+
+            if (questionsDuQuiz.length > 0) {
+                indexQuestion = 0;
+                score = 0;
+                afficherQuestion();
+            } else {
+                document.getElementById("zone-image")!.innerHTML =
+                    `<span class="text-red-500 font-bold p-4 block text-center">Il manque des questions dans PocketBase.</span>`;
+            }
+        } catch (error) {
+            console.error("Erreur :", error);
+        }
+    }
+
+    function afficherQuestion() {
+        const q = questionsDuQuiz[indexQuestion];
+
+        document.getElementById("compteur-questions")!.textContent =
+            `Question ${indexQuestion + 1} / ${questionsDuQuiz.length}`;
+        document.getElementById("zone-image")!.innerHTML =
+            `<img src="${q.urlImage}" class="h-full w-full object-contain rounded-xl" />`;
+        document.getElementById("btn-suivant")!.classList.add("hidden");
+
+        const bonneReponse = q.reponseCourte;
+
+        let mauvaisesReponses = toutesLesImagesDispos
+            .filter(
+                (i: any) =>
+                    simplifierTexte(i.nom) !== simplifierTexte(bonneReponse),
+            )
+            .map((i: any) => i.nom.trim())
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 3);
+
+        while (mauvaisesReponses.length < 3) mauvaisesReponses.push("...");
+
+        let choix = [bonneReponse, ...mauvaisesReponses].sort(
+            () => Math.random() - 0.5,
+        );
+
+        const grille = document.getElementById("grille-reponses")!;
+        grille.innerHTML = "";
+
+        choix.forEach((texte) => {
+            const btn = document.createElement("button");
+            btn.className =
+                "bg-slate-100 hover:bg-slate-200 border-2 border-slate-200 text-slate-700 font-bold py-4 rounded-xl transition-all cursor-pointer text-lg capitalize";
+            btn.textContent = texte;
+            btn.onclick = () => verifierReponse(btn, texte, bonneReponse);
+            grille.appendChild(btn);
+        });
+    }
+
+    function verifierReponse(
+        boutonClique: HTMLElement,
+        choixUser: string,
+        bonneReponse: string,
+    ) {
+        const boutons = document
+            .getElementById("grille-reponses")!
+            .querySelectorAll("button");
+        boutons.forEach((b) => {
+            b.disabled = true;
+            b.classList.remove("hover:bg-slate-200", "cursor-pointer");
+
+            if (b.textContent === bonneReponse) {
+                b.classList.replace("bg-slate-100", "bg-green-500");
+                b.classList.replace("border-slate-200", "border-green-600");
+                b.classList.replace("text-slate-700", "text-white");
+            }
+        });
+
+        if (choixUser !== bonneReponse) {
+            boutonClique.classList.replace("bg-slate-100", "bg-red-500");
+            boutonClique.classList.replace(
+                "border-slate-200",
+                "border-red-600",
+            );
+            boutonClique.classList.replace("text-slate-700", "text-white");
+        } else {
+            score++;
+        }
+
+        const btnSuivant = document.getElementById("btn-suivant")!;
+        btnSuivant.textContent =
+            indexQuestion === questionsDuQuiz.length - 1
+                ? "Voir mon score"
+                : "Question suivante";
+        btnSuivant.classList.remove("hidden");
+
+        btnSuivant.onclick = () => {
+            indexQuestion++;
+            if (indexQuestion < questionsDuQuiz.length) {
+                afficherQuestion();
+            } else {
+                document.getElementById("zone-image")!.innerHTML =
+                    `<div class="flex flex-col items-center justify-center h-full w-full bg-green-50 rounded-xl"><span class="text-3xl text-green-700 font-bold mb-2">Quiz terminé ! 🎉</span></div>`;
+                document.getElementById("question-texte")!.textContent =
+                    `Ton score est de : ${score} sur ${questionsDuQuiz.length}`;
+                document.getElementById("grille-reponses")!.innerHTML = "";
+                btnSuivant.textContent = "Retourner aux jeux";
+                btnSuivant.onclick = () =>
+                    (window.location.href = "/application/jeux");
+            }
+        };
+    }
+
+    chargerQuiz();
+    document.addEventListener("astro:page-load", chargerQuiz);
+</script>
