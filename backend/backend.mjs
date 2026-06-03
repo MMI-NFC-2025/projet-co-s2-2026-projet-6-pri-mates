@@ -38,7 +38,7 @@ export async function getQuestions() {
 }
 
 export async function getImages() {
-    const Images = await pb.collection('Images').getFullList();
+    const Images = await pb.collection('Images').getFullList({requestKey: null});
     return await Promise.all(Images.map(async (image) => {
         const recordImage = Array.isArray(image.image)
             ? image.image[0]

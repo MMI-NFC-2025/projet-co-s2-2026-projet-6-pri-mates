@@ -1,18 +1,12 @@
 ---
 import LayoutAppli from "../../layouts/Layout-appli.astro";
 import HeaderJeux from "../../components/header_jeux.astro";
-import { getjeux } from "../../../backend/backend.mjs";
-import Cartesmemory from "../../components/cartes_memory.astro";
-import CartesMemory from "../../components/cartes_memory.astro";
-
-const url = new URL(Astro.request.url);
+import PlateauMemory from "../../components/plateau_memory.astro";
 ---
 
 <LayoutAppli>
     <main>
-        <HeaderJeux
-            hrefQuitter="/application/jeux"
-        />
-        <CartesMemory></CartesMemory>
+        <HeaderJeux hrefQuitter="/application/jeux" />
+        <PlateauMemory count={3} />
     </main>
 </LayoutAppli>
