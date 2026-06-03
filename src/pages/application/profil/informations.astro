@@ -1,8 +1,5 @@
 ---
 import LayoutFooter from "../../../layouts/Layout-footer.astro";
-import { getUtilisateur } from "../../../../backend/backend.mjs";
-
-const Utilisateur = await getUtilisateur();
 ---
 
 <LayoutFooter>
@@ -50,8 +47,6 @@ const Utilisateur = await getUtilisateur();
                         <input
                             type="text"
                             id="prenom"
-                            value={Utilisateur?.prenom_utilisateur}
-                            placeholder="Ton prénom"
                             class="bg-[#f8f5f0] border border-slate-200 rounded-xl px-4 py-3.5 outline-none focus:border-[#a40d1a] transition-all"
                         />
                     </div>
@@ -65,8 +60,6 @@ const Utilisateur = await getUtilisateur();
                         <input
                             type="text"
                             id="nom"
-                            value={Utilisateur?.nom_utilisateur}
-                            placeholder="Ton nom"
                             class="bg-[#f8f5f0] border border-slate-200 rounded-xl px-4 py-3.5 outline-none focus:border-[#a40d1a] transition-all"
                         />
                     </div>
@@ -108,6 +101,7 @@ const Utilisateur = await getUtilisateur();
     const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
 
     document.addEventListener("DOMContentLoaded", async () => {
+        // 🔒 Sécurité : Redirection si non connecté
         if (!pb.authStore.isValid) {
             window.location.href = "/application/profil/connexion";
             return;
@@ -115,11 +109,36 @@ const Utilisateur = await getUtilisateur();
 
         const userId = pb.authStore.model?.id;
 
+        // 🧑‍💻 1. CHARGEMENT DES VRAIES INFORMATIONS DU COMPTE CONNECTÉ
+        try {
+            // On récupère le bon profil via le compte_id
+            const monProfil = await pb
+                .collection("utilisateur")
+                .getFirstListItem(`compte_id="${userId}"`);
+
+            // On remplit les champs Nom et Prénom
+            const prenomInput = document.getElementById(
+                "prenom",
+            ) as HTMLInputElement;
+            const nomInput = document.getElementById("nom") as HTMLInputElement;
+
+            if (prenomInput)
+                prenomInput.value = monProfil.prenom_utilisateur || "";
+            if (nomInput) nomInput.value = monProfil.nom_utilisateur || "";
+        } catch (error) {
+            console.error(
+                "Erreur lors de la récupération des infos personnelles :",
+                error,
+            );
+        }
+
+        // On affiche l'email directement depuis les données de connexion
         const emailInput = document.getElementById("email") as HTMLInputElement;
         if (emailInput && pb.authStore.model?.email) {
             emailInput.value = pb.authStore.model.email;
         }
 
+        // 💾 2. SAUVEGARDE DES MODIFICATIONS
         const form = document.getElementById("form-infos");
         const btnSubmit = document.getElementById("btn-submit");
 
@@ -140,6 +159,7 @@ const Utilisateur = await getUtilisateur();
             formData.append("nom_utilisateur", nom);
 
             try {
+                // On met à jour la collection 'utilisateur'
                 const monProfil = await pb
                     .collection("utilisateur")
                     .getFirstListItem(`compte_id="${userId}"`);
@@ -147,10 +167,13 @@ const Utilisateur = await getUtilisateur();
                     .collection("utilisateur")
                     .update(monProfil.id, formData);
 
+                // On met aussi à jour la collection 'users' par sécurité
                 try {
                     await pb.collection("users").update(userId, formData);
                     await pb.collection("users").authRefresh();
-                } catch (err) {}
+                } catch (err) {
+                    // Si 'users' n'a pas les champs nom/prénom, on ignore silencieusement
+                }
 
                 alert("Tes informations personnelles ont été mises à jour !");
                 window.location.href = "/application/profil";
