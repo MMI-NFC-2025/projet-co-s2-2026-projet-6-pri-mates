@@ -40,10 +40,20 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
                     class="bg-orange-100 text-orange-700 font-bold px-3 py-1 rounded-full text-sm"
                     >...</span
                 >
-                <span
-                    id="compteur-questions"
-                    class="text-slate-500 text-sm font-medium">0 questions</span
-                >
+                <div class="flex items-center gap-3">
+                    <span
+                        id="timer-affichage"
+                        class="hidden bg-red-100 text-red-700 font-bold px-3 py-1 rounded-full text-sm transition-colors"
+                    >
+                        ⏳ 0s
+                    </span>
+                    <span
+                        id="compteur-questions"
+                        class="text-slate-500 text-sm font-medium"
+                    >
+                        0 questions
+                    </span>
+                </div>
             </div>
 
             <div class="grow flex flex-col items-center justify-center w-full">
@@ -85,6 +95,11 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
     let indexQuestion = 0;
     let score = 0;
 
+    // 🌟 Variables du minuteur
+    let timerId: number;
+    let tempsMax = 15;
+    let tempsRestant = 15;
+
     function calculerNombreQuestions(
         total: number,
         difficulte: string,
@@ -94,14 +109,43 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
         return total;
     }
 
-    // 🚜 LA FONCTION BULLDOZER : Elle détruit les accents, apostrophes et espaces pour tout faire correspondre
     function simplifierTexte(texte: string): string {
         if (!texte) return "";
         return texte
             .toLowerCase()
             .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "") // Enlève les accents (é devient e)
-            .replace(/[^a-z0-9]/g, ""); // Ne garde QUE les lettres (efface espaces, tirets, apostrophes)
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]/g, "");
+    }
+
+    // 🌟 Fonction pour gérer le chrono
+    function lancerMinuteur(bonneReponse: string) {
+        clearInterval(timerId); // On nettoie l'ancien chrono au cas où
+        tempsRestant = tempsMax;
+
+        const affichage = document.getElementById("timer-affichage")!;
+        affichage.classList.remove("hidden", "bg-red-600", "text-white");
+        affichage.classList.add("bg-red-100", "text-red-700");
+        affichage.textContent = `⏳ ${tempsRestant}s`;
+
+        timerId = window.setInterval(() => {
+            tempsRestant--;
+            affichage.textContent = `⏳ ${tempsRestant}s`;
+
+            // Effet visuel quand il reste peu de temps
+            if (tempsRestant <= 3 && tempsRestant > 0) {
+                affichage.classList.replace("bg-red-100", "bg-red-600");
+                affichage.classList.replace("text-red-700", "text-white");
+            }
+
+            // Temps écoulé !
+            if (tempsRestant <= 0) {
+                clearInterval(timerId);
+                affichage.textContent = "⏳ Terminé !";
+                // On simule une erreur (null car aucun bouton n'a été cliqué)
+                verifierReponse(null, "TEMPS_ECOULE", bonneReponse);
+            }
+        }, 1000); // Répète toutes les 1000 millisecondes (1 sec)
     }
 
     async function chargerQuiz() {
@@ -110,6 +154,11 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
         const difficulte = (urlParams.get("difficulte") || "")
             .toLowerCase()
             .trim();
+
+        // 🌟 Définition du temps selon la difficulté
+        if (difficulte === "facile") tempsMax = 15;
+        else if (difficulte === "moyen") tempsMax = 10;
+        else if (difficulte === "difficile") tempsMax = 5;
 
         document.getElementById("titre-quiz")!.textContent =
             `Quiz : ${themeUrl.charAt(0).toUpperCase() + themeUrl.slice(1)}`;
@@ -135,7 +184,6 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             const isAlp = themeUrl.includes("alp");
             const isSal = themeUrl.includes("sal");
 
-            // Filtrage par thème
             const questionsDb = dataQ.items.filter((q: any) => {
                 const t = (q.theme || "").toLowerCase();
                 return (
@@ -150,30 +198,23 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
                 );
             });
 
-            // 🧠 FUSION INFAILLIBLE
             const questionsCompletes = questionsDb
                 .map((q: any) => {
                     const img = toutesLesImagesDispos.find((i: any) => {
                         const nomBrut = (i.nom || "").toLowerCase().trim();
                         if (!nomBrut) return false;
 
-                        const nomSimple = simplifierTexte(i.nom); // ex: "silteplait" ou "z"
+                        const nomSimple = simplifierTexte(i.nom);
                         const repSimple = simplifierTexte(q.reponse);
-                        const questSimple = simplifierTexte(q.question); // ex: "commentditonsilteplait"
+                        const questSimple = simplifierTexte(q.question);
 
-                        // 1. Match direct (Parfait pour l'alphabet si la réponse est "a")
                         if (nomSimple === repSimple && nomSimple.length > 0)
                             return true;
-
-                        // 2. Le nom est caché dans la question (Parfait pour les salutations)
-                        // On fait ça seulement si le mot a plus de 2 lettres pour éviter les bugs
                         if (
                             nomSimple.length > 2 &&
                             questSimple.includes(nomSimple)
                         )
                             return true;
-
-                        // 3. Sécurité spéciale Alphabet (si la méthode 1 a échoué)
                         if (nomBrut.length === 1) {
                             const regex = new RegExp(`\\b${nomBrut}\\b`, "i");
                             if (regex.test(q.question || "")) return true;
@@ -191,11 +232,6 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
                     };
                 })
                 .filter((q: any) => q.urlImage !== null);
-
-            // On vérifie combien on en a trouvé pour de vrai
-            console.log(
-                `Thème: ${themeUrl} | Questions dans la base : ${questionsDb.length} | Images validées : ${questionsCompletes.length}`,
-            );
 
             const nb = calculerNombreQuestions(
                 questionsCompletes.length,
@@ -255,13 +291,20 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             btn.onclick = () => verifierReponse(btn, texte, bonneReponse);
             grille.appendChild(btn);
         });
+
+        // 🌟 On démarre le chrono une fois la question prête !
+        lancerMinuteur(bonneReponse);
     }
 
+    // 🌟 Mise à jour : le bouton cliqué peut être null (si le temps est écoulé)
     function verifierReponse(
-        boutonClique: HTMLElement,
+        boutonClique: HTMLElement | null,
         choixUser: string,
         bonneReponse: string,
     ) {
+        // On stoppe le chrono
+        clearInterval(timerId);
+
         const boutons = document
             .getElementById("grille-reponses")!
             .querySelectorAll("button");
@@ -269,6 +312,7 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             b.disabled = true;
             b.classList.remove("hover:bg-slate-200", "cursor-pointer");
 
+            // Met en vert la bonne réponse
             if (b.textContent === bonneReponse) {
                 b.classList.replace("bg-slate-100", "bg-green-500");
                 b.classList.replace("border-slate-200", "border-green-600");
@@ -276,13 +320,16 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             }
         });
 
+        // Si l'utilisateur a cliqué sur une mauvaise réponse (et non une fin de temps)
         if (choixUser !== bonneReponse) {
-            boutonClique.classList.replace("bg-slate-100", "bg-red-500");
-            boutonClique.classList.replace(
-                "border-slate-200",
-                "border-red-600",
-            );
-            boutonClique.classList.replace("text-slate-700", "text-white");
+            if (boutonClique) {
+                boutonClique.classList.replace("bg-slate-100", "bg-red-500");
+                boutonClique.classList.replace(
+                    "border-slate-200",
+                    "border-red-600",
+                );
+                boutonClique.classList.replace("text-slate-700", "text-white");
+            }
         } else {
             score++;
         }
@@ -299,6 +346,12 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             if (indexQuestion < questionsDuQuiz.length) {
                 afficherQuestion();
             } else {
+                // Arrêt définitif du minuteur et masquage à la fin du jeu
+                clearInterval(timerId);
+                document
+                    .getElementById("timer-affichage")!
+                    .classList.add("hidden");
+
                 document.getElementById("zone-image")!.innerHTML =
                     `<div class="flex flex-col items-center justify-center h-full w-full bg-green-50 rounded-xl"><span class="text-3xl text-green-700 font-bold mb-2">Quiz terminé ! 🎉</span></div>`;
                 document.getElementById("question-texte")!.textContent =

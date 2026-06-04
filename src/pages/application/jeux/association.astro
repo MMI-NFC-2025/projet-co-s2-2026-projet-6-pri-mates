@@ -1,0 +1,414 @@
+---
+import LayoutAppli from "../../../layouts/Layout-appli.astro";
+---
+
+<LayoutAppli>
+    <div
+        class="bg-[#f8f5f0] min-h-screen flex flex-col pt-8 px-4 pb-4 overflow-hidden touch-none"
+        id="ecran-jeu"
+    >
+        <!-- En-tête -->
+        <div class="flex items-center mb-4 z-10">
+            <a
+                id="retour-menu"
+                href="/application/jeux"
+                class="text-slate-900 bg-white p-2.5 rounded-full shadow-sm hover:bg-slate-50 transition-colors"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+            </a>
+            <h1 class="text-xl font-bold ml-4 text-slate-900">
+                Trouve le bon signe !
+            </h1>
+            <span
+                id="score-affichage"
+                class="ml-auto bg-orange-100 text-orange-700 font-bold px-4 py-1.5 rounded-full"
+                >Score: 0</span
+            >
+        </div>
+
+        <!-- Zone de jeu (Ciel et Panier) -->
+        <div
+            class="relative grow bg-white rounded-3xl shadow-inner border-4 border-slate-100 overflow-hidden"
+            id="zone-chute"
+        >
+            <!-- Le Panier (Cible : Le Mot) -->
+            <div
+                id="panier"
+                class="absolute bottom-4 left-1/2 -translate-x-1/2 w-48 h-24 bg-slate-50 rounded-2xl border-4 border-dashed border-slate-300 flex flex-col items-center justify-center p-2 z-10 transition-colors"
+            >
+                <span
+                    id="texte-cible"
+                    class="text-2xl font-bold text-slate-800 capitalize hidden text-center"
+                ></span>
+                <span
+                    id="texte-chargement"
+                    class="text-slate-400 font-bold text-center"
+                    >Chargement...</span
+                >
+            </div>
+        </div>
+
+        <!-- Écran de fin -->
+        <div
+            id="ecran-fin"
+            class="absolute inset-0 bg-white/90 z-50 hidden flex-col items-center justify-center p-6 text-center"
+        >
+            <h2 class="text-4xl font-bold text-green-600 mb-4">Terminé ! 🎉</h2>
+            <p
+                id="texte-score-final"
+                class="text-xl text-slate-700 font-bold mb-8"
+            >
+                Ton score : 0
+            </p>
+            <a
+                href="/application/jeux"
+                class="w-full max-w-xs bg-red-800 text-white font-bold py-4 rounded-xl"
+                >Retour aux jeux</a
+            >
+        </div>
+    </div>
+</LayoutAppli>
+
+<style>
+    /* Empêche le "pull-to-refresh" et le scroll pendant qu'on glisse un mot sur mobile */
+    #ecran-jeu {
+        overscroll-behavior-y: none;
+    }
+</style>
+
+<script>
+    const POCKETBASE_URL = "https://tacita-pb.charlottemettetal.fr";
+
+    let donneesJeu: any[] = [];
+    let indexNiveau = 0;
+    let score = 0;
+    let animationId: number;
+    let imagesActives: HTMLElement[] = [];
+    let difficulteGlobale = "moyen"; // On stocke la difficulté pour tout le script
+
+    // Drag & Drop
+    let elementAttrape: HTMLElement | null = null;
+    let decalageX = 0;
+    let decalageY = 0;
+
+    // FONCTION BULLDOZER
+    function simplifierTexte(texte: string): string {
+        if (!texte) return "";
+        return texte
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]/g, "");
+    }
+
+    async function chargerDonnees() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const themeUrl = (urlParams.get("theme") || "").toLowerCase().trim();
+        // 🌟 RÉCUPÉRATION DE LA DIFFICULTÉ
+        difficulteGlobale = (urlParams.get("difficulte") || "moyen")
+            .toLowerCase()
+            .trim();
+
+        try {
+            const repQ = await fetch(
+                `${POCKETBASE_URL}/api/collections/Questions/records?perPage=200`,
+            );
+            const dataQ = await repQ.json();
+            const repI = await fetch(
+                `${POCKETBASE_URL}/api/collections/Images/records?perPage=200`,
+            );
+            const dataI = await repI.json();
+
+            const isAlp = themeUrl.includes("alp");
+            const isSal = themeUrl.includes("sal");
+
+            const questionsDb = dataQ.items.filter((q: any) => {
+                const t = (q.theme || "").toLowerCase();
+                return (
+                    (isAlp && t.includes("alp")) || (isSal && t.includes("sal"))
+                );
+            });
+
+            const imagesDb = dataI.items.filter((i: any) => {
+                const l = (i.Lecon || "").toLowerCase();
+                return (
+                    (isAlp && l.includes("alp")) || (isSal && l.includes("sal"))
+                );
+            });
+
+            // Lier les données
+            donneesJeu = questionsDb
+                .map((q: any) => {
+                    const img = imagesDb.find((i: any) => {
+                        const nomBrut = (i.nom || "").toLowerCase().trim();
+                        if (!nomBrut) return false;
+
+                        const nomSimple = simplifierTexte(i.nom);
+                        const repSimple = simplifierTexte(q.reponse);
+                        const questSimple = simplifierTexte(q.question);
+
+                        if (nomSimple === repSimple && nomSimple.length > 0)
+                            return true;
+                        if (
+                            nomSimple.length > 2 &&
+                            questSimple.includes(nomSimple)
+                        )
+                            return true;
+                        if (nomBrut.length === 1) {
+                            const regex = new RegExp(`\\b${nomBrut}\\b`, "i");
+                            if (regex.test(q.question || "")) return true;
+                        }
+                        return false;
+                    });
+                    return {
+                        mot: img ? img.nom.trim() : null,
+                        urlImage: img
+                            ? `${POCKETBASE_URL}/api/files/Images/${img.id}/${img.image}`
+                            : null,
+                    };
+                })
+                .filter((d: any) => d.urlImage !== null && d.mot !== null);
+
+            // On garde 5 mots à trouver par partie d'association
+            donneesJeu = donneesJeu.sort(() => Math.random() - 0.5).slice(0, 5);
+
+            if (donneesJeu.length > 0) {
+                demarrerNiveau();
+                animerChute();
+            } else {
+                document.getElementById("texte-chargement")!.textContent =
+                    "Erreur de données.";
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function demarrerNiveau() {
+        if (indexNiveau >= donneesJeu.length) {
+            terminerJeu();
+            return;
+        }
+
+        imagesActives.forEach((img) => img.remove());
+        imagesActives = [];
+
+        const niveauActuel = donneesJeu[indexNiveau];
+
+        const texteCible = document.getElementById("texte-cible")!;
+        texteCible.textContent = niveauActuel.mot;
+        texteCible.classList.remove("hidden");
+        document.getElementById("texte-chargement")!.classList.add("hidden");
+
+        // 🌟 GESTION DE LA QUANTITÉ DE DISTRACTEURS SELON LA DIFFICULTÉ
+        let nbFaussesImages = 3; // Moyen par défaut
+        if (difficulteGlobale === "facile") nbFaussesImages = 1; // Total = 2 images
+        if (difficulteGlobale === "difficile") nbFaussesImages = 5; // Total = 6 images
+
+        const autresDonnees = donneesJeu.filter(
+            (d) => d.urlImage !== niveauActuel.urlImage,
+        );
+        let faussesDonnees = autresDonnees
+            .sort(() => Math.random() - 0.5)
+            .slice(0, nbFaussesImages);
+
+        // Si ta base n'a pas assez d'images différentes, on duplique les fausses pour remplir l'écran
+        while (faussesDonnees.length < nbFaussesImages) {
+            faussesDonnees.push(faussesDonnees[0] || niveauActuel);
+        }
+
+        let tousLesElements = [
+            { url: niveauActuel.urlImage, bon: true },
+            ...faussesDonnees.map((d) => ({ url: d.urlImage, bon: false })),
+        ].sort(() => Math.random() - 0.5);
+
+        // Faire tomber les images avec un décalage
+        tousLesElements.forEach((item, index) => {
+            setTimeout(
+                () => creerImageTombante(item.url, item.bon),
+                index * 800,
+            );
+        });
+    }
+
+    function creerImageTombante(urlImage: string, estBonneReponse: boolean) {
+        const zone = document.getElementById("zone-chute")!;
+        const conteneur = document.createElement("div");
+
+        conteneur.className =
+            "absolute touch-none select-none bg-white border-2 border-slate-300 rounded-2xl shadow-lg cursor-grab active:cursor-grabbing z-20 flex items-center justify-center p-2 w-28 h-28";
+
+        const img = document.createElement("img");
+        img.src = urlImage;
+        img.className =
+            "w-full h-full object-contain pointer-events-none rounded-xl";
+
+        conteneur.appendChild(img);
+
+        // 🌟 GESTION DE LA VITESSE SELON LA DIFFICULTÉ
+        let baseVitesse = 1.2 + Math.random() * 1.2;
+        if (difficulteGlobale === "facile") baseVitesse *= 0.7; // Plus lent
+        if (difficulteGlobale === "difficile") baseVitesse *= 1.8; // Plus rapide
+
+        (conteneur as any).vitesse = baseVitesse;
+        (conteneur as any).estBon = estBonneReponse;
+        (conteneur as any).y = -150;
+
+        const maxLeft = zone.clientWidth - 120;
+        (conteneur as any).x = 10 + Math.random() * maxLeft;
+
+        conteneur.style.left = `${(conteneur as any).x}px`;
+        conteneur.style.top = `${(conteneur as any).y}px`;
+
+        conteneur.addEventListener("mousedown", (e) =>
+            demarrerGlissement(e, conteneur),
+        );
+        conteneur.addEventListener(
+            "touchstart",
+            (e) => demarrerGlissement(e.touches[0], conteneur),
+            { passive: false },
+        );
+
+        zone.appendChild(conteneur);
+        imagesActives.push(conteneur);
+    }
+
+    // --- MOTEUR DE CHUTE ET GLISSER-DÉPOSER ---
+    function animerChute() {
+        const zone = document.getElementById("zone-chute")!;
+        const hauteurMax = zone.clientHeight;
+
+        imagesActives.forEach((img) => {
+            if (img !== elementAttrape) {
+                (img as any).y += (img as any).vitesse;
+                img.style.top = `${(img as any).y}px`;
+
+                if ((img as any).y > hauteurMax) {
+                    (img as any).y = -150;
+                    (img as any).x =
+                        10 + Math.random() * (zone.clientWidth - 120);
+                    img.style.left = `${(img as any).x}px`;
+                }
+            }
+        });
+
+        animationId = requestAnimationFrame(animerChute);
+    }
+
+    function demarrerGlissement(e: any, element: HTMLElement) {
+        if (e.preventDefault) e.preventDefault();
+        elementAttrape = element;
+        elementAttrape.style.zIndex = "100";
+        elementAttrape.classList.replace(
+            "border-slate-300",
+            "border-orange-500",
+        );
+
+        const rect = elementAttrape.getBoundingClientRect();
+        decalageX = e.clientX - rect.left;
+        decalageY = e.clientY - rect.top;
+    }
+
+    function glisser(e: any) {
+        if (!elementAttrape) return;
+        if (e.preventDefault) e.preventDefault();
+
+        const clientX = e.clientX || e.touches[0].clientX;
+        const clientY = e.clientY || e.touches[0].clientY;
+
+        const zone = document
+            .getElementById("zone-chute")!
+            .getBoundingClientRect();
+
+        let newX = clientX - zone.left - decalageX;
+        let newY = clientY - zone.top - decalageY;
+
+        (elementAttrape as any).x = newX;
+        (elementAttrape as any).y = newY;
+
+        elementAttrape.style.left = `${newX}px`;
+        elementAttrape.style.top = `${newY}px`;
+    }
+
+    function lacher() {
+        if (!elementAttrape) return;
+
+        elementAttrape.style.zIndex = "20";
+        elementAttrape.classList.replace(
+            "border-orange-500",
+            "border-slate-300",
+        );
+
+        const rectElement = elementAttrape.getBoundingClientRect();
+        const panier = document.getElementById("panier")!;
+        const rectPanier = panier.getBoundingClientRect();
+
+        const centreX = rectElement.left + rectElement.width / 2;
+        const centreY = rectElement.top + rectElement.height / 2;
+
+        const estDansPanier =
+            centreX > rectPanier.left &&
+            centreX < rectPanier.right &&
+            centreY > rectPanier.top &&
+            centreY < rectPanier.bottom;
+
+        if (estDansPanier) {
+            if ((elementAttrape as any).estBon) {
+                panier.classList.add("bg-green-100", "border-green-500");
+                setTimeout(
+                    () =>
+                        panier.classList.remove(
+                            "bg-green-100",
+                            "border-green-500",
+                        ),
+                    500,
+                );
+
+                score++;
+                document.getElementById("score-affichage")!.textContent =
+                    `Score: ${score}`;
+                indexNiveau++;
+                demarrerNiveau();
+            } else {
+                panier.classList.add("bg-red-100", "border-red-500");
+                setTimeout(
+                    () =>
+                        panier.classList.remove("bg-red-100", "border-red-500"),
+                    500,
+                );
+
+                (elementAttrape as any).y = -150;
+            }
+        }
+
+        elementAttrape = null;
+    }
+
+    document.addEventListener("mousemove", glisser);
+    document.addEventListener("touchmove", glisser, { passive: false });
+    document.addEventListener("mouseup", lacher);
+    document.addEventListener("touchend", lacher);
+
+    function terminerJeu() {
+        cancelAnimationFrame(animationId);
+        document.getElementById("ecran-fin")!.classList.remove("hidden");
+        document.getElementById("ecran-fin")!.classList.add("flex");
+        document.getElementById("texte-score-final")!.textContent =
+            `Ton score : ${score}`;
+    }
+
+    chargerDonnees();
+    document.addEventListener("astro:page-load", chargerDonnees);
+</script>
