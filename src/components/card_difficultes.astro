@@ -37,40 +37,42 @@ const Jeux = await getjeux();
     </div>
 </div>
 
-document.addEventListener('DOMContentLoaded', () => {
-    const cards = document.querySelectorAll('.difficulte-card');
-    const boutonCestParti = document.getElementById('bouton-cest-parti');
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const cards = document.querySelectorAll(".difficulte-card");
+        const boutonCestParti = document.getElementById("bouton-cest-parti");
 
-    // 1. On récupère le nom du jeu depuis l'URL (ex: "quiz", "memory")
-    const urlParams = new URLSearchParams(window.location.search);
-    const jeuNom = urlParams.get('jeu');
+        // Récupération de l'ID du jeu depuis l'URL de la page précédente (ex: ?jeu=1)
+        const urlParams = new URLSearchParams(window.location.search);
+        const jeuId = urlParams.get("jeu");
 
-    cards.forEach(card => {
-        card.addEventListener('click', () => {
-            // ... (Ici tu gardes ton code actuel pour les bordures et couleurs des cards) ...
-            
-            const difficulte = card.getAttribute('data-difficulte');
+        cards.forEach((card) => {
+            card.addEventListener("click", () => {
+                // 1. Réinitialiser la sélection de toutes les cards
+                cards.forEach((c) => {
+                    // On enlève la bordure blanche et un éventuel effet de zoom
+                    c.classList.remove("border-white", "scale-105");
+                    c.classList.add("border-transparent");
+                });
 
-            boutonCestParti.classList.remove('bg-gray-400', 'cursor-not-allowed', 'pointer-events-none');
-            boutonCestParti.classList.add('bg-red-800', 'hover:bg-rose-950');
-            
-            // 2. L'AIGUILLAGE : On choisit la bonne page en fonction du nom du jeu
-            let urlDestination = "";
+                // 2. Mettre en évidence la card sélectionnée
+                card.classList.remove("border-transparent");
+                // On ajoute la bordure et un léger zoom pour bien marquer la sélection
+                card.classList.add("border-white", "scale-105");
 
-            // On utilise .includes() au cas où il y aurait des accents ou des espaces (ex: "le memory")
-            if (jeuNom && jeuNom.includes('quiz')) {
-                urlDestination = `/application/quiz?difficulte=${difficulte}`;
-            } 
-            else if (jeuNom && jeuNom.includes('memory')) {
-                urlDestination = `/application/memory?difficulte=${difficulte}`;
-            } 
-            else {
-                // Pour ton troisième jeu (remplace "jeu3" par le nom de ton fichier)
-                urlDestination = `/application/jeu3?difficulte=${difficulte}`;
-            }
+                // 3. Récupérer la difficulté choisie
+                const difficulte = card.getAttribute("data-difficulte");
 
-            // 3. On applique l'adresse finale au bouton
-            boutonCestParti.href = urlDestination;
+                // 4. Activer le bouton "C'est parti"
+                boutonCestParti.classList.remove(
+                    "bg-gray-400",
+                    "cursor-not-allowed",
+                    "pointer-events-none",
+                );
+                boutonCestParti.classList.add(
+                    "bg-red-800",
+                    "hover:bg-rose-950",
+                );
         });
     });
-});
+</script>
