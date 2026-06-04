@@ -9,6 +9,7 @@ import imgEspace from "../../../assets/image/bannière_espace.webp";
 import imgCiel from "../../../assets/image/bannière_ciel_1.webp";
 import imgVote from "../../../assets/image/bannière_vote.webp";
 
+// Le serveur charge ça par défaut, mais le script JS va prendre le relais
 const Utilisateur = await getUtilisateur();
 
 const bannieres = [
@@ -21,6 +22,7 @@ const bannieres = [
 
 <Layoutfooter>
     <div class="bg-[#f8f5f0] min-h-screen pb-32 font-sans px-6 pt-8">
+        <!-- En-tête -->
         <div class="flex items-center mb-8 max-w-md mx-auto">
             <a
                 href="/application/profil"
@@ -46,8 +48,13 @@ const bannieres = [
         </div>
 
         <form id="form-modifier" class="max-w-md mx-auto flex flex-col gap-8">
+            <!-- Photo de profil -->
             <div class="flex flex-col items-center">
-                <div class="relative group cursor-pointer" id="conteneur-photo">
+                <!-- Ajout de opacity-0 pour cacher la photo d'Axium au chargement -->
+                <div
+                    class="relative group cursor-pointer opacity-0 transition-opacity duration-300"
+                    id="conteneur-photo"
+                >
                     <PbImage
                         id="preview-pdp"
                         record={Utilisateur}
@@ -78,21 +85,23 @@ const bannieres = [
                 </div>
             </div>
 
+            <!-- Pseudo -->
             <div class="flex flex-col gap-1">
                 <label
                     for="pseudo"
                     class="text-sm font-medium text-slate-700 ml-1"
                     >Pseudo (@)</label
                 >
+                <!-- Retrait du value={Utilisateur?.pseudo} par défaut -->
                 <input
                     type="text"
                     id="pseudo"
-                    value={Utilisateur?.pseudo}
                     placeholder="Ton pseudo (ex: monpseudo)"
                     class="bg-white border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-[#a40d1a] transition-all"
                 />
             </div>
 
+            <!-- Choix Bannière -->
             <div class="mt-2">
                 <label
                     class="text-sm font-medium text-slate-700 ml-1 mb-2 block"
@@ -125,7 +134,7 @@ const bannieres = [
             <button
                 type="submit"
                 id="btn-submit"
-                class="mt-4 bg-[#a40d1a] text-white py-3.5 rounded-xl font-bold shadow-md w-full"
+                class="mt-4 bg-[#a40d1a] text-white py-3.5 rounded-xl font-bold shadow-md w-full transition-all active:scale-95"
             >
                 <span>Enregistrer les modifications</span>
             </button>
@@ -150,30 +159,82 @@ const bannieres = [
     const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
 
     document.addEventListener("DOMContentLoaded", async () => {
-        const userId = pb.authStore.model?.id;
+        // Sécurité
+        if (!pb.authStore.isValid) {
+            window.location.href = "/application/profil/connexion";
+            return;
+        }
 
-        // 1. Photo de profil
+        const userId = pb.authStore.model?.id;
+        const inputPseudo = document.getElementById(
+            "pseudo",
+        ) as HTMLInputElement;
+        const conteneurPhoto = document.getElementById("conteneur-photo");
         const inputPdp = document.getElementById("pdp") as HTMLInputElement;
+
+        // On cible spécifiquement l'image à l'intérieur de ton composant
         const previewPdp = document.querySelector(
-            "#preview-pdp img",
+            "#conteneur-photo img",
         ) as HTMLImageElement;
-        document
-            .getElementById("conteneur-photo")
-            ?.addEventListener("click", () => inputPdp.click());
+
+        // 🧑‍💻 1. CHARGEMENT DES VRAIES DONNÉES DE L'UTILISATEUR
+        try {
+            const monProfil = await pb
+                .collection("utilisateur")
+                .getFirstListItem(`compte_id="${userId}"`);
+
+            // On remplit le champ pseudo avec la vraie valeur
+            if (inputPseudo) {
+                inputPseudo.value = monProfil.pseudo || "";
+            }
+
+            // On va chercher la vraie photo de profil
+            if (previewPdp) {
+                if (monProfil.photo_profil) {
+                    previewPdp.src = pb.files.getUrl(
+                        monProfil,
+                        monProfil.photo_profil,
+                    );
+                } else {
+                    // Image transparente si pas de photo
+                    previewPdp.src =
+                        "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+                }
+            }
+
+            // On fait apparaître le conteneur photo en retirant l'opacité
+            if (conteneurPhoto) {
+                conteneurPhoto.classList.remove("opacity-0");
+            }
+
+            // On fait apparaître le conteneur photo en retirant l'opacité
+            if (conteneurPhoto) {
+                conteneurPhoto.classList.remove("opacity-0");
+            }
+        } catch (error) {
+            console.error("Erreur lors de la récupération du profil :", error);
+            if (conteneurPhoto) conteneurPhoto.classList.remove("opacity-0");
+        }
+
+        // 📸 2. GESTION DE LA PHOTO DE PROFIL (Clic et Preview)
+        conteneurPhoto?.addEventListener("click", () => inputPdp.click());
 
         inputPdp?.addEventListener("change", (e) => {
             const file = (e.target as HTMLInputElement).files?.[0];
-            if (file && previewPdp) previewPdp.src = URL.createObjectURL(file);
+            if (file && previewPdp) {
+                previewPdp.src = URL.createObjectURL(file);
+            }
         });
 
-        // 2. Bannière (LocalStorage - Ton code original)
+        // 🎨 3. GESTION DES BANNIÈRES (LocalStorage)
         const buttonsBanniere = document.querySelectorAll(".btn-banniere");
         let selectedBannerSrc = localStorage.getItem("user_banner_pref");
 
         if (selectedBannerSrc) {
             buttonsBanniere.forEach((btn) => {
-                if (btn.getAttribute("data-img") === selectedBannerSrc)
+                if (btn.getAttribute("data-img") === selectedBannerSrc) {
                     btn.classList.add("border-[#a40d1a]");
+                }
             });
         }
 
@@ -188,37 +249,47 @@ const bannieres = [
             });
         });
 
-        // 3. Soumission
-        document
-            .getElementById("form-modifier")
-            ?.addEventListener("submit", async (e) => {
-                e.preventDefault();
-                const pseudo = (
-                    document.getElementById("pseudo") as HTMLInputElement
-                ).value;
-                const fichierImage = inputPdp.files?.[0] || null;
+        // 💾 4. SOUMISSION DU FORMULAIRE
+        const formModifier = document.getElementById("form-modifier");
+        const btnSubmit = document.getElementById("btn-submit");
 
-                // Sauvegarde locale de la bannière
-                if (selectedBannerSrc)
-                    localStorage.setItem("user_banner_pref", selectedBannerSrc);
+        formModifier?.addEventListener("submit", async (e) => {
+            e.preventDefault();
 
-                try {
-                    // On récupère le profil utilisateur pour avoir son ID de collection
-                    const profil = await pb
-                        .collection("utilisateur")
-                        .getFirstListItem(`compte_id="${userId}"`);
+            if (btnSubmit)
+                btnSubmit.querySelector("span")!.textContent =
+                    "Enregistrement en cours...";
 
-                    // Enregistrement Pseudo et Photo dans PocketBase
-                    await updateProfil(profil.id, {
-                        pseudo: pseudo,
-                        photo_profil: fichierImage,
-                    });
+            const pseudo = inputPseudo.value;
+            const fichierImage = inputPdp.files?.[0] || null;
 
-                    alert("Profil et bannière mis à jour !");
-                    window.location.href = "/application/profil";
-                } catch (error) {
-                    alert("Erreur lors de l'enregistrement");
-                }
-            });
+            // Sauvegarde locale de la bannière
+            if (selectedBannerSrc) {
+                localStorage.setItem("user_banner_pref", selectedBannerSrc);
+            }
+
+            try {
+                // On récupère le profil utilisateur pour avoir son ID de collection (et pas son compte_id)
+                const profil = await pb
+                    .collection("utilisateur")
+                    .getFirstListItem(`compte_id="${userId}"`);
+
+                // Enregistrement Pseudo et Photo dans PocketBase
+                // Note : Ton script backend s'attend à recevoir { pseudo, photo_profil }
+                await updateProfil(profil.id, {
+                    pseudo: pseudo,
+                    photo_profil: fichierImage,
+                });
+
+                alert("Profil et bannière mis à jour !");
+                window.location.href = "/application/profil";
+            } catch (error) {
+                console.error(error);
+                alert("Erreur lors de l'enregistrement de ton profil.");
+                if (btnSubmit)
+                    btnSubmit.querySelector("span")!.textContent =
+                        "Enregistrer les modifications";
+            }
+        });
     });
 </script>

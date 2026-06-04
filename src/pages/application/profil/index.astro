@@ -19,19 +19,20 @@ const bannièresImages: Record<string, string> = {
     vote: imgVote.src,
 };
 
-const banniereUtilisateur =
-    typeof Utilisateur?.banniere === "string" ? Utilisateur.banniere : "";
+const banniereCle =
+    typeof Utilisateur?.banniere === "string"
+        ? (Utilisateur.banniere as keyof typeof bannièresImages)
+        : undefined;
 
 // On définit l'image à afficher (soit celle en base, soit ville par défaut)
 const imageBanniereAffichee =
-    banniereUtilisateur && bannièresImages[banniereUtilisateur]
-        ? bannièresImages[banniereUtilisateur]
+    banniereCle && bannièresImages[banniereCle]
+        ? bannièresImages[banniereCle]
         : imgVille.src;
 ---
 
 <LayoutFooter titre="Profil - Tacita">
     <div class="bg-[#f8f5f0] min-h-screen pb-25 font-sans">
-        <!-- ================= BANNIÈRE ================= -->
         <div class="h-48 w-full bg-slate-800 relative">
             <img
                 id="main-hero-img"
@@ -41,25 +42,34 @@ const imageBanniereAffichee =
             />
         </div>
 
-        <!-- ================= EN-TÊTE PROFIL ================= -->
         <div class="flex flex-col items-center -mt-14 px-4 relative z-10">
-            <!-- Balise PbImage -->
-            <PbImage
-                record={Utilisateur}
-                recordImage={Utilisateur?.image?.[0] ||
-                    Utilisateur?.photo_profil ||
-                    ""}
-                class="border-4 border-white h-28 w-28 rounded-full object-cover shadow-sm bg-slate-200 relative z-10"
-            />
+            <div
+                id="profil-image-container"
+                class="opacity-0 transition-opacity duration-300 relative z-10"
+            >
+                <PbImage
+                    record={Utilisateur}
+                    recordImage={Utilisateur?.image?.[0] ||
+                        Utilisateur?.photo_profil ||
+                        ""}
+                    class="border-4 border-white h-28 w-28 rounded-full object-cover shadow-sm bg-slate-200"
+                />
+            </div>
 
-            <!-- Nom et Surnom -->
-            <h1 class="text-2xl font-bold mt-2 text-slate-900">
+            <h1
+                id="profil-nom"
+                class="text-2xl font-bold mt-2 text-slate-900 opacity-0 transition-opacity duration-300"
+            >
                 {Utilisateur?.prenom_utilisateur}
                 {Utilisateur?.nom_utilisateur}
             </h1>
-            <p class="text-slate-800 text-lg">@{Utilisateur?.pseudo}</p>
+            <p
+                id="profil-pseudo"
+                class="text-slate-800 text-lg opacity-0 transition-opacity duration-300"
+            >
+                @{Utilisateur?.pseudo}
+            </p>
 
-            <!-- BOUTON MODIFIER (Transformé en lien vers la page de modification) -->
             <a
                 href="/application/profil/modifier"
                 class="mt-4 bg-[#a40d1a] hover:bg-red-800 text-white px-6 py-2.5 rounded-lg font-medium shadow-md active:scale-95 transition-all text-center inline-block"
@@ -68,7 +78,6 @@ const imageBanniereAffichee =
             </a>
         </div>
 
-        <!-- ================= PARAMÈTRES ================= -->
         <div class="px-6 mt-10 max-w-md mx-auto">
             <h2 class="text-lg mb-2 text-slate-900">Paramètres</h2>
             <ul
@@ -78,44 +87,45 @@ const imageBanniereAffichee =
                     <a
                         href="/application/profil/informations"
                         class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
-                        >Informations personnelles</a
                     >
+                        Informations personnelles
+                    </a>
                 </li>
-
+                <li class="border-b border-white/20">
+                    <a
+                        href="/application/profil/preferences"
+                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
+                    >
+                        Préférences
+                    </a>
+                </li>
                 <li class="border-b border-white/20">
                     <a
                         href="#"
                         class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
-                        >Préférences</a
                     >
+                        Notifications
+                    </a>
                 </li>
-                <li class="border-b border-white/20">
-                    <a
-                        href="#"
-                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
-                        >Notifications</a
-                    >
-                </li>
-
                 <li class="border-b border-white/20">
                     <a
                         href="/application/profil/securite"
                         class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
-                        >Sécurité et connexion</a
                     >
+                        Sécurité et connexion
+                    </a>
                 </li>
-
                 <li>
                     <a
                         href="/application/profil/abonnement"
                         class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
-                        >Abonnement</a
                     >
+                        Abonnement
+                    </a>
                 </li>
             </ul>
         </div>
 
-        <!-- ================= ASSISTANCE ================= -->
         <div class="px-6 mt-8 mb-8 max-w-md mx-auto">
             <h2 class="text-lg mb-2 text-slate-900">Assistance</h2>
             <ul
@@ -125,38 +135,96 @@ const imageBanniereAffichee =
                     <a
                         href="/application/profil/contact"
                         class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
-                        >Contact</a
                     >
+                        Contact
+                    </a>
                 </li>
                 <li>
                     <a
                         href="/application/profil/resiliation"
                         class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
-                        >Résilier mon abonnement</a
                     >
+                        Résilier mon abonnement
+                    </a>
                 </li>
             </ul>
         </div>
     </div>
 </LayoutFooter>
 
-<!-- ================= SCRIPT ================= -->
-<!-- ================= SCRIPT ================= -->
 <script>
     import PocketBase from "pocketbase";
-    // Remplace par la vraie URL de ton serveur si elle est différente
     const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
         // 🔒 1. SÉCURITÉ : Vérification de la connexion
-        // Si l'utilisateur n'est pas connecté, on le renvoie vers la page de connexion
         if (!pb.authStore.isValid) {
             window.location.href = "/application/profil/connexion";
-            return; // On arrête l'exécution du script ici
+            return;
         }
 
-        // 🎨 2. AFFICHAGE DE LA BANNIÈRE (Ton code existant)
-        // Ce code ne s'exécutera que si l'utilisateur est bien connecté
+        // 🧑‍💻 2. CHARGEMENT DU VRAI PROFIL UTILISATEUR
+        try {
+            const userId = pb.authStore.model?.id;
+            // On cherche le profil relié au compte connecté
+            const monProfil = await pb
+                .collection("utilisateur")
+                .getFirstListItem(`compte_id="${userId}"`);
+
+            // Récupération des éléments HTML
+            const elementNom = document.getElementById("profil-nom");
+            const elementPseudo = document.getElementById("profil-pseudo");
+            const conteneurImage = document.getElementById(
+                "profil-image-container",
+            );
+
+            // Mise à jour du Nom / Prénom
+            if (elementNom) {
+                const prenom = monProfil.prenom_utilisateur || "";
+                const nom = monProfil.nom_utilisateur || "";
+                elementNom.textContent =
+                    `${prenom} ${nom}`.trim() || "Utilisateur";
+                elementNom.classList.remove("opacity-0"); // Fait apparaître le texte
+            }
+
+            // Mise à jour du Pseudo
+            if (elementPseudo) {
+                elementPseudo.textContent = `@${monProfil.pseudo || "pseudo"}`;
+                elementPseudo.classList.remove("opacity-0"); // Fait apparaître le texte
+            }
+
+            // Mise à jour de l'Image de profil
+            if (conteneurImage) {
+                const imgTag = conteneurImage.querySelector("img");
+                if (imgTag) {
+                    if (monProfil.photo_profil) {
+                        imgTag.src = pb.files.getUrl(
+                            monProfil,
+                            monProfil.photo_profil,
+                        );
+                    } else {
+                        // Image transparente si pas de photo
+                        imgTag.src =
+                            "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+                    }
+                }
+                conteneurImage.classList.remove("opacity-0"); // Fait apparaître l'image
+            }
+        } catch (error) {
+            console.error("Erreur lors de la récupération du profil :", error);
+            // En cas d'erreur, on affiche quand même les blocs (pour ne pas bloquer l'écran)
+            document
+                .getElementById("profil-nom")
+                ?.classList.remove("opacity-0");
+            document
+                .getElementById("profil-pseudo")
+                ?.classList.remove("opacity-0");
+            document
+                .getElementById("profil-image-container")
+                ?.classList.remove("opacity-0");
+        }
+
+        // 🎨 3. AFFICHAGE DE LA BANNIÈRE (Ton code existant)
         const heroImg = document.getElementById(
             "main-hero-img",
         ) as HTMLImageElement;
