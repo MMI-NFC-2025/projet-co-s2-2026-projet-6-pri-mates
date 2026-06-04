@@ -1,18 +1,22 @@
 ---
-import LayoutFooter from "../../../layouts/Layout-footer.astro";
+import LayoutAppli from "../../../layouts/Layout-appli.astro";
+import { getPseudo } from "../../../../backend/backend.mjs";
+
+const Utilisateur = await getPseudo();
 ---
 
-<LayoutFooter>
-    <div class="bg-[#f8f5f0] min-h-screen pb-32 font-sans px-6 pt-8 md:pt-12">
-        <!-- En-tête avec bouton retour -->
-        <div class="flex items-center mb-8 max-w-2xl mx-auto">
+<LayoutAppli>
+    <div
+        class="bg-[#f8f5f0] min-h-screen flex flex-col pt-12 px-6 pb-20 items-center"
+    >
+        <div class="w-full max-w-md flex items-center mb-6">
             <a
                 href="/application/profil"
-                class="text-slate-900 bg-white p-1.5 rounded-full shadow-sm hover:bg-slate-100 transition-colors"
+                class="text-slate-900 bg-white p-2.5 rounded-full shadow-sm hover:bg-slate-50 transition-colors"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
+                    class="h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -24,210 +28,140 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                         d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
             </a>
-        </div>
-
-        <!-- Conteneur Principal -->
-        <div
-            class="max-w-2xl mx-auto bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-slate-100"
-        >
-            <h1
-                class="text-2xl md:text-3xl font-medium text-slate-900 mb-8 leading-tight"
-            >
-                Contactez-nous en cas de problème
+            <h1 class="text-2xl font-bold ml-4 text-slate-900">
+                Nous Contacter
             </h1>
-
-            <form id="form-contact" class="flex flex-col gap-6">
-                <!-- Grille Prénom / Nom -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="flex flex-col gap-2">
-                        <label
-                            for="prenom"
-                            class="text-sm font-medium text-slate-700 ml-1"
-                            >Prénom</label
-                        >
-                        <!-- Valeur vide par défaut -->
-                        <input
-                            type="text"
-                            id="prenom"
-                            required
-                            style="padding-left: 16px;"
-                            class="w-full bg-white border border-slate-300 rounded-xl pr-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
-                        />
-                    </div>
-
-                    <div class="flex flex-col gap-2">
-                        <label
-                            for="nom"
-                            class="text-sm font-medium text-slate-700 ml-1"
-                            >Nom</label
-                        >
-                        <!-- Valeur vide par défaut -->
-                        <input
-                            type="text"
-                            id="nom"
-                            required
-                            style="padding-left: 16px;"
-                            class="w-full bg-white border border-slate-300 rounded-xl pr-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
-                        />
-                    </div>
-                </div>
-
-                <!-- Grille Téléphone / E-mail -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="flex flex-col gap-2">
-                        <label
-                            for="telephone"
-                            class="text-sm font-medium text-slate-700 ml-1"
-                            >Téléphone</label
-                        >
-                        <input
-                            type="tel"
-                            id="telephone"
-                            style="padding-left: 16px;"
-                            class="w-full bg-white border border-slate-300 rounded-xl pr-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
-                        />
-                    </div>
-
-                    <div class="flex flex-col gap-2">
-                        <label
-                            for="email"
-                            class="text-sm font-medium text-slate-700 ml-1"
-                            >E-mail</label
-                        >
-                        <input
-                            type="email"
-                            id="email"
-                            required
-                            style="padding-left: 16px;"
-                            class="w-full bg-slate-50 border border-slate-200 text-slate-500 rounded-xl pr-4 py-3 outline-none cursor-not-allowed"
-                            readonly
-                        />
-                    </div>
-                </div>
-
-                <!-- Objet -->
-                <div class="flex flex-col gap-2">
-                    <label
-                        for="objet"
-                        class="text-sm font-medium text-slate-700 ml-1"
-                        >Objet</label
-                    >
-                    <input
-                        type="text"
-                        id="objet"
-                        required
-                        style="padding-left: 16px;"
-                        class="w-full bg-white border border-slate-300 rounded-xl pr-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
-                    />
-                </div>
-
-                <!-- Message -->
-                <div class="flex flex-col gap-2">
-                    <label
-                        for="message"
-                        class="text-sm font-medium text-slate-700 ml-1"
-                        >Message</label
-                    >
-                    <textarea
-                        id="message"
-                        required
-                        rows="5"
-                        style="padding-left: 16px; padding-top: 12px;"
-                        class="w-full bg-white border border-slate-300 rounded-xl pr-4 pb-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all resize-none"
-                    ></textarea>
-                </div>
-
-                <!-- Bouton Envoyer -->
-                <div class="mt-4 flex justify-center">
-                    <button
-                        type="submit"
-                        id="btn-submit"
-                        class="bg-[#a40d1a] hover:bg-red-800 text-white px-12 py-3 rounded-xl font-medium shadow-md transition-all active:scale-95"
-                    >
-                        Envoyer
-                    </button>
-                </div>
-            </form>
         </div>
+
+        <p class="text-slate-500 font-medium text-center mb-8 max-w-sm">
+            Un bug ? Une suggestion pour Tacita ? Écris-nous directement via ce
+            formulaire !
+        </p>
+
+        <form
+            id="form-contact"
+            class="bg-white p-8 rounded-3xl shadow-sm border-2 border-slate-100 w-full max-w-md flex flex-col gap-6"
+        >
+            <div class="flex flex-col gap-2">
+                <label for="contact-nom" class="font-bold text-slate-700"
+                    >Ton Pseudo</label
+                >
+                <input
+                    type="text"
+                    id="contact-nom"
+                    value={Utilisateur?.pseudo || ""}
+                    class="p-4 rounded-xl border-2 border-slate-200 focus:border-red-400 outline-none transition-colors font-semibold text-slate-800"
+                    required
+                />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label for="contact-email" class="font-bold text-slate-700"
+                    >Ton Email</label
+                >
+                <input
+                    type="email"
+                    id="contact-email"
+                    value={Utilisateur?.email || ""}
+                    class="p-4 rounded-xl border-2 border-slate-200 focus:border-red-400 outline-none transition-colors font-semibold text-slate-800"
+                    required
+                />
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label for="contact-message" class="font-bold text-slate-700"
+                    >Ton Message</label
+                >
+                <textarea
+                    id="contact-message"
+                    rows="5"
+                    class="p-4 rounded-xl border-2 border-slate-200 focus:border-red-400 outline-none resize-none transition-colors font-medium text-slate-700"
+                    placeholder="Dis-nous tout..."
+                    required></textarea>
+            </div>
+
+            <button
+                type="submit"
+                id="btn-envoyer"
+                class="mt-4 bg-slate-900 hover:bg-slate-800 text-white font-bold text-lg py-4 rounded-xl transition-all shadow-md"
+            >
+                Envoyer le message
+            </button>
+
+            <p
+                id="message-contact-info"
+                class="text-center font-bold text-sm hidden"
+            >
+            </p>
+        </form>
     </div>
-</LayoutFooter>
+</LayoutAppli>
 
 <script>
     import PocketBase from "pocketbase";
-    const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
 
-    document.addEventListener("DOMContentLoaded", async () => {
-        // 🔒 Sécurité
-        if (!pb.authStore.isValid) {
-            window.location.href = "/application/profil/connexion";
-            return;
-        }
+    function initialiserPageContact() {
+        const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr");
+        const form = document.getElementById("form-contact");
+        const btn = document.getElementById("btn-envoyer");
+        const msg = document.getElementById("message-contact-info");
 
-        const prenomInput = document.getElementById(
-            "prenom",
-        ) as HTMLInputElement;
-        const nomInput = document.getElementById("nom") as HTMLInputElement;
-        const emailInput = document.getElementById("email") as HTMLInputElement;
+        if (!form || !btn || !msg) return;
 
-        // 🧑‍💻 1. PRÉ-REMPLISSAGE DES DONNÉES DU VRAI UTILISATEUR
-        try {
-            const userId = pb.authStore.model?.id;
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
 
-            // On pré-remplit l'e-mail directement avec les infos de connexion
-            if (emailInput && pb.authStore.model?.email) {
-                emailInput.value = pb.authStore.model.email;
+            const nom = (
+                document.getElementById("contact-nom") as HTMLInputElement
+            ).value;
+            const email = (
+                document.getElementById("contact-email") as HTMLInputElement
+            ).value;
+            const message = (
+                document.getElementById(
+                    "contact-message",
+                ) as HTMLTextAreaElement
+            ).value;
+
+            btn.textContent = "Envoi en cours...";
+            btn.classList.add("opacity-50", "pointer-events-none");
+
+            try {
+                const data = {
+                    nom: nom,
+                    email: email,
+                    message: message,
+                    utilisateur_id: pb.authStore.model
+                        ? pb.authStore.model.id
+                        : "Non connecté",
+                };
+
+                await pb.collection("messages_contact").create(data);
+
+                msg.textContent = "Message envoyé avec succès ! 🚀";
+                msg.className =
+                    "text-center font-bold text-sm block mt-2 text-green-500";
+
+                (
+                    document.getElementById(
+                        "contact-message",
+                    ) as HTMLTextAreaElement
+                ).value = "";
+
+                btn.textContent = "Envoyer un autre message";
+                btn.classList.remove("opacity-50", "pointer-events-none");
+            } catch (error) {
+                console.error(error);
+                msg.textContent = "Erreur lors de l'envoi. Réessaie plus tard.";
+                msg.className =
+                    "text-center font-bold text-sm block mt-2 text-red-500";
+
+                btn.textContent = "Envoyer le message";
+                btn.classList.remove("opacity-50", "pointer-events-none");
             }
-
-            // On va chercher le profil pour le Nom et Prénom
-            const monProfil = await pb
-                .collection("utilisateur")
-                .getFirstListItem(`compte_id="${userId}"`);
-
-            if (prenomInput)
-                prenomInput.value = monProfil.prenom_utilisateur || "";
-            if (nomInput) nomInput.value = monProfil.nom_utilisateur || "";
-        } catch (error) {
-            console.error(
-                "Erreur lors de la récupération du profil pour le contact :",
-                error,
-            );
-        }
-
-        // ✉️ 2. GESTION DE L'ENVOI DU FORMULAIRE
-        const formContact = document.getElementById("form-contact");
-        const btnSubmit = document.getElementById("btn-submit");
-
-        formContact?.addEventListener("submit", (e) => {
-            e.preventDefault(); // Empêche la page de recharger
-
-            if (btnSubmit) btnSubmit.textContent = "Envoi en cours...";
-
-            // Simulation d'un envoi (Tu pourras relier ça à PocketBase ou un service d'e-mail plus tard)
-            setTimeout(async () => {
-                alert("Ton message a bien été envoyé à l'équipe !");
-
-                // On vide le formulaire (le message et l'objet)
-                (formContact as HTMLFormElement).reset();
-
-                // On remet les infos de base (Nom, Prénom, Email) qui ont été effacées par le reset()
-                try {
-                    if (emailInput && pb.authStore.model?.email)
-                        emailInput.value = pb.authStore.model.email;
-                    const monProfil = await pb
-                        .collection("utilisateur")
-                        .getFirstListItem(
-                            `compte_id="${pb.authStore.model?.id}"`,
-                        );
-                    if (prenomInput)
-                        prenomInput.value = monProfil.prenom_utilisateur || "";
-                    if (nomInput)
-                        nomInput.value = monProfil.nom_utilisateur || "";
-                } catch (e) {
-                    console.error(e);
-                }
-
-                if (btnSubmit) btnSubmit.textContent = "Envoyer";
-            }, 800);
         });
-    });
+    }
+
+    document.addEventListener("DOMContentLoaded", initialiserPageContact);
+    document.addEventListener("astro:page-load", initialiserPageContact);
 </script>

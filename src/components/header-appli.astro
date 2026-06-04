@@ -8,89 +8,81 @@ import {
 
 const Utilisateur = await getPseudo();
 const stats = getProgressionUtilisateur(Utilisateur);
----
 
+// SÉCURITÉ : On vérifie s'il a une photo ou une image
+const aUnePhoto = Utilisateur?.image?.[0] || Utilisateur?.photo_profil;
+---
 
 <header
     id="header-banniere"
-    class="relative bg-red-100 pb-4 pt-10 bg-cover bg-center transition-all duration-300"
+    class="relative bg-red-100 pb-6 pt-10 px-6 bg-cover bg-center transition-all duration-300"
 >
-
     <div
         id="header-overlay"
         class="absolute inset-0 z-0 transition-all duration-300 pointer-events-none"
     >
     </div>
 
-  
-    <div class="relative z-10 flex gap-4 items-center">
-        
-        <h3
-            id="header-nom"
-            class="m-2 text-slate-900 transition-all duration-300 opacity-0"
-        >
-            {Utilisateur?.pseudo}
-        </h3>
+    <div class="relative z-10 flex justify-between items-center w-full">
+        <div class="flex flex-col gap-1">
+            <h3
+                id="header-nom"
+                class="text-2xl font-bold text-slate-900 transition-all duration-300 opacity-0 drop-shadow-sm"
+            >
+                {Utilisateur?.pseudo || "Nouveau Joueur"}
+            </h3>
 
-        <p
-            id="header-niveau"
-            class="font-body text-tinyd p-2 text-slate-800 transition-all duration-300 opacity-0"
-        >
-            Niveau {stats.niveau} | Jour {stats.jour}
-        </p>
+            <p
+                id="header-niveau"
+                class="font-body text-sm font-semibold text-slate-800 transition-all duration-300 opacity-0 drop-shadow-sm"
+            >
+                Niveau {stats.niveau || 1} | Jour {stats.jour || 1}
+            </p>
+        </div>
 
         <div
             id="header-img-container"
             class="opacity-0 transition-opacity duration-300"
         >
-            <PbImage
-                record={Utilisateur}
-                recordImage={Utilisateur?.image?.[0] ||
-                    Utilisateur?.photo_profil ||
-                    ""}
-                class="outline-2 outline-offset-2 outline-solid outline-white h-25 w-25 rounded-full object-cover m-2 shrink-0"
-            />
+            {
+                aUnePhoto ? (
+                    <PbImage
+                        record={Utilisateur}
+                        recordImage={aUnePhoto}
+                        class="outline outline-2 outline-white h-16 w-16 rounded-full object-cover shrink-0 shadow-lg bg-white"
+                    />
+                ) : (
+                    <div class="outline outline-2 outline-white h-16 w-16 rounded-full shrink-0 shadow-lg bg-slate-200 flex items-center justify-center">
+                        <span class="text-2xl font-bold text-slate-500 uppercase">
+                            {(Utilisateur?.pseudo || "J")[0]}
+                        </span>
+                    </div>
+                )
+            }
         </div>
     </div>
 </header>
 
 <script>
-    import PocketBase from "pocketbase";
-    const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
-
-    document.addEventListener("DOMContentLoaded", async () => {
+    function initialiserHeader() {
         const header = document.getElementById("header-banniere");
         const overlay = document.getElementById("header-overlay");
         const texteNom = document.getElementById("header-nom");
         const texteNiveau = document.getElementById("header-niveau");
         const imgContainer = document.getElementById("header-img-container");
 
-
-        if (pb.authStore.isValid) {
-            try {
-
-                const userId = pb.authStore.model?.id;
-                const monProfil = await pb
-                    .collection("utilisateur")
-                    .getFirstListItem(`compte_id="${userId}"`);
-
-     
         const savedBanner = localStorage.getItem("user_banner_pref");
 
         if (savedBanner && header && texteNom && texteNiveau && overlay) {
-            
             header.style.backgroundImage = `url('${savedBanner}')`;
 
-            
             const imgPath = savedBanner.toLowerCase();
 
-    
             if (
                 imgPath.includes("ciel") ||
                 imgPath.includes("espace") ||
                 imgPath.includes("ville")
             ) {
-        
                 texteNom.classList.replace("text-slate-900", "text-white");
                 texteNiveau.classList.replace(
                     "text-slate-800",
@@ -99,7 +91,6 @@ const stats = getProgressionUtilisateur(Utilisateur);
                 overlay.className =
                     "absolute inset-0 z-0 bg-black/40 transition-all duration-300 pointer-events-none";
             } else if (imgPath.includes("vote")) {
-                
                 texteNom.classList.add("text-slate-900");
                 texteNom.classList.remove("text-white");
                 texteNiveau.classList.add("text-slate-800");
@@ -108,5 +99,13 @@ const stats = getProgressionUtilisateur(Utilisateur);
                     "absolute inset-0 z-0 bg-white/40 transition-all duration-300 pointer-events-none";
             }
         }
-    });
+
+        // Rendre visible à la fin (contourne le bug du nouveau compte)
+        if (texteNom) texteNom.classList.remove("opacity-0");
+        if (texteNiveau) texteNiveau.classList.remove("opacity-0");
+        if (imgContainer) imgContainer.classList.remove("opacity-0");
+    }
+
+    document.addEventListener("DOMContentLoaded", initialiserHeader);
+    document.addEventListener("astro:page-load", initialiserHeader);
 </script>
