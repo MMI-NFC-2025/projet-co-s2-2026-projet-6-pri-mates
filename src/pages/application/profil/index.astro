@@ -157,43 +157,36 @@ const imageBanniereAffichee =
     const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
 
     document.addEventListener("DOMContentLoaded", async () => {
-        // 🔒 1. SÉCURITÉ : Vérification de la connexion
         if (!pb.authStore.isValid) {
             window.location.href = "/application/profil/connexion";
             return;
         }
 
-        // 🧑‍💻 2. CHARGEMENT DU VRAI PROFIL UTILISATEUR
         try {
             const userId = pb.authStore.model?.id;
-            // On cherche le profil relié au compte connecté
             const monProfil = await pb
                 .collection("utilisateur")
                 .getFirstListItem(`compte_id="${userId}"`);
 
-            // Récupération des éléments HTML
             const elementNom = document.getElementById("profil-nom");
             const elementPseudo = document.getElementById("profil-pseudo");
             const conteneurImage = document.getElementById(
                 "profil-image-container",
             );
 
-            // Mise à jour du Nom / Prénom
             if (elementNom) {
                 const prenom = monProfil.prenom_utilisateur || "";
                 const nom = monProfil.nom_utilisateur || "";
                 elementNom.textContent =
                     `${prenom} ${nom}`.trim() || "Utilisateur";
-                elementNom.classList.remove("opacity-0"); // Fait apparaître le texte
+                elementNom.classList.remove("opacity-0");
             }
 
-            // Mise à jour du Pseudo
             if (elementPseudo) {
                 elementPseudo.textContent = `@${monProfil.pseudo || "pseudo"}`;
-                elementPseudo.classList.remove("opacity-0"); // Fait apparaître le texte
+                elementPseudo.classList.remove("opacity-0");
             }
 
-            // Mise à jour de l'Image de profil
             if (conteneurImage) {
                 const imgTag = conteneurImage.querySelector("img");
                 if (imgTag) {
@@ -203,16 +196,15 @@ const imageBanniereAffichee =
                             monProfil.photo_profil,
                         );
                     } else {
-                        // Image transparente si pas de photo
                         imgTag.src =
                             "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
                     }
                 }
-                conteneurImage.classList.remove("opacity-0"); // Fait apparaître l'image
+                conteneurImage.classList.remove("opacity-0");
             }
         } catch (error) {
             console.error("Erreur lors de la récupération du profil :", error);
-            // En cas d'erreur, on affiche quand même les blocs (pour ne pas bloquer l'écran)
+
             document
                 .getElementById("profil-nom")
                 ?.classList.remove("opacity-0");
@@ -224,7 +216,6 @@ const imageBanniereAffichee =
                 ?.classList.remove("opacity-0");
         }
 
-        // 🎨 3. AFFICHAGE DE LA BANNIÈRE (Ton code existant)
         const heroImg = document.getElementById(
             "main-hero-img",
         ) as HTMLImageElement;

@@ -1,37 +1,35 @@
 ﻿---
-const { count = 3, themeActuel } = Astro.props;
+const { count = 3 } = Astro.props;
 import { getjeux } from "../../backend/backend.mjs";
-const Jeux = (await getjeux()) as any[];
+const Jeux = await getjeux();
 ---
 
 <div>
     <a
-        href={`/application/lecons?theme=${themeActuel}`}
-        class="block bg-red-300 text-white rounded-md mx-6 my-6 p-4 no-underline hover:opacity-90 transition-opacity"
+        href="/application/lecons"
+        class="block bg-red-300 text-white rounded-md mx-6 my-6 p-4 no-underline hover:opacity-90"
     >
-        <div class="text-h4d text-center font-bold text-2xl">Leçon</div>
+        <div class="text-h4d text-center">Leçon</div>
     </a>
 
     <div id="liste-jeux">
         {
-            Jeux.slice(0, count).map((jeu) => (
+            Jeux.slice(0, count).map((jeu, i) => (
                 <div
                     class="jeu-card bg-red-300 text-white rounded-md mx-6 my-6 p-4 cursor-pointer transition-all border-4 border-transparent hover:bg-red-400"
-                    data-jeu-nom={jeu.jeu}
+                    data-jeu-nom={jeu.jeu ? String(jeu.jeu).toLowerCase() : ""}
+                    key={jeu.id}
                     role="button"
                     tabindex="0"
                 >
-                    <div class="text-h4d text-center font-bold text-2xl pointer-events-none">
+                    <div class="text-h4d text-center pointer-events-none">
                         {jeu.jeu}
                     </div>
-
                     <details class="mt-3">
-                        <summary class="cursor-pointer border border-white rounded-full w-10 h-10 mx-auto flex items-center justify-center bg-white text-red-300 font-bold text-xl">
+                        <summary class="cursor-pointer border border-white rounded-full w-10 h-10 mx-auto flex items-center justify-center bg-white text-red-300 font-bold">
                             +
                         </summary>
-                        <div class="text-tinyd mt-3 text-center">
-                            {jeu.description}
-                        </div>
+                        <div class="text-tinyd mt-3">{jeu.description}</div>
                     </details>
                 </div>
             ))
@@ -40,9 +38,8 @@ const Jeux = (await getjeux()) as any[];
 
     <div class="flex justify-center mt-6">
         <a
-            href="#"
+            href="/application/difficultes"
             id="bouton-jouer"
-            data-theme={themeActuel}
             class="font-body bg-gray-400 text-white text-body3d py-4 px-12 rounded-lg cursor-not-allowed pointer-events-none transition-colors duration-300"
         >
             Jouer
@@ -52,22 +49,14 @@ const Jeux = (await getjeux()) as any[];
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const cards = Array.from(
-            document.querySelectorAll(".jeu-card"),
-        ) as HTMLElement[];
-        const boutonJouer = document.getElementById(
-            "bouton-jouer",
-        ) as HTMLAnchorElement;
+        const cards = Array.from(document.querySelectorAll(".jeu-card"));
+        const boutonJouer = document.getElementById("bouton-jouer");
 
-        const theme = boutonJouer.getAttribute("data-theme");
+        let selectedGameName = null;
 
-        const selectCard = (card: HTMLElement) => {
-            let nomDuJeu =
-                card.getAttribute("data-jeu-nom")?.toLowerCase().trim() || "";
+        const selectCard = (card) => {
 
-            if (nomDuJeu === "quiz") {
-                nomDuJeu = "quizz";
-            }
+            selectedGameName = card.getAttribute("data-jeu-nom");
 
             cards.forEach((c) => {
                 const selected = c === card;
@@ -83,16 +72,15 @@ const Jeux = (await getjeux()) as any[];
             );
             boutonJouer.classList.add("bg-red-800", "hover:bg-rose-950");
 
-            boutonJouer.href = `/application/jeux/difficultes?jeu=${nomDuJeu}&theme=${theme}`;
+            boutonJouer.href = `/application/difficultes?jeu=${selectedGameName}`;
         };
 
-        cards.forEach((card: HTMLElement) => {
-            card.addEventListener("click", (event: any) => {
-                const target = event.target as HTMLElement | null;
-                if (target?.closest("summary")) return;
+        cards.forEach((card) => {
+            card.addEventListener("click", (event) => {
+                if (event.target.closest("summary")) return;
                 selectCard(card);
             });
-            card.addEventListener("keydown", (event: any) => {
+            card.addEventListener("keydown", (event) => {
                 if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
                     selectCard(card);

@@ -2,7 +2,8 @@
 import LayoutFooter from "../../../layouts/Layout-footer.astro";
 ---
 
-<LayoutFooter titre="Connexion - Tacita">
+
+<LayoutFooter title="Connexion - Tacita">
     <div
         class="bg-[#f8f5f0] min-h-screen flex flex-col justify-center px-6 font-sans"
     >
@@ -16,8 +17,8 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                 </p>
             </div>
 
+
             <form id="form-connexion" class="flex flex-col gap-5">
-                <!-- Champ Email -->
                 <div class="flex flex-col gap-1">
                     <label
                         for="email"
@@ -33,7 +34,7 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                     />
                 </div>
 
-                <!-- Champ Mot de passe -->
+
                 <div class="flex flex-col gap-1">
                     <label
                         for="password"
@@ -49,7 +50,7 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                     />
                 </div>
 
-                <!-- Message d'erreur caché par défaut -->
+
                 <p
                     id="erreur-msg"
                     class="text-red-600 text-sm text-center hidden"
@@ -57,7 +58,7 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                     Identifiants incorrects. Veuillez réessayer.
                 </p>
 
-                <!-- Bouton de connexion -->
+
                 <button
                     type="submit"
                     id="btn-submit"
@@ -66,6 +67,7 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                     <span id="btn-text">Se connecter</span>
                 </button>
             </form>
+
 
             <div class="mt-6 text-center text-sm text-slate-600">
                 Pas encore de compte ? <a
@@ -78,21 +80,23 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
     </div>
 </LayoutFooter>
 
+
 <script>
     import PocketBase from "pocketbase";
     const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
+
 
     document.addEventListener("DOMContentLoaded", () => {
         const form = document.getElementById("form-connexion");
         const erreurMsg = document.getElementById("erreur-msg");
         const btnText = document.getElementById("btn-text");
 
-        form?.addEventListener("submit", async (e) => {
-            e.preventDefault(); // Empêche le rechargement de la page
 
-            // On cache le message d'erreur et on change le texte du bouton
+        form?.addEventListener("submit", async (e) => {
+            e.preventDefault();
             if (erreurMsg) erreurMsg.classList.add("hidden");
             if (btnText) btnText.textContent = "Connexion en cours...";
+
 
             const email = (document.getElementById("email") as HTMLInputElement)
                 .value;
@@ -100,23 +104,26 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                 document.getElementById("password") as HTMLInputElement
             ).value;
 
+
             try {
-                // 🔐 La vraie fonction de connexion de PocketBase
                 const authData = await pb
                     .collection("users")
                     .authWithPassword(email, password);
 
+
                 console.log("Connecté avec succès :", authData);
 
-                // Redirection vers le profil !
+
                 window.location.href = "/application/profil";
             } catch (error) {
                 console.error("Erreur de connexion :", error);
 
-                // On affiche le message d'erreur
+
                 if (erreurMsg) erreurMsg.classList.remove("hidden");
                 if (btnText) btnText.textContent = "Se connecter";
             }
         });
     });
 </script>
+
+
