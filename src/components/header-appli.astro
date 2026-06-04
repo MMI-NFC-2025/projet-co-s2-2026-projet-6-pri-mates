@@ -1,27 +1,124 @@
 ---
 import "../style/global.css";
-import PbImage from "../components/PbImage.astro";
-import {
-    getUtilisateur,
-    getProgressionUtilisateur,
-} from "../../backend/backend.mjs";
-
-const Utilisateur = await getUtilisateur();
-const stats = getProgressionUtilisateur(Utilisateur);
 ---
 
-<header class="bg-red-100 pb-4 pt-10">
-    <div class="flex gap-4 items-center">
-        <h3 class="m-2">{Utilisateur.pseudo}</h3>
-        <p class="font-body text-tinyd p-2">
-            Niveau {stats.niveau} | Jour {stats.jour}
-        </p>
-        <PbImage
-            record={Utilisateur}
-            recordImage={Utilisateur?.image?.[0] ||
-                Utilisateur?.photo_profil ||
-                ""}
-            class="outline-2 outline-offset-2 outline-solid outline-white h-25 w-25 rounded-full object-cover m-2"
-        />
+<header
+    id="header-banniere"
+    class="relative bg-red-100 pb-6 pt-10 px-6 bg-cover bg-center transition-all duration-300"
+>
+    <div
+        id="header-overlay"
+        class="absolute inset-0 z-0 transition-all duration-300 pointer-events-none"
+    >
+    </div>
+
+    <div class="relative z-10 flex justify-between items-center w-full">
+        <div class="flex flex-col gap-1">
+            <h3
+                id="header-nom"
+                class="text-2xl font-bold text-slate-900 transition-all duration-300 drop-shadow-sm"
+            >
+                Nouveau Joueur
+            </h3>
+
+            <p
+                id="header-niveau"
+                class="font-body text-sm font-semibold text-slate-800 transition-all duration-300 drop-shadow-sm"
+            >
+                Niveau 1 | Jour 1
+            </p>
+        </div>
+
+        <div
+            id="header-img-container"
+            class="hidden transition-opacity duration-300"
+        >
+            <img
+                id="header-avatar"
+                class="outline outline-2 outline-white h-16 w-16 rounded-full object-cover shrink-0 shadow-lg bg-white"
+                alt="Photo de profil"
+            />
+        </div>
     </div>
 </header>
+
+<script>
+    import PocketBase from "pocketbase";
+
+    const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
+
+    function initialiserHeader() {
+        const header = document.getElementById("header-banniere");
+        const overlay = document.getElementById("header-overlay");
+        const texteNom = document.getElementById("header-nom");
+        const texteNiveau = document.getElementById("header-niveau");
+        const imgContainer = document.getElementById("header-img-container");
+        const avatar = document.getElementById(
+            "header-avatar",
+        ) as HTMLImageElement | null;
+
+        const savedBanner = localStorage.getItem("user_banner_pref");
+
+        if (savedBanner && header && texteNom && texteNiveau && overlay) {
+            header.style.backgroundImage = `url('${savedBanner}')`;
+
+            const imgPath = savedBanner.toLowerCase();
+
+            if (
+                imgPath.includes("ciel") ||
+                imgPath.includes("espace") ||
+                imgPath.includes("ville")
+            ) {
+                texteNom.classList.replace("text-slate-900", "text-white");
+                texteNiveau.classList.replace(
+                    "text-slate-800",
+                    "text-slate-100",
+                );
+                overlay.className =
+                    "absolute inset-0 z-0 bg-black/40 transition-all duration-300 pointer-events-none";
+            } else if (imgPath.includes("vote")) {
+                texteNom.classList.add("text-slate-900");
+                texteNom.classList.remove("text-white");
+                texteNiveau.classList.add("text-slate-800");
+                texteNiveau.classList.remove("text-slate-100");
+                overlay.className =
+                    "absolute inset-0 z-0 bg-white/40 transition-all duration-300 pointer-events-none";
+            }
+        }
+
+        if (!pb.authStore.isValid || !imgContainer || !avatar) {
+            return;
+        }
+
+        const userId = pb.authStore.model?.id;
+        if (!userId) {
+            return;
+        }
+
+        pb.collection("utilisateur")
+            .getFirstListItem(`compte_id="${userId}"`)
+            .then((monProfil) => {
+                if (texteNom) {
+                    texteNom.textContent = monProfil.pseudo || "Nouveau Joueur";
+                }
+
+                if (texteNiveau) {
+                    const niveau = monProfil.Niveau || 1;
+                    const jour = monProfil.Jour || 1;
+                    texteNiveau.textContent = `Niveau ${niveau} | Jour ${jour}`;
+                }
+
+                const photo = monProfil.photo_profil || monProfil.image?.[0];
+                if (photo) {
+                    avatar.src = pb.files.getUrl(monProfil, photo);
+                    imgContainer.classList.remove("hidden");
+                }
+            })
+            .catch(() => {
+                // Aucun profil ou aucune photo: on garde l'espace vide.
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", initialiserHeader);
+    document.addEventListener("astro:page-load", initialiserHeader);
+</script>

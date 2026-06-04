@@ -1,0 +1,227 @@
+---
+// 1. Imports nécessaires
+import PbImage from "../../../components/PbImage.astro";
+import { getUtilisateur } from "../../../../backend/backend.mjs";
+import LayoutFooter from "../../../layouts/Layout-footer.astro";
+
+import imgVille from "../../../assets/image/bannière_ville.webp";
+import imgEspace from "../../../assets/image/bannière_espace.webp";
+import imgCiel from "../../../assets/image/bannière_ciel_1.webp";
+import imgVote from "../../../assets/image/bannière_vote.webp";
+
+const Utilisateur = await getUtilisateur();
+
+// On crée une correspondance entre l'ID en base et l'image importée
+const bannièresImages = {
+    ville: imgVille.src,
+    espace: imgEspace.src,
+    ciel: imgCiel.src,
+    vote: imgVote.src,
+};
+
+const banniereCle = Utilisateur?.banniere as
+    | keyof typeof bannièresImages
+    | undefined;
+
+// On définit l'image à afficher (soit celle en base, soit ville par défaut)
+const imageBanniereAffichee =
+    banniereCle && bannièresImages[banniereCle]
+        ? bannièresImages[banniereCle]
+        : imgVille.src;
+---
+
+<LayoutFooter>
+    <div class="bg-[#f8f5f0] min-h-screen pb-25 font-sans">
+        <div class="h-48 w-full bg-slate-800 relative">
+            <img
+                id="main-hero-img"
+                src={imageBanniereAffichee}
+                alt="Bannière de profil"
+                class="w-full h-full object-cover"
+            />
+        </div>
+
+        <div class="flex flex-col items-center -mt-14 px-4 relative z-10">
+            <div
+                id="profil-image-container"
+                class="opacity-0 transition-opacity duration-300 relative z-10"
+            >
+                <PbImage
+                    record={Utilisateur}
+                    recordImage={Utilisateur?.image?.[0] ||
+                        Utilisateur?.photo_profil ||
+                        ""}
+                    class="border-4 border-white h-28 w-28 rounded-full object-cover shadow-sm bg-slate-200"
+                />
+            </div>
+
+            <h1
+                id="profil-nom"
+                class="text-2xl font-bold mt-2 text-slate-900 opacity-0 transition-opacity duration-300"
+            >
+                {Utilisateur?.prenom_utilisateur}
+                {Utilisateur?.nom_utilisateur}
+            </h1>
+            <p
+                id="profil-pseudo"
+                class="text-slate-800 text-lg opacity-0 transition-opacity duration-300"
+            >
+                @{Utilisateur?.pseudo}
+            </p>
+
+            <a
+                href="/application/profil/modifier"
+                class="mt-4 bg-[#a40d1a] hover:bg-red-800 text-white px-6 py-2.5 rounded-lg font-medium shadow-md active:scale-95 transition-all text-center inline-block"
+            >
+                Modifier le profil
+            </a>
+        </div>
+
+        <div class="px-6 mt-10 max-w-md mx-auto">
+            <h2 class="text-lg mb-2 text-slate-900">Paramètres</h2>
+            <ul
+                class="bg-[#4a0815] text-white rounded-xl overflow-hidden shadow-md"
+            >
+                <li class="border-b border-white/20">
+                    <a
+                        href="/application/profil/informations"
+                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
+                    >
+                        Informations personnelles
+                    </a>
+                </li>
+                <li class="border-b border-white/20">
+                    <a
+                        href="/application/profil/preferences"
+                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
+                    >
+                        Préférences
+                    </a>
+                </li>
+                <li class="border-b border-white/20">
+                    <a
+                        href="#"
+                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
+                    >
+                        Notifications
+                    </a>
+                </li>
+                <li class="border-b border-white/20">
+                    <a
+                        href="/application/profil/securite"
+                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
+                    >
+                        Sécurité et connexion
+                    </a>
+                </li>
+                <li>
+                    <a
+                        href="/application/profil/abonnement"
+                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
+                    >
+                        Abonnement
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="px-6 mt-8 mb-8 max-w-md mx-auto">
+            <h2 class="text-lg mb-2 text-slate-900">Assistance</h2>
+            <ul
+                class="bg-[#4a0815] text-white rounded-xl overflow-hidden shadow-md"
+            >
+                <li class="border-b border-white/20">
+                    <a
+                        href="/application/profil/contact"
+                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
+                    >
+                        Contact
+                    </a>
+                </li>
+                <li>
+                    <a
+                        href="/application/profil/resiliation"
+                        class="block px-4 py-3.5 hover:bg-white/10 transition-colors"
+                    >
+                        Résilier mon abonnement
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</LayoutFooter>
+
+<script>
+    import PocketBase from "pocketbase";
+    const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        if (!pb.authStore.isValid) {
+            window.location.href = "/application/profil/connexion";
+            return;
+        }
+
+        try {
+            const userId = pb.authStore.model?.id;
+            const monProfil = await pb
+                .collection("utilisateur")
+                .getFirstListItem(`compte_id="${userId}"`);
+
+            const elementNom = document.getElementById("profil-nom");
+            const elementPseudo = document.getElementById("profil-pseudo");
+            const conteneurImage = document.getElementById(
+                "profil-image-container",
+            );
+
+            if (elementNom) {
+                const prenom = monProfil.prenom_utilisateur || "";
+                const nom = monProfil.nom_utilisateur || "";
+                elementNom.textContent =
+                    `${prenom} ${nom}`.trim() || "Utilisateur";
+                elementNom.classList.remove("opacity-0");
+            }
+
+            if (elementPseudo) {
+                elementPseudo.textContent = `@${monProfil.pseudo || "pseudo"}`;
+                elementPseudo.classList.remove("opacity-0");
+            }
+
+            if (conteneurImage) {
+                const imgTag = conteneurImage.querySelector("img");
+                if (imgTag) {
+                    if (monProfil.photo_profil) {
+                        imgTag.src = pb.files.getUrl(
+                            monProfil,
+                            monProfil.photo_profil,
+                        );
+                    } else {
+                        imgTag.src =
+                            "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+                    }
+                }
+                conteneurImage.classList.remove("opacity-0");
+            }
+        } catch (error) {
+            console.error("Erreur lors de la récupération du profil :", error);
+
+            document
+                .getElementById("profil-nom")
+                ?.classList.remove("opacity-0");
+            document
+                .getElementById("profil-pseudo")
+                ?.classList.remove("opacity-0");
+            document
+                .getElementById("profil-image-container")
+                ?.classList.remove("opacity-0");
+        }
+
+        const heroImg = document.getElementById(
+            "main-hero-img",
+        ) as HTMLImageElement;
+        const savedBanner = localStorage.getItem("user_banner_pref");
+
+        if (savedBanner && heroImg) {
+            heroImg.src = savedBanner;
+        }
+    });
+</script>

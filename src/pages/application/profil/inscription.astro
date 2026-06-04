@@ -1,0 +1,232 @@
+---
+import LayoutFooter from "../../../layouts/Layout-footer.astro";
+---
+
+<LayoutFooter title="Inscription - Tacita">
+    <div
+        class="bg-[#f8f5f0] min-h-screen flex flex-col justify-center px-6 py-12 font-sans pb-32"
+    >
+        <div
+            class="max-w-md w-full mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-100"
+        >
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-slate-900">
+                    Créer un compte
+                </h1>
+                <p class="text-slate-500 mt-2">
+                    Rejoins Tacita dès aujourd'hui
+                </p>
+            </div>
+
+            <form id="form-inscription" class="flex flex-col gap-4">
+                <!-- Prénom & Nom (côte à côte) -->
+                <div class="flex gap-4">
+                    <div class="flex flex-col gap-1 w-1/2">
+                        <label
+                            for="prenom"
+                            class="text-sm font-medium text-slate-700 ml-1"
+                            >Prénom</label
+                        >
+                        <input
+                            type="text"
+                            id="prenom"
+                            required
+                            placeholder="Ton prénom"
+                            class="bg-[#f8f5f0] border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
+                        />
+                    </div>
+                    <div class="flex flex-col gap-1 w-1/2">
+                        <label
+                            for="nom"
+                            class="text-sm font-medium text-slate-700 ml-1"
+                            >Nom</label
+                        >
+                        <input
+                            type="text"
+                            id="nom"
+                            required
+                            placeholder="Ton nom"
+                            class="bg-[#f8f5f0] border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
+                        />
+                    </div>
+                </div>
+
+                <!-- Pseudo -->
+                <div class="flex flex-col gap-1">
+                    <label
+                        for="pseudo"
+                        class="text-sm font-medium text-slate-700 ml-1"
+                        >Pseudo (@)</label
+                    >
+                    <input
+                        type="text"
+                        id="pseudo"
+                        required
+                        placeholder="Ton pseudo"
+                        class="bg-[#f8f5f0] border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
+                    />
+                </div>
+
+                <!-- Email -->
+                <div class="flex flex-col gap-1">
+                    <label
+                        for="email"
+                        class="text-sm font-medium text-slate-700 ml-1"
+                        >Adresse e-mail</label
+                    >
+                    <input
+                        type="email"
+                        id="email"
+                        required
+                        placeholder="ton@email.com"
+                        class="bg-[#f8f5f0] border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
+                    />
+                </div>
+
+                <!-- Mot de passe -->
+                <div class="flex flex-col gap-1">
+                    <label
+                        for="password"
+                        class="text-sm font-medium text-slate-700 ml-1"
+                        >Mot de passe (8 car. min)</label
+                    >
+                    <input
+                        type="password"
+                        id="password"
+                        required
+                        placeholder="••••••••"
+                        class="bg-[#f8f5f0] border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
+                    />
+                </div>
+
+                <!-- Confirmer le Mot de passe -->
+                <div class="flex flex-col gap-1">
+                    <label
+                        for="passwordConfirm"
+                        class="text-sm font-medium text-slate-700 ml-1"
+                        >Confirmer le mot de passe</label
+                    >
+                    <input
+                        type="password"
+                        id="passwordConfirm"
+                        required
+                        placeholder="••••••••"
+                        class="bg-[#f8f5f0] border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
+                    />
+                </div>
+
+                <!-- Message d'erreur -->
+                <p
+                    id="erreur-msg"
+                    class="text-red-600 text-sm text-center hidden mt-2"
+                >
+                    Une erreur est survenue. Vérifiez vos informations.
+                </p>
+
+                <!-- Bouton S'inscrire -->
+                <button
+                    type="submit"
+                    id="btn-submit"
+                    class="mt-4 bg-[#a40d1a] hover:bg-red-800 text-white px-10 py-3.5 rounded-xl font-bold shadow-md text-lg active:scale-95 transition-all w-full flex justify-center items-center"
+                >
+                    <span id="btn-text">S'inscrire</span>
+                </button>
+            </form>
+
+            <div class="mt-6 text-center text-sm text-slate-600">
+                Déjà un compte ? <a
+                    href="/application/profil/connexion"
+                    class="text-[#a40d1a] font-bold hover:underline"
+                    >Se connecter</a
+                >
+            </div>
+        </div>
+    </div>
+</LayoutFooter>
+
+<script>
+    import PocketBase from "pocketbase";
+    const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("form-inscription");
+        const erreurMsg = document.getElementById("erreur-msg");
+        const btnText = document.getElementById("btn-text");
+
+        form?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            // Cacher l'erreur et changer le texte
+            if (erreurMsg) erreurMsg.classList.add("hidden");
+            if (btnText) btnText.textContent = "Création en cours...";
+
+            // Récupérer les valeurs
+            const prenom = (
+                document.getElementById("prenom") as HTMLInputElement
+            ).value;
+            const nom = (document.getElementById("nom") as HTMLInputElement)
+                .value;
+            const pseudo = (
+                document.getElementById("pseudo") as HTMLInputElement
+            ).value;
+            const email = (document.getElementById("email") as HTMLInputElement)
+                .value;
+            const password = (
+                document.getElementById("password") as HTMLInputElement
+            ).value;
+            const passwordConfirm = (
+                document.getElementById("passwordConfirm") as HTMLInputElement
+            ).value;
+
+            try {
+                // 1. Création de la sécurité dans 'users' (JUSTE le mail et mot de passe)
+                const dataAuth = {
+                    email: email,
+                    password: password,
+                    passwordConfirm: passwordConfirm,
+                    emailVisibility: true,
+                };
+
+                // On récupère le résultat pour avoir l'ID généré
+                const newAuthRecord = await pb
+                    .collection("users")
+                    .create(dataAuth);
+
+                // 2. Création du profil public dans 'utilisateur' (Le reste des infos + Le PONT)
+                const dataProfil = {
+                    compte_id: newAuthRecord.id, // 👈 C'est le pont qui relie les deux !
+                    prenom_utilisateur: prenom,
+                    nom_utilisateur: nom,
+                    pseudo: pseudo,
+                };
+
+                await pb.collection("utilisateur").create(dataProfil);
+
+                // 3. Auto-connexion
+                await pb.collection("users").authWithPassword(email, password);
+                console.log("Compte créé, profil lié et connecté !");
+
+                // 4. Redirection vers son profil
+                window.location.href = "/application/profil";
+            } catch (error: any) {
+                console.error("Erreur d'inscription :", error.data);
+
+                if (erreurMsg) {
+                    // On peut personnaliser le message d'erreur si l'email existe déjà
+                    if (
+                        error.data?.data?.email?.code ===
+                        "validation_not_unique"
+                    ) {
+                        erreurMsg.textContent =
+                            "Cette adresse e-mail est déjà utilisée.";
+                    } else {
+                        erreurMsg.textContent =
+                            "Une erreur est survenue. Le mot de passe fait-il 8 caractères ?";
+                    }
+                    erreurMsg.classList.remove("hidden");
+                }
+                if (btnText) btnText.textContent = "S'inscrire";
+            }
+        });
+    });
+</script>

@@ -1,0 +1,129 @@
+---
+import LayoutFooter from "../../../layouts/Layout-footer.astro";
+---
+
+
+<LayoutFooter title="Connexion - Tacita">
+    <div
+        class="bg-[#f8f5f0] min-h-screen flex flex-col justify-center px-6 font-sans"
+    >
+        <div
+            class="max-w-md w-full mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-100"
+        >
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-slate-900">Bon retour !</h1>
+                <p class="text-slate-500 mt-2">
+                    Connecte-toi pour accéder à ton profil
+                </p>
+            </div>
+
+
+            <form id="form-connexion" class="flex flex-col gap-5">
+                <div class="flex flex-col gap-1">
+                    <label
+                        for="email"
+                        class="text-sm font-medium text-slate-700 ml-1"
+                        >Adresse e-mail</label
+                    >
+                    <input
+                        type="email"
+                        id="email"
+                        required
+                        placeholder="ton@email.com"
+                        class="bg-[#f8f5f0] border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
+                    />
+                </div>
+
+
+                <div class="flex flex-col gap-1">
+                    <label
+                        for="password"
+                        class="text-sm font-medium text-slate-700 ml-1"
+                        >Mot de passe</label
+                    >
+                    <input
+                        type="password"
+                        id="password"
+                        required
+                        placeholder="••••••••"
+                        class="bg-[#f8f5f0] border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
+                    />
+                </div>
+
+
+                <p
+                    id="erreur-msg"
+                    class="text-red-600 text-sm text-center hidden"
+                >
+                    Identifiants incorrects. Veuillez réessayer.
+                </p>
+
+
+                <button
+                    type="submit"
+                    id="btn-submit"
+                    class="mt-2 bg-[#a40d1a] hover:bg-red-800 text-white px-10 py-3.5 rounded-xl font-bold shadow-md text-lg active:scale-95 transition-all w-full flex justify-center items-center"
+                >
+                    <span id="btn-text">Se connecter</span>
+                </button>
+            </form>
+
+
+            <div class="mt-6 text-center text-sm text-slate-600">
+                Pas encore de compte ? <a
+                    href="/application/profil/inscription"
+                    class="text-[#a40d1a] font-bold hover:underline"
+                    >S'inscrire</a
+                >
+            </div>
+        </div>
+    </div>
+</LayoutFooter>
+
+
+<script>
+    import PocketBase from "pocketbase";
+    const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("form-connexion");
+        const erreurMsg = document.getElementById("erreur-msg");
+        const btnText = document.getElementById("btn-text");
+
+
+        form?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            if (erreurMsg) erreurMsg.classList.add("hidden");
+            if (btnText) btnText.textContent = "Connexion en cours...";
+
+
+            const email = (document.getElementById("email") as HTMLInputElement)
+                .value;
+            const password = (
+                document.getElementById("password") as HTMLInputElement
+            ).value;
+
+
+            try {
+                const authData = await pb
+                    .collection("users")
+                    .authWithPassword(email, password);
+
+
+                console.log("Connecté avec succès :", authData);
+
+
+                window.location.href = "/application/profil";
+            } catch (error) {
+                console.error("Erreur de connexion :", error);
+
+
+                if (erreurMsg) erreurMsg.classList.remove("hidden");
+                if (btnText) btnText.textContent = "Se connecter";
+            }
+        });
+    });
+</script>
+
+
