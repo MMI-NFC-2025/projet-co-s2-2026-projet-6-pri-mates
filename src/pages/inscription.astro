@@ -16,6 +16,7 @@ import Layout from "../layouts/Layout.astro";
             </div>
 
             <form
+                id="form-inscription"
                 class="col-span-full lg:col-start-4 lg:col-span-6 flex flex-col gap-6"
                 aria-describedby="inscription-help"
             >
@@ -70,6 +71,23 @@ import Layout from "../layouts/Layout.astro";
 
                 <div class="flex flex-col gap-2">
                     <label
+                        for="pseudo"
+                        class="font-sans text-smalld text-rose-950"
+                        >Pseudo</label
+                    >
+                    <input
+                        type="text"
+                        id="pseudo"
+                        name="pseudo"
+                        placeholder="Ex: leon42"
+                        autocomplete="nickname"
+                        required
+                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all focus-visible:ring-2 focus-visible:ring-red-800"
+                    />
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label
                         for="birthdate"
                         class="font-sans text-smalld text-rose-950"
                         >Date de naissance</label
@@ -96,6 +114,40 @@ import Layout from "../layouts/Layout.astro";
                         name="email"
                         placeholder="Ex: leon.marchand@email.com"
                         autocomplete="email"
+                        required
+                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all focus-visible:ring-2 focus-visible:ring-red-800"
+                    />
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label
+                        for="password"
+                        class="font-sans text-smalld text-rose-950"
+                        >Mot de passe</label
+                    >
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="8 caractères minimum"
+                        minlength="8"
+                        required
+                        class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all focus-visible:ring-2 focus-visible:ring-red-800"
+                    />
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <label
+                        for="passwordConfirm"
+                        class="font-sans text-smalld text-rose-950"
+                        >Confirmer le mot de passe</label
+                    >
+                    <input
+                        type="password"
+                        id="passwordConfirm"
+                        name="passwordConfirm"
+                        placeholder="Retapez votre mot de passe"
+                        minlength="8"
                         required
                         class="bg-white border border-black rounded-lg h-14 px-4 font-sans focus:ring-1 focus:ring-red-800 outline-none transition-all focus-visible:ring-2 focus-visible:ring-red-800"
                     />
@@ -133,12 +185,13 @@ import Layout from "../layouts/Layout.astro";
                 </div>
 
                 <div class="flex justify-center mt-6">
-                    <a
-                        href="/application/"
-                        class="font-body bg-red-800 hover:bg-rose-950 text-white text-body3d py-4 px-12 rounded-lg"
+                    <button
+                        type="submit"
+                        id="btn-submit"
+                        class="font-body bg-red-800 hover:bg-rose-950 text-white text-body3d py-4 px-12 rounded-lg transition-all"
                     >
                         Je crée mon compte
-                    </a>
+                    </button>
                 </div>
 
                 <div class="relative flex items-center py-8">
@@ -163,46 +216,6 @@ import Layout from "../layouts/Layout.astro";
                         Me connecter avec Apple
                     </button>
                 </div>
-                <script>
-                    const googleBtn = document.getElementById("login-google");
-                    const appleBtn = document.getElementById("login-apple");
-
-                    const openPopup = (url: string, title: string) => {
-                        const w = 500;
-                        const h = 600;
-                        const left = screen.width / 2 - w / 2;
-                        const top = screen.height / 2 - h / 2;
-
-                        return window.open(
-                            url,
-                            title,
-                            `width=${w},height=${h},top=${top},left=${left},toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes`,
-                        );
-                    };
-
-                    googleBtn?.addEventListener("click", () => {
-                        const clientId =
-                            "635714375983-drrpdad2sfksqhk5h2prkh27j4ob3dvd.apps.googleusercontent.com";
-
-                        const redirectUri = encodeURIComponent(
-                            "http://localhost:4321/inscription",
-                        );
-
-                        const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=email%20profile`;
-
-                        openPopup(url, "Connexion Google");
-                    });
-
-                    appleBtn?.addEventListener("click", () => {
-                        alert(
-                            "Sign in with Apple nécessite un compte développeur payant (99€/an). La popup s'ouvrirait ici sur un projet réel.",
-                        );
-                        openPopup(
-                            "https://appleid.apple.com/auth/authorize",
-                            "Connexion Apple",
-                        );
-                    });
-                </script>
             </form>
         </div>
     </main>
@@ -215,3 +228,117 @@ import Layout from "../layouts/Layout.astro";
         filter: invert(0.2);
     }
 </style>
+
+<script>
+    import PocketBase from "pocketbase";
+    const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // --- 1. GESTION DE LA CRÉATION DE COMPTE ---
+        const form = document.getElementById("form-inscription");
+        const btnSubmit = document.getElementById("btn-submit");
+
+        form?.addEventListener("submit", async (e) => {
+            e.preventDefault(); // Empêche le rechargement de la page
+
+            const password = (
+                document.getElementById("password") as HTMLInputElement
+            ).value;
+            const passwordConfirm = (
+                document.getElementById("passwordConfirm") as HTMLInputElement
+            ).value;
+
+            // Vérification des mots de passe
+            if (password !== passwordConfirm) {
+                alert("Les mots de passe ne correspondent pas.");
+                return;
+            }
+
+            if (btnSubmit) btnSubmit.textContent = "Création en cours...";
+
+            try {
+                // Récupération de toutes les infos
+                const prenom = (
+                    document.getElementById("prenom") as HTMLInputElement
+                ).value;
+                const nom = (document.getElementById("nom") as HTMLInputElement)
+                    .value;
+                const pseudo = (
+                    document.getElementById("pseudo") as HTMLInputElement
+                ).value;
+                const email = (
+                    document.getElementById("email") as HTMLInputElement
+                ).value;
+                // const civilite = (document.getElementById('civilite') as HTMLInputElement).value;
+                // const birthdate = (document.getElementById('birthdate') as HTMLInputElement).value;
+                // const niveau = (document.getElementById('niveau') as HTMLInputElement).value;
+
+                // ÉTAPE A : Création de l'authentification dans la collection 'users'
+                const userRecord = await pb.collection("users").create({
+                    email: email,
+                    emailVisibility: true,
+                    password: password,
+                    passwordConfirm: passwordConfirm,
+                    prenom_utilisateur: prenom,
+                    nom_utilisateur: nom,
+                });
+
+                // ÉTAPE B : On connecte l'utilisateur immédiatement
+                await pb.collection("users").authWithPassword(email, password);
+
+                // ÉTAPE C : Création du pont dans la collection 'utilisateur'
+                await pb.collection("utilisateur").create({
+                    compte_id: userRecord.id,
+                    prenom_utilisateur: prenom,
+                    nom_utilisateur: nom,
+                    pseudo: pseudo,
+                });
+
+                // Redirection vers l'application
+                window.location.href = "/application/";
+            } catch (error) {
+                console.error("Erreur lors de l'inscription :", error);
+                alert(
+                    "Une erreur est survenue. Cet e-mail ou ce pseudo est peut-être déjà utilisé.",
+                );
+                if (btnSubmit) btnSubmit.textContent = "Je crée mon compte";
+            }
+        });
+
+        // --- 2. GESTION DES BOUTONS GOOGLE / APPLE ---
+        const googleBtn = document.getElementById("login-google");
+        const appleBtn = document.getElementById("login-apple");
+
+        const openPopup = (url: string, title: string) => {
+            const w = 500;
+            const h = 600;
+            const left = screen.width / 2 - w / 2;
+            const top = screen.height / 2 - h / 2;
+            return window.open(
+                url,
+                title,
+                `width=${w},height=${h},top=${top},left=${left},toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes`,
+            );
+        };
+
+        googleBtn?.addEventListener("click", () => {
+            const clientId =
+                "635714375983-drrpdad2sfksqhk5h2prkh27j4ob3dvd.apps.googleusercontent.com";
+            const redirectUri = encodeURIComponent(
+                "http://localhost:4321/inscription",
+            );
+            const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=email%20profile`;
+            openPopup(url, "Connexion Google");
+        });
+
+        appleBtn?.addEventListener("click", () => {
+            alert(
+                "Sign in with Apple nécessite un compte développeur payant (99€/an). La popup s'ouvrirait ici sur un projet réel.",
+            );
+            openPopup(
+                "https://appleid.apple.com/auth/authorize",
+                "Connexion Apple",
+            );
+        });
+    });
+</script>

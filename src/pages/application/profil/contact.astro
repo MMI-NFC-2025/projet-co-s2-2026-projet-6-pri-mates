@@ -1,9 +1,5 @@
 ---
 import LayoutFooter from "../../../layouts/Layout-footer.astro";
-import { getUtilisateur } from "../../../../backend/backend.mjs";
-
-// On récupère les infos pour pré-remplir le formulaire
-const Utilisateur = await getUtilisateur();
 ---
 
 <LayoutFooter>
@@ -49,12 +45,11 @@ const Utilisateur = await getUtilisateur();
                             class="text-sm font-medium text-slate-700 ml-1"
                             >Prénom</label
                         >
+                        <!-- Valeur vide par défaut -->
                         <input
                             type="text"
                             id="prenom"
                             required
-                            value={Utilisateur?.prenom_utilisateur || ""}
-                            placeholder="Ton prénom"
                             style="padding-left: 16px;"
                             class="w-full bg-white border border-slate-300 rounded-xl pr-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
                         />
@@ -66,12 +61,11 @@ const Utilisateur = await getUtilisateur();
                             class="text-sm font-medium text-slate-700 ml-1"
                             >Nom</label
                         >
+                        <!-- Valeur vide par défaut -->
                         <input
                             type="text"
                             id="nom"
                             required
-                            value={Utilisateur?.nom_utilisateur || ""}
-                            placeholder="Ton nom"
                             style="padding-left: 16px;"
                             class="w-full bg-white border border-slate-300 rounded-xl pr-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
                         />
@@ -89,7 +83,6 @@ const Utilisateur = await getUtilisateur();
                         <input
                             type="tel"
                             id="telephone"
-                            placeholder="Ton numéro (optionnel)"
                             style="padding-left: 16px;"
                             class="w-full bg-white border border-slate-300 rounded-xl pr-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
                         />
@@ -105,9 +98,9 @@ const Utilisateur = await getUtilisateur();
                             type="email"
                             id="email"
                             required
-                            placeholder="ton@email.com"
                             style="padding-left: 16px;"
-                            class="w-full bg-white border border-slate-300 rounded-xl pr-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
+                            class="w-full bg-slate-50 border border-slate-200 text-slate-500 rounded-xl pr-4 py-3 outline-none cursor-not-allowed"
+                            readonly
                         />
                     </div>
                 </div>
@@ -123,7 +116,6 @@ const Utilisateur = await getUtilisateur();
                         type="text"
                         id="objet"
                         required
-                        placeholder="Sujet de ton message"
                         style="padding-left: 16px;"
                         class="w-full bg-white border border-slate-300 rounded-xl pr-4 py-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all"
                     />
@@ -140,13 +132,12 @@ const Utilisateur = await getUtilisateur();
                         id="message"
                         required
                         rows="5"
-                        placeholder="Explique ton problème en quelques lignes"
                         style="padding-left: 16px; padding-top: 12px;"
                         class="w-full bg-white border border-slate-300 rounded-xl pr-4 pb-3 outline-none focus:border-[#a40d1a] focus:ring-1 focus:ring-[#a40d1a] transition-all resize-none"
                     ></textarea>
                 </div>
 
-                <!-- Bouton Envoyer (Centré) -->
+                <!-- Bouton Envoyer -->
                 <div class="mt-4 flex justify-center">
                     <button
                         type="submit"
@@ -165,20 +156,44 @@ const Utilisateur = await getUtilisateur();
     import PocketBase from "pocketbase";
     const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
 
-    document.addEventListener("DOMContentLoaded", () => {
-        // Sécurité
+    document.addEventListener("DOMContentLoaded", async () => {
+        // 🔒 Sécurité
         if (!pb.authStore.isValid) {
             window.location.href = "/application/profil/connexion";
             return;
         }
 
-        // Pré-remplissage de l'e-mail depuis la session PocketBase
+        const prenomInput = document.getElementById(
+            "prenom",
+        ) as HTMLInputElement;
+        const nomInput = document.getElementById("nom") as HTMLInputElement;
         const emailInput = document.getElementById("email") as HTMLInputElement;
-        if (emailInput && pb.authStore.model?.email) {
-            emailInput.value = pb.authStore.model.email;
+
+        // 🧑‍💻 1. PRÉ-REMPLISSAGE DES DONNÉES DU VRAI UTILISATEUR
+        try {
+            const userId = pb.authStore.model?.id;
+
+            // On pré-remplit l'e-mail directement avec les infos de connexion
+            if (emailInput && pb.authStore.model?.email) {
+                emailInput.value = pb.authStore.model.email;
+            }
+
+            // On va chercher le profil pour le Nom et Prénom
+            const monProfil = await pb
+                .collection("utilisateur")
+                .getFirstListItem(`compte_id="${userId}"`);
+
+            if (prenomInput)
+                prenomInput.value = monProfil.prenom_utilisateur || "";
+            if (nomInput) nomInput.value = monProfil.nom_utilisateur || "";
+        } catch (error) {
+            console.error(
+                "Erreur lors de la récupération du profil pour le contact :",
+                error,
+            );
         }
 
-        // Gestion de l'envoi du formulaire
+        // ✉️ 2. GESTION DE L'ENVOI DU FORMULAIRE
         const formContact = document.getElementById("form-contact");
         const btnSubmit = document.getElementById("btn-submit");
 
@@ -187,19 +202,30 @@ const Utilisateur = await getUtilisateur();
 
             if (btnSubmit) btnSubmit.textContent = "Envoi en cours...";
 
-            // Simulation d'un envoi (Ici tu pourras plus tard relier à une collection 'messages' dans PocketBase)
-            setTimeout(() => {
+            // Simulation d'un envoi (Tu pourras relier ça à PocketBase ou un service d'e-mail plus tard)
+            setTimeout(async () => {
                 alert("Ton message a bien été envoyé à l'équipe !");
-                (formContact as HTMLFormElement).reset(); // On vide le formulaire
 
-                // On remet les infos de base après avoir vidé
-                const prenom = document.getElementById(
-                    "prenom",
-                ) as HTMLInputElement;
-                const nom = document.getElementById("nom") as HTMLInputElement;
+                // On vide le formulaire (le message et l'objet)
+                (formContact as HTMLFormElement).reset();
 
-                if (emailInput && pb.authStore.model?.email)
-                    emailInput.value = pb.authStore.model.email;
+                // On remet les infos de base (Nom, Prénom, Email) qui ont été effacées par le reset()
+                try {
+                    if (emailInput && pb.authStore.model?.email)
+                        emailInput.value = pb.authStore.model.email;
+                    const monProfil = await pb
+                        .collection("utilisateur")
+                        .getFirstListItem(
+                            `compte_id="${pb.authStore.model?.id}"`,
+                        );
+                    if (prenomInput)
+                        prenomInput.value = monProfil.prenom_utilisateur || "";
+                    if (nomInput)
+                        nomInput.value = monProfil.nom_utilisateur || "";
+                } catch (e) {
+                    console.error(e);
+                }
+
                 if (btnSubmit) btnSubmit.textContent = "Envoyer";
             }, 800);
         });
