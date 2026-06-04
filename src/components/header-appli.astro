@@ -6,24 +6,25 @@ import {
     getProgressionUtilisateur,
 } from "../../backend/backend.mjs";
 
-// Ces fonctions vont charger Axium par défaut, mais notre script JS
-// prendra le relais juste en dessous pour afficher la bonne personne !
 const Utilisateur = await getPseudo();
 const stats = getProgressionUtilisateur(Utilisateur);
 ---
+
 
 <header
     id="header-banniere"
     class="relative bg-red-100 pb-4 pt-10 bg-cover bg-center transition-all duration-300"
 >
+
     <div
         id="header-overlay"
         class="absolute inset-0 z-0 transition-all duration-300 pointer-events-none"
     >
     </div>
 
+  
     <div class="relative z-10 flex gap-4 items-center">
-        <!-- On met opacity-0 par défaut pour masquer Axium le temps que le script charge -->
+        
         <h3
             id="header-nom"
             class="m-2 text-slate-900 transition-all duration-300 opacity-0"
@@ -64,68 +65,32 @@ const stats = getProgressionUtilisateur(Utilisateur);
         const texteNiveau = document.getElementById("header-niveau");
         const imgContainer = document.getElementById("header-img-container");
 
-        // --- 1. GESTION DU VRAI UTILISATEUR CONNECTÉ ---
+
         if (pb.authStore.isValid) {
             try {
-                // On récupère l'ID du compte de la personne connectée
-                const userId = pb.authStore.model?.id;
 
-                // On va chercher SON vrai profil dans la collection 'utilisateur'
+                const userId = pb.authStore.model?.id;
                 const monProfil = await pb
                     .collection("utilisateur")
                     .getFirstListItem(`compte_id="${userId}"`);
 
-                // On remplace le nom
-                if (texteNom) {
-                    texteNom.textContent =
-                        monProfil.pseudo || monProfil.prenom_utilisateur;
-                    texteNom.classList.remove("opacity-0");
-                }
-
-                // On affiche le niveau
-                if (texteNiveau) {
-                    texteNiveau.classList.remove("opacity-0");
-                }
-
-                // On remplace l'image de profil AVANT de l'afficher
-                if (imgContainer) {
-                    const imgTag = imgContainer.querySelector("img");
-                    if (imgTag) {
-                        if (monProfil.photo_profil) {
-                            // Si l'utilisateur a une photo, on l'affiche
-                            imgTag.src = pb.files.getUrl(
-                                monProfil,
-                                monProfil.photo_profil,
-                            );
-                        } else {
-                            // Sinon (nouveau compte), on met une image transparente pour cacher Axium
-                            imgTag.src =
-                                "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
-                        }
-                    }
-                    imgContainer.classList.remove("opacity-0");
-                }
-            } catch (error) {
-                console.error(
-                    "Erreur lors du chargement du header appli :",
-                    error,
-                );
-            }
-        }
-
-        // --- 2. GESTION DE LA BANNIÈRE ---
+     
         const savedBanner = localStorage.getItem("user_banner_pref");
 
         if (savedBanner && header && texteNom && texteNiveau && overlay) {
+            
             header.style.backgroundImage = `url('${savedBanner}')`;
+
+            
             const imgPath = savedBanner.toLowerCase();
 
+    
             if (
                 imgPath.includes("ciel") ||
                 imgPath.includes("espace") ||
                 imgPath.includes("ville")
             ) {
-                // THÈME SOMBRE
+        
                 texteNom.classList.replace("text-slate-900", "text-white");
                 texteNiveau.classList.replace(
                     "text-slate-800",
@@ -134,7 +99,7 @@ const stats = getProgressionUtilisateur(Utilisateur);
                 overlay.className =
                     "absolute inset-0 z-0 bg-black/40 transition-all duration-300 pointer-events-none";
             } else if (imgPath.includes("vote")) {
-                // THÈME CLAIR
+                
                 texteNom.classList.add("text-slate-900");
                 texteNom.classList.remove("text-white");
                 texteNiveau.classList.add("text-slate-800");
