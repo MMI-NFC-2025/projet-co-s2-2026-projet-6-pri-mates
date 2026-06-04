@@ -27,34 +27,52 @@ const stats = getProgressionUtilisateur(Utilisateur);
         
         <h3
             id="header-nom"
-            class="m-2 text-slate-900 transition-colors duration-300"
+            class="m-2 text-slate-900 transition-all duration-300 opacity-0"
         >
             {Utilisateur?.pseudo}
         </h3>
 
         <p
             id="header-niveau"
-            class="font-body text-tinyd p-2 text-slate-800 transition-colors duration-300"
+            class="font-body text-tinyd p-2 text-slate-800 transition-all duration-300 opacity-0"
         >
             Niveau {stats.niveau} | Jour {stats.jour}
         </p>
 
-        <PbImage
-            record={Utilisateur}
-            recordImage={Utilisateur?.image?.[0] ||
-                Utilisateur?.photo_profil ||
-                ""}
-            class="outline-2 outline-offset-2 outline-solid outline-white h-25 w-25 rounded-full object-cover m-2 shrink-0"
-        />
+        <div
+            id="header-img-container"
+            class="opacity-0 transition-opacity duration-300"
+        >
+            <PbImage
+                record={Utilisateur}
+                recordImage={Utilisateur?.image?.[0] ||
+                    Utilisateur?.photo_profil ||
+                    ""}
+                class="outline-2 outline-offset-2 outline-solid outline-white h-25 w-25 rounded-full object-cover m-2 shrink-0"
+            />
+        </div>
     </div>
 </header>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
+    import PocketBase from "pocketbase";
+    const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
+
+    document.addEventListener("DOMContentLoaded", async () => {
         const header = document.getElementById("header-banniere");
         const overlay = document.getElementById("header-overlay");
         const texteNom = document.getElementById("header-nom");
         const texteNiveau = document.getElementById("header-niveau");
+        const imgContainer = document.getElementById("header-img-container");
+
+
+        if (pb.authStore.isValid) {
+            try {
+
+                const userId = pb.authStore.model?.id;
+                const monProfil = await pb
+                    .collection("utilisateur")
+                    .getFirstListItem(`compte_id="${userId}"`);
 
      
         const savedBanner = localStorage.getItem("user_banner_pref");
@@ -84,10 +102,8 @@ const stats = getProgressionUtilisateur(Utilisateur);
                 
                 texteNom.classList.add("text-slate-900");
                 texteNom.classList.remove("text-white");
-
                 texteNiveau.classList.add("text-slate-800");
                 texteNiveau.classList.remove("text-slate-100");
-
                 overlay.className =
                     "absolute inset-0 z-0 bg-white/40 transition-all duration-300 pointer-events-none";
             }
