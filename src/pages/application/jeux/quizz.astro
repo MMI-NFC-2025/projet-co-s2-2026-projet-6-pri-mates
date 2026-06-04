@@ -95,7 +95,7 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
     let indexQuestion = 0;
     let score = 0;
 
-    // 🌟 Variables du minuteur
+    
     let timerId: number;
     let tempsMax = 15;
     let tempsRestant = 15;
@@ -118,9 +118,9 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             .replace(/[^a-z0-9]/g, "");
     }
 
-    // 🌟 Fonction pour gérer le chrono
+  
     function lancerMinuteur(bonneReponse: string) {
-        clearInterval(timerId); // On nettoie l'ancien chrono au cas où
+        clearInterval(timerId); 
         tempsRestant = tempsMax;
 
         const affichage = document.getElementById("timer-affichage")!;
@@ -132,20 +132,20 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             tempsRestant--;
             affichage.textContent = `⏳ ${tempsRestant}s`;
 
-            // Effet visuel quand il reste peu de temps
+           
             if (tempsRestant <= 3 && tempsRestant > 0) {
                 affichage.classList.replace("bg-red-100", "bg-red-600");
                 affichage.classList.replace("text-red-700", "text-white");
             }
 
-            // Temps écoulé !
+           
             if (tempsRestant <= 0) {
                 clearInterval(timerId);
                 affichage.textContent = "⏳ Terminé !";
-                // On simule une erreur (null car aucun bouton n'a été cliqué)
+                
                 verifierReponse(null, "TEMPS_ECOULE", bonneReponse);
             }
-        }, 1000); // Répète toutes les 1000 millisecondes (1 sec)
+        }, 1000);
     }
 
     async function chargerQuiz() {
@@ -155,7 +155,7 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             .toLowerCase()
             .trim();
 
-        // 🌟 Définition du temps selon la difficulté
+       
         if (difficulte === "facile") tempsMax = 15;
         else if (difficulte === "moyen") tempsMax = 10;
         else if (difficulte === "difficile") tempsMax = 5;
@@ -292,17 +292,17 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             grille.appendChild(btn);
         });
 
-        // 🌟 On démarre le chrono une fois la question prête !
+        
         lancerMinuteur(bonneReponse);
     }
 
-    // 🌟 Mise à jour : le bouton cliqué peut être null (si le temps est écoulé)
+   
     function verifierReponse(
         boutonClique: HTMLElement | null,
         choixUser: string,
         bonneReponse: string,
     ) {
-        // On stoppe le chrono
+      
         clearInterval(timerId);
 
         const boutons = document
@@ -312,7 +312,7 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             b.disabled = true;
             b.classList.remove("hover:bg-slate-200", "cursor-pointer");
 
-            // Met en vert la bonne réponse
+          
             if (b.textContent === bonneReponse) {
                 b.classList.replace("bg-slate-100", "bg-green-500");
                 b.classList.replace("border-slate-200", "border-green-600");
@@ -320,7 +320,7 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             }
         });
 
-        // Si l'utilisateur a cliqué sur une mauvaise réponse (et non une fin de temps)
+        
         if (choixUser !== bonneReponse) {
             if (boutonClique) {
                 boutonClique.classList.replace("bg-slate-100", "bg-red-500");
@@ -346,7 +346,7 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             if (indexQuestion < questionsDuQuiz.length) {
                 afficherQuestion();
             } else {
-                // Arrêt définitif du minuteur et masquage à la fin du jeu
+                
                 clearInterval(timerId);
                 document
                     .getElementById("timer-affichage")!

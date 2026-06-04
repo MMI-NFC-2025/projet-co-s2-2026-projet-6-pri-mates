@@ -62,11 +62,9 @@ const Jeux = (await getjeux()) as any[];
         const theme = boutonJouer.getAttribute("data-theme");
 
         const selectCard = (card: HTMLElement) => {
-            // On récupère le nom du jeu depuis l'attribut HTML qu'on a ajouté
             let nomDuJeu =
                 card.getAttribute("data-jeu-nom")?.toLowerCase().trim() || "";
 
-            // Sécurité : Si PocketBase renvoie "quiz", on le force à "quizz" pour correspondre au fichier Astro
             if (nomDuJeu === "quiz") {
                 nomDuJeu = "quizz";
             }
@@ -85,7 +83,6 @@ const Jeux = (await getjeux()) as any[];
             );
             boutonJouer.classList.add("bg-red-800", "hover:bg-rose-950");
 
-            // L'URL envoie maintenant le NOM du jeu et le THEME
             boutonJouer.href = `/application/jeux/difficultes?jeu=${nomDuJeu}&theme=${theme}`;
         };
 

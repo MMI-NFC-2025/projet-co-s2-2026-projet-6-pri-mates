@@ -3,8 +3,9 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
 ---
 
 <LayoutAppli>
+   
     <div
-        class="bg-[#f8f5f0] min-h-screen flex flex-col pt-8 px-4 pb-4 overflow-hidden touch-none"
+        class="bg-[#f8f5f0] min-h-screen flex flex-col pt-8 px-4 pb-32"
         id="ecran-jeu"
     >
         <!-- En-tête -->
@@ -38,15 +39,15 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             >
         </div>
 
-        <!-- Zone de jeu (Ciel et Panier) -->
+      
         <div
-            class="relative grow bg-white rounded-3xl shadow-inner border-4 border-slate-100 overflow-hidden"
+            class="relative w-full max-w-md mx-auto h-[65vh] min-h-[400px] bg-white rounded-3xl shadow-inner border-4 border-slate-100 overflow-hidden"
             id="zone-chute"
         >
-            <!-- Le Panier (Cible : Le Mot) -->
+         
             <div
                 id="panier"
-                class="absolute bottom-4 left-1/2 -translate-x-1/2 w-48 h-24 bg-slate-50 rounded-2xl border-4 border-dashed border-slate-300 flex flex-col items-center justify-center p-2 z-10 transition-colors"
+                class="absolute bottom-6 left-1/2 -translate-x-1/2 w-48 h-24 bg-slate-50 rounded-2xl border-4 border-dashed border-slate-300 flex flex-col items-center justify-center p-2 z-10 transition-colors"
             >
                 <span
                     id="texte-cible"
@@ -60,7 +61,7 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             </div>
         </div>
 
-        <!-- Écran de fin -->
+      
         <div
             id="ecran-fin"
             class="absolute inset-0 bg-white/90 z-50 hidden flex-col items-center justify-center p-6 text-center"
@@ -82,7 +83,7 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
 </LayoutAppli>
 
 <style>
-    /* Empêche le "pull-to-refresh" et le scroll pendant qu'on glisse un mot sur mobile */
+   
     #ecran-jeu {
         overscroll-behavior-y: none;
     }
@@ -96,14 +97,13 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
     let score = 0;
     let animationId: number;
     let imagesActives: HTMLElement[] = [];
-    let difficulteGlobale = "moyen"; // On stocke la difficulté pour tout le script
+    let difficulteGlobale = "moyen";
 
     // Drag & Drop
     let elementAttrape: HTMLElement | null = null;
     let decalageX = 0;
     let decalageY = 0;
 
-    // FONCTION BULLDOZER
     function simplifierTexte(texte: string): string {
         if (!texte) return "";
         return texte
@@ -116,7 +116,6 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
     async function chargerDonnees() {
         const urlParams = new URLSearchParams(window.location.search);
         const themeUrl = (urlParams.get("theme") || "").toLowerCase().trim();
-        // 🌟 RÉCUPÉRATION DE LA DIFFICULTÉ
         difficulteGlobale = (urlParams.get("difficulte") || "moyen")
             .toLowerCase()
             .trim();
@@ -148,7 +147,6 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
                 );
             });
 
-            // Lier les données
             donneesJeu = questionsDb
                 .map((q: any) => {
                     const img = imagesDb.find((i: any) => {
@@ -181,7 +179,6 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
                 })
                 .filter((d: any) => d.urlImage !== null && d.mot !== null);
 
-            // On garde 5 mots à trouver par partie d'association
             donneesJeu = donneesJeu.sort(() => Math.random() - 0.5).slice(0, 5);
 
             if (donneesJeu.length > 0) {
@@ -212,10 +209,9 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
         texteCible.classList.remove("hidden");
         document.getElementById("texte-chargement")!.classList.add("hidden");
 
-        // 🌟 GESTION DE LA QUANTITÉ DE DISTRACTEURS SELON LA DIFFICULTÉ
-        let nbFaussesImages = 3; // Moyen par défaut
-        if (difficulteGlobale === "facile") nbFaussesImages = 1; // Total = 2 images
-        if (difficulteGlobale === "difficile") nbFaussesImages = 5; // Total = 6 images
+        let nbFaussesImages = 3;
+        if (difficulteGlobale === "facile") nbFaussesImages = 1;
+        if (difficulteGlobale === "difficile") nbFaussesImages = 5;
 
         const autresDonnees = donneesJeu.filter(
             (d) => d.urlImage !== niveauActuel.urlImage,
@@ -224,7 +220,6 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             .sort(() => Math.random() - 0.5)
             .slice(0, nbFaussesImages);
 
-        // Si ta base n'a pas assez d'images différentes, on duplique les fausses pour remplir l'écran
         while (faussesDonnees.length < nbFaussesImages) {
             faussesDonnees.push(faussesDonnees[0] || niveauActuel);
         }
@@ -234,16 +229,28 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
             ...faussesDonnees.map((d) => ({ url: d.urlImage, bon: false })),
         ].sort(() => Math.random() - 0.5);
 
-        // Faire tomber les images avec un décalage
+        
         tousLesElements.forEach((item, index) => {
             setTimeout(
-                () => creerImageTombante(item.url, item.bon),
+                () =>
+                    creerImageTombante(
+                        item.url,
+                        item.bon,
+                        index,
+                        tousLesElements.length,
+                    ),
                 index * 800,
             );
         });
     }
 
-    function creerImageTombante(urlImage: string, estBonneReponse: boolean) {
+    
+    function creerImageTombante(
+        urlImage: string,
+        estBonneReponse: boolean,
+        index: number,
+        total: number,
+    ) {
         const zone = document.getElementById("zone-chute")!;
         const conteneur = document.createElement("div");
 
@@ -257,17 +264,18 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
 
         conteneur.appendChild(img);
 
-        // 🌟 GESTION DE LA VITESSE SELON LA DIFFICULTÉ
         let baseVitesse = 1.2 + Math.random() * 1.2;
-        if (difficulteGlobale === "facile") baseVitesse *= 0.7; // Plus lent
-        if (difficulteGlobale === "difficile") baseVitesse *= 1.8; // Plus rapide
+        if (difficulteGlobale === "facile") baseVitesse *= 0.7;
+        if (difficulteGlobale === "difficile") baseVitesse *= 1.8;
 
         (conteneur as any).vitesse = baseVitesse;
         (conteneur as any).estBon = estBonneReponse;
         (conteneur as any).y = -150;
 
-        const maxLeft = zone.clientWidth - 120;
-        (conteneur as any).x = 10 + Math.random() * maxLeft;
+        
+        const maxLeft = zone.clientWidth - 120; 
+        const largeurCouloir = maxLeft / Math.max(1, total - 1);
+        (conteneur as any).x = 10 + index * largeurCouloir;
 
         conteneur.style.left = `${(conteneur as any).x}px`;
         conteneur.style.top = `${(conteneur as any).y}px`;
@@ -285,7 +293,6 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
         imagesActives.push(conteneur);
     }
 
-    // --- MOTEUR DE CHUTE ET GLISSER-DÉPOSER ---
     function animerChute() {
         const zone = document.getElementById("zone-chute")!;
         const hauteurMax = zone.clientHeight;
@@ -297,9 +304,7 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
 
                 if ((img as any).y > hauteurMax) {
                     (img as any).y = -150;
-                    (img as any).x =
-                        10 + Math.random() * (zone.clientWidth - 120);
-                    img.style.left = `${(img as any).x}px`;
+                    
                 }
             }
         });
@@ -308,7 +313,7 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
     }
 
     function demarrerGlissement(e: any, element: HTMLElement) {
-        if (e.preventDefault) e.preventDefault();
+        if (e.cancelable) e.preventDefault();
         elementAttrape = element;
         elementAttrape.style.zIndex = "100";
         elementAttrape.classList.replace(
@@ -323,7 +328,7 @@ import LayoutAppli from "../../../layouts/Layout-appli.astro";
 
     function glisser(e: any) {
         if (!elementAttrape) return;
-        if (e.preventDefault) e.preventDefault();
+        if (e.cancelable) e.preventDefault();
 
         const clientX = e.clientX || e.touches[0].clientX;
         const clientY = e.clientY || e.touches[0].clientY;

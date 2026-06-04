@@ -4,9 +4,9 @@ const { count = 3 } = Astro.props;
 
 <div id="boite-secrete" data-jeu="" data-theme="" class="hidden"></div>
 
-<div>
+<div class="flex flex-col">
     <div
-        class="difficulte-card bg-green-500 text-white rounded-md mx-6 my-6 p-4 cursor-pointer transition-all border-4 border-transparent hover:opacity-80"
+        class="difficulte-card bg-green-500 text-white rounded-md mx-6 my-4 p-4 cursor-pointer transition-all border-4 border-transparent hover:opacity-80"
         data-difficulte="facile"
     >
         <div class="text-h4d text-center font-bold pointer-events-none">
@@ -15,7 +15,7 @@ const { count = 3 } = Astro.props;
     </div>
 
     <div
-        class="difficulte-card bg-yellow-500 text-white rounded-md mx-6 my-6 p-4 cursor-pointer transition-all border-4 border-transparent hover:opacity-80"
+        class="difficulte-card bg-yellow-500 text-white rounded-md mx-6 my-4 p-4 cursor-pointer transition-all border-4 border-transparent hover:opacity-80"
         data-difficulte="moyen"
     >
         <div class="text-h4d text-center font-bold pointer-events-none">
@@ -24,7 +24,7 @@ const { count = 3 } = Astro.props;
     </div>
 
     <div
-        class="difficulte-card bg-red-500 text-white rounded-md mx-6 my-6 p-4 cursor-pointer transition-all border-4 border-transparent hover:opacity-80"
+        class="difficulte-card bg-red-500 text-white rounded-md mx-6 my-4 p-4 cursor-pointer transition-all border-4 border-transparent hover:opacity-80"
         data-difficulte="difficile"
     >
         <div class="text-h4d text-center font-bold pointer-events-none">
@@ -32,7 +32,7 @@ const { count = 3 } = Astro.props;
         </div>
     </div>
 
-    <div class="flex justify-center mt-6">
+    <div class="flex justify-center mt-10">
         <a
             href="#"
             id="bouton-cest-parti"
@@ -53,7 +53,6 @@ const { count = 3 } = Astro.props;
         ) as HTMLAnchorElement;
         const boiteSecrete = document.getElementById("boite-secrete");
 
-        // Sécurité pour éviter les bugs si on n'est pas sur la bonne page
         if (!boutonCestParti || !boiteSecrete) return;
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -65,19 +64,16 @@ const { count = 3 } = Astro.props;
 
         cards.forEach((card: HTMLElement) => {
             card.addEventListener("click", () => {
-                // On nettoie les autres cartes
                 cards.forEach((c) => {
-                    c.classList.remove("border-white", "scale-105");
+                    c.classList.remove("border-black", "scale-105");
                     c.classList.add("border-transparent");
                 });
 
-                // On met en surbrillance la carte cliquée
                 card.classList.remove("border-transparent");
-                card.classList.add("border-white", "scale-105");
+                card.classList.add("border-black", "scale-105");
 
                 const difficulte = card.getAttribute("data-difficulte");
 
-                // On active le bouton
                 boutonCestParti.classList.remove(
                     "bg-gray-400",
                     "cursor-not-allowed",
@@ -93,8 +89,6 @@ const { count = 3 } = Astro.props;
         });
     }
 
-    // On lance la fonction
     activerCartesDifficultes();
-    // On la relance si Astro fait un chargement dynamique
     document.addEventListener("astro:page-load", activerCartesDifficultes);
 </script>

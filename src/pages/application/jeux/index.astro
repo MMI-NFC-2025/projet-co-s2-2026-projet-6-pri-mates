@@ -1,7 +1,7 @@
 ---
 import LayoutAppli from "../../../layouts/Layout-appli.astro";
 
-// 🧠 BASE DE DONNÉES DU JEU (Avec les "slugs" pour les liens)
+
 const parcours = [
     {
         id: 1,
@@ -115,9 +115,7 @@ const parcours = [
                                     niveau.status === "termine";
                                 const lineColor = isLineActive
                                     ? "#a40d1a"
-                                    : "#e2e8f0"; // Rouge vif ou Gris clair
-
-                                // Positionnement gauche ou droite strict (40px)
+                                    : "#e2e8f0"; 
                                 const positionX =
                                     niveau.align === "gauche"
                                         ? "-translate-x-10"
