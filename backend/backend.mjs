@@ -40,6 +40,10 @@ export async function getdefis() {
     return await pb.collection('defis').getFullList();
 }
 
+export async function getjeux() {
+    return await pb.collection('Jeux').getFullList();
+}
+
 export async function updateProfil(id, dataToUpdate) {
     const formData = new FormData();
 

@@ -1,5 +1,16 @@
 ---
 import "../style/global.css";
+import PbImage from "../components/PbImage.astro";
+import {
+    getPseudo,
+    getProgressionUtilisateur,
+} from "../../backend/backend.mjs";
+
+const Utilisateur = await getPseudo();
+const stats = getProgressionUtilisateur(Utilisateur);
+
+// SÉCURITÉ : On vérifie s'il a une photo ou une image
+const aUnePhoto = Utilisateur?.image?.[0] || Utilisateur?.photo_profil;
 ---
 
 <header
@@ -16,46 +27,49 @@ import "../style/global.css";
         <div class="flex flex-col gap-1">
             <h3
                 id="header-nom"
-                class="text-2xl font-bold text-slate-900 transition-all duration-300 drop-shadow-sm"
+                class="text-2xl font-bold text-slate-900 transition-all duration-300 opacity-0 drop-shadow-sm"
             >
-                Nouveau Joueur
+                {Utilisateur?.pseudo || "Nouveau Joueur"}
             </h3>
 
             <p
                 id="header-niveau"
-                class="font-body text-sm font-semibold text-slate-800 transition-all duration-300 drop-shadow-sm"
+                class="font-body text-sm font-semibold text-slate-800 transition-all duration-300 opacity-0 drop-shadow-sm"
             >
-                Niveau 1 | Jour 1
+                Niveau {stats.niveau || 1} | Jour {stats.jour || 1}
             </p>
         </div>
 
         <div
             id="header-img-container"
-            class="hidden transition-opacity duration-300"
+            class="opacity-0 transition-opacity duration-300"
         >
-            <img
-                id="header-avatar"
-                class="outline outline-2 outline-white h-16 w-16 rounded-full object-cover shrink-0 shadow-lg bg-white"
-                alt="Photo de profil"
-            />
+            {
+                aUnePhoto ? (
+                    <PbImage
+                        record={Utilisateur}
+                        recordImage={aUnePhoto}
+                        class="outline outline-2 outline-white h-16 w-16 rounded-full object-cover shrink-0 shadow-lg bg-white"
+                    />
+                ) : (
+                    <div class="outline outline-2 outline-white h-16 w-16 rounded-full shrink-0 shadow-lg bg-slate-200 flex items-center justify-center">
+                        <span class="text-2xl font-bold text-slate-500 uppercase">
+                            {(Utilisateur?.pseudo || "J")[0]}
+                        </span>
+                    </div>
+                )
+            }
         </div>
     </div>
 </header>
 
 <script>
-    import PocketBase from "pocketbase";
-
-    const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
-
     function initialiserHeader() {
         const header = document.getElementById("header-banniere");
         const overlay = document.getElementById("header-overlay");
         const texteNom = document.getElementById("header-nom");
         const texteNiveau = document.getElementById("header-niveau");
         const imgContainer = document.getElementById("header-img-container");
-        const avatar = document.getElementById(
-            "header-avatar",
-        ) as HTMLImageElement | null;
 
         const savedBanner = localStorage.getItem("user_banner_pref");
 
@@ -86,37 +100,10 @@ import "../style/global.css";
             }
         }
 
-        if (!pb.authStore.isValid || !imgContainer || !avatar) {
-            return;
-        }
-
-        const userId = pb.authStore.model?.id;
-        if (!userId) {
-            return;
-        }
-
-        pb.collection("utilisateur")
-            .getFirstListItem(`compte_id="${userId}"`)
-            .then((monProfil) => {
-                if (texteNom) {
-                    texteNom.textContent = monProfil.pseudo || "Nouveau Joueur";
-                }
-
-                if (texteNiveau) {
-                    const niveau = monProfil.Niveau || 1;
-                    const jour = monProfil.Jour || 1;
-                    texteNiveau.textContent = `Niveau ${niveau} | Jour ${jour}`;
-                }
-
-                const photo = monProfil.photo_profil || monProfil.image?.[0];
-                if (photo) {
-                    avatar.src = pb.files.getUrl(monProfil, photo);
-                    imgContainer.classList.remove("hidden");
-                }
-            })
-            .catch(() => {
-                // Aucun profil ou aucune photo: on garde l'espace vide.
-            });
+        // Rendre visible à la fin (contourne le bug du nouveau compte)
+        if (texteNom) texteNom.classList.remove("opacity-0");
+        if (texteNiveau) texteNiveau.classList.remove("opacity-0");
+        if (imgContainer) imgContainer.classList.remove("opacity-0");
     }
 
     document.addEventListener("DOMContentLoaded", initialiserHeader);

@@ -1,0 +1,73 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import PbImage from "../../../components/PbImage.astro";
+import { getLeconImages } from "../../../../backend/backend.mjs";
+
+export async function getStaticPaths() {
+	return [
+		{ params: { id: "alphabet" } },
+		{ params: { id: "salutations" } }
+	];
+}
+
+const { id } = Astro.params;
+const leconFiltre =
+	id === "salutations" ? "Salutation" : id === "alphabet" ? "Alphabet" : id;
+const titrePage =
+	id === "salutations" ? "Salutations" : id === "alphabet" ? "Alphabet" : "Leçon";
+
+const imagesLecon = leconFiltre ? await getLeconImages(leconFiltre) : [];
+---
+
+<Layout titre={`${titrePage} - Tacita`}>
+	<main class="mx-6 my-10">
+		{imagesLecon.length > 0 ? (
+			<section class="mx-auto max-w-4xl rounded-3xl bg-rose-50 p-6 shadow-sm ring-1 ring-rose-100">
+				<p class="text-sm font-semibold uppercase tracking-[0.2em] text-rose-500">
+					Page de leçon
+				</p>
+				<h1 class="mt-2 text-3xl font-bold text-rose-950">
+					{titrePage}
+				</h1>
+
+				<a
+					href="/application/lecons"
+					class="mt-6 inline-flex items-center rounded-full bg-red-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-800"
+				>
+					Retour au choix des leçons
+				</a>
+
+				<div class="mt-8 space-y-10">
+					{imagesLecon.map((image) => (
+						<section class="space-y-4 border-b border-rose-100 pb-10 last:border-b-0 last:pb-0">
+							<h2 class="text-2xl font-semibold text-rose-950">
+								{image.nom ?? "Sans nom"}
+							</h2>
+
+							<PbImage
+								record={image}
+								recordImage={image.image ?? ""}
+								class="mx-auto w-full max-w-xl rounded-2xl"
+								width={640}
+								height={420}
+							/>
+
+							{image.description_image ? (
+								<p class="text-base leading-7 text-rose-900">
+									{image.description_image}
+								</p>
+							) : null}
+						</section>
+					))}
+				</div>
+			</section>
+		) : (
+			<section class="mx-auto max-w-3xl rounded-3xl bg-rose-50 p-6 shadow-sm ring-1 ring-rose-100">
+				<h1 class="text-3xl font-bold text-rose-950">Leçon introuvable</h1>
+				<p class="mt-4 text-base text-rose-900">
+					Cette page ne connaît pas encore la leçon demandée.
+				</p>
+			</section>
+		)}
+	</main>
+</Layout>

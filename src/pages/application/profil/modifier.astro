@@ -3,16 +3,15 @@ import Layoutfooter from "../../../layouts/Layout-footer.astro";
 import PbImage from "../../../components/PbImage.astro";
 import { getUtilisateur } from "../../../../backend/backend.mjs";
 
-// Import des bannières (fichiers locaux)
+// Import des bannières prédéfinies (fichiers locaux)
 import imgVille from "../../../assets/image/bannière_ville.webp";
 import imgEspace from "../../../assets/image/bannière_espace.webp";
 import imgCiel from "../../../assets/image/bannière_ciel_1.webp";
 import imgVote from "../../../assets/image/bannière_vote.webp";
 
-// Le serveur charge ça par défaut, mais le script JS va prendre le relais
 const Utilisateur = await getUtilisateur();
 
-const bannieres = [
+const bannieresPredefinies = [
     { id: "ville", nom: "Ville", src: imgVille.src },
     { id: "espace", nom: "Espace", src: imgEspace.src },
     { id: "ciel", nom: "Ciel", src: imgCiel.src },
@@ -50,7 +49,6 @@ const bannieres = [
         <form id="form-modifier" class="max-w-md mx-auto flex flex-col gap-8">
             <!-- Photo de profil -->
             <div class="flex flex-col items-center">
-                <!-- Ajout de opacity-0 pour cacher la photo d'Axium au chargement -->
                 <div
                     class="relative group cursor-pointer opacity-0 transition-opacity duration-300"
                     id="conteneur-photo"
@@ -92,7 +90,6 @@ const bannieres = [
                     class="text-sm font-medium text-slate-700 ml-1"
                     >Pseudo (@)</label
                 >
-                <!-- Retrait du value={Utilisateur?.pseudo} par défaut -->
                 <input
                     type="text"
                     id="pseudo"
@@ -101,20 +98,23 @@ const bannieres = [
                 />
             </div>
 
-            <!-- Choix Bannière -->
+            <!-- Bannière -->
             <div class="mt-2">
                 <label
-                    class="text-sm font-medium text-slate-700 ml-1 mb-2 block"
+                    class="text-sm font-medium text-slate-700 ml-1 mb-3 block"
                     >Bannière du profil</label
                 >
+
+                <!-- Grille : bannières prédéfinies + bouton upload custom -->
                 <div
                     class="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory hide-scrollbar"
                 >
                     {
-                        bannieres.map((banniere) => (
+                        bannieresPredefinies.map((banniere) => (
                             <button
                                 type="button"
-                                class="snap-center shrink-0 w-48 h-24 relative rounded-xl overflow-hidden border-[3px] border-transparent focus:border-[#a40d1a] transition-all btn-banniere"
+                                class="snap-center shrink-0 w-48 h-24 relative rounded-xl overflow-hidden border-[3px] border-transparent transition-all btn-banniere"
+                                data-type="predefined"
                                 data-img={banniere.src}
                             >
                                 <img
@@ -128,7 +128,82 @@ const bannieres = [
                             </button>
                         ))
                     }
+
+                    <!-- Bouton upload bannière custom -->
+                    <button
+                        type="button"
+                        id="btn-upload-banniere"
+                        class="snap-center shrink-0 w-48 h-24 relative rounded-xl overflow-hidden border-[3px] border-dashed border-slate-300 bg-white flex flex-col items-center justify-center gap-1 text-slate-400 hover:border-[#a40d1a] hover:text-[#a40d1a] transition-all"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-7 w-7"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span class="text-xs font-medium">Importer</span>
+                        <input
+                            type="file"
+                            id="input-banniere-custom"
+                            accept="image/*"
+                            class="hidden"
+                        />
+                    </button>
+
+                    <!-- Carte preview bannière custom (cachée par défaut) -->
+                    <div
+                        id="carte-banniere-custom"
+                        class="snap-center shrink-0 w-48 h-24 relative rounded-xl overflow-hidden border-[3px] border-transparent transition-all hidden"
+                    >
+                        <img
+                            id="preview-banniere-custom"
+                            src=""
+                            alt="Bannière custom"
+                            class="w-full h-full object-cover"
+                        />
+                        <div
+                            class="absolute bottom-0 inset-x-0 bg-black/60 p-1.5 text-white text-xs text-center"
+                        >
+                            Ma bannière
+                        </div>
+                        <!-- Bouton supprimer -->
+                        <button
+                            type="button"
+                            id="btn-supprimer-custom"
+                            class="absolute top-1 right-1 bg-black/60 rounded-full p-0.5 text-white hover:bg-[#a40d1a] transition-colors"
+                            title="Supprimer"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
+
+                <!-- Indication bannière actuelle depuis PB -->
+                <p
+                    id="info-banniere-actuelle"
+                    class="text-xs text-slate-400 ml-1 mt-1 hidden"
+                >
+                    Bannière actuelle chargée depuis ton profil
+                </p>
             </div>
 
             <button
@@ -150,6 +225,12 @@ const bannieres = [
         -ms-overflow-style: none;
         scrollbar-width: none;
     }
+
+    /* Bannière sélectionnée */
+    .btn-banniere.selected,
+    #carte-banniere-custom.selected {
+        border-color: #a40d1a;
+    }
 </style>
 
 <script>
@@ -159,136 +240,227 @@ const bannieres = [
     const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
 
     document.addEventListener("DOMContentLoaded", async () => {
-        // Sécurité
+        // ── Sécurité ──────────────────────────────────────────────────────
         if (!pb.authStore.isValid) {
             window.location.href = "/application/profil/connexion";
             return;
         }
 
         const userId = pb.authStore.model?.id;
+
+        // ── Références DOM ────────────────────────────────────────────────
         const inputPseudo = document.getElementById(
             "pseudo",
         ) as HTMLInputElement;
-        const conteneurPhoto = document.getElementById("conteneur-photo");
+        const conteneurPhoto = document.getElementById(
+            "conteneur-photo",
+        ) as HTMLElement;
         const inputPdp = document.getElementById("pdp") as HTMLInputElement;
-
-        // On cible spécifiquement l'image à l'intérieur de ton composant
         const previewPdp = document.querySelector(
             "#conteneur-photo img",
         ) as HTMLImageElement;
 
-        // 🧑‍💻 1. CHARGEMENT DES VRAIES DONNÉES DE L'UTILISATEUR
+        const btnUploadBanniere = document.getElementById(
+            "btn-upload-banniere",
+        ) as HTMLButtonElement;
+        const inputBanniereCustom = document.getElementById(
+            "input-banniere-custom",
+        ) as HTMLInputElement;
+        const carteBanniereCustom = document.getElementById(
+            "carte-banniere-custom",
+        ) as HTMLElement;
+        const previewBanniereCustom = document.getElementById(
+            "preview-banniere-custom",
+        ) as HTMLImageElement;
+        const btnSupprimerCustom = document.getElementById(
+            "btn-supprimer-custom",
+        ) as HTMLButtonElement;
+        const infoBanniereActuelle = document.getElementById(
+            "info-banniere-actuelle",
+        ) as HTMLElement;
+
+        const buttonsBanniere =
+            document.querySelectorAll<HTMLElement>(".btn-banniere");
+
+        // ── État local ────────────────────────────────────────────────────
+        let selectedBannerType: "predefined" | "custom" | "pb" = "predefined";
+        let selectedBannerSrc: string | null = null; // URL pour les prédéfinies
+        let customBannerFile: File | null = null; // Fichier pour la custom
+        let profilId: string = "";
+
+        // ── 1. Chargement des données utilisateur ─────────────────────────
         try {
             const monProfil = await pb
                 .collection("utilisateur")
                 .getFirstListItem(`compte_id="${userId}"`);
 
-            // On remplit le champ pseudo avec la vraie valeur
-            if (inputPseudo) {
-                inputPseudo.value = monProfil.pseudo || "";
+            profilId = monProfil.id;
+
+            // Pseudo
+            if (inputPseudo) inputPseudo.value = monProfil.pseudo || "";
+
+            // Photo de profil
+            if (previewPdp) {
+                previewPdp.src = monProfil.photo_profil
+                    ? pb.files.getUrl(monProfil, monProfil.photo_profil)
+                    : "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
             }
 
-            // On va chercher la vraie photo de profil
-            if (previewPdp) {
-                if (monProfil.photo_profil) {
-                    previewPdp.src = pb.files.getUrl(
-                        monProfil,
-                        monProfil.photo_profil,
-                    );
-                } else {
-                    // Image transparente si pas de photo
-                    previewPdp.src =
-                        "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+            // Bannière stockée dans PocketBase
+            if (monProfil.banniere_profil) {
+                const urlPb = pb.files.getUrl(
+                    monProfil,
+                    monProfil.banniere_profil,
+                );
+
+                // On affiche la bannière depuis PB dans la carte custom
+                previewBanniereCustom.src = urlPb;
+                carteBanniereCustom.classList.remove("hidden");
+                carteBanniereCustom.classList.add("selected");
+                infoBanniereActuelle.classList.remove("hidden");
+
+                selectedBannerType = "pb";
+                selectedBannerSrc = urlPb;
+            } else {
+                // Pas de bannière PB → on relit le localStorage pour les prédéfinies
+                const bannerLocal = localStorage.getItem("user_banner_pref");
+                if (bannerLocal) {
+                    selectedBannerType = "predefined";
+                    selectedBannerSrc = bannerLocal;
+                    buttonsBanniere.forEach((btn) => {
+                        if (btn.getAttribute("data-img") === bannerLocal) {
+                            btn.classList.add("selected");
+                        }
+                    });
                 }
             }
 
-            // On fait apparaître le conteneur photo en retirant l'opacité
-            if (conteneurPhoto) {
-                conteneurPhoto.classList.remove("opacity-0");
-            }
-
-            // On fait apparaître le conteneur photo en retirant l'opacité
-            if (conteneurPhoto) {
-                conteneurPhoto.classList.remove("opacity-0");
-            }
+            // Afficher le conteneur photo
+            conteneurPhoto?.classList.remove("opacity-0");
         } catch (error) {
             console.error("Erreur lors de la récupération du profil :", error);
-            if (conteneurPhoto) conteneurPhoto.classList.remove("opacity-0");
+            conteneurPhoto?.classList.remove("opacity-0");
         }
 
-        // 📸 2. GESTION DE LA PHOTO DE PROFIL (Clic et Preview)
+        // ── 2. Photo de profil ────────────────────────────────────────────
         conteneurPhoto?.addEventListener("click", () => inputPdp.click());
 
         inputPdp?.addEventListener("change", (e) => {
             const file = (e.target as HTMLInputElement).files?.[0];
-            if (file && previewPdp) {
-                previewPdp.src = URL.createObjectURL(file);
-            }
+            if (file && previewPdp) previewPdp.src = URL.createObjectURL(file);
         });
 
-        // 🎨 3. GESTION DES BANNIÈRES (LocalStorage)
-        const buttonsBanniere = document.querySelectorAll(".btn-banniere");
-        let selectedBannerSrc = localStorage.getItem("user_banner_pref");
-
-        if (selectedBannerSrc) {
-            buttonsBanniere.forEach((btn) => {
-                if (btn.getAttribute("data-img") === selectedBannerSrc) {
-                    btn.classList.add("border-[#a40d1a]");
-                }
-            });
-        }
-
+        // ── 3. Sélection bannière prédéfinie ──────────────────────────────
         buttonsBanniere.forEach((btn) => {
-            btn.addEventListener("click", (e) => {
-                buttonsBanniere.forEach((b) =>
-                    b.classList.remove("border-[#a40d1a]"),
-                );
-                const target = e.currentTarget as HTMLButtonElement;
-                target.classList.add("border-[#a40d1a]");
-                selectedBannerSrc = target.getAttribute("data-img");
+            btn.addEventListener("click", () => {
+                // Désélectionner tout
+                buttonsBanniere.forEach((b) => b.classList.remove("selected"));
+                carteBanniereCustom.classList.remove("selected");
+
+                btn.classList.add("selected");
+                selectedBannerType = "predefined";
+                selectedBannerSrc = btn.getAttribute("data-img");
+                customBannerFile = null;
             });
         });
 
-        // 💾 4. SOUMISSION DU FORMULAIRE
+        // ── 4. Upload bannière custom ─────────────────────────────────────
+        btnUploadBanniere?.addEventListener("click", () =>
+            inputBanniereCustom.click(),
+        );
+
+        inputBanniereCustom?.addEventListener("change", (e) => {
+            const file = (e.target as HTMLInputElement).files?.[0];
+            if (!file) return;
+
+            customBannerFile = file;
+            const objectUrl = URL.createObjectURL(file);
+
+            // Afficher la carte custom
+            previewBanniereCustom.src = objectUrl;
+            carteBanniereCustom.classList.remove("hidden");
+            infoBanniereActuelle.classList.add("hidden");
+
+            // Sélectionner automatiquement la bannière custom
+            buttonsBanniere.forEach((b) => b.classList.remove("selected"));
+            carteBanniereCustom.classList.add("selected");
+            selectedBannerType = "custom";
+            selectedBannerSrc = null;
+        });
+
+        // Rendre la carte custom sélectionnable au clic
+        carteBanniereCustom?.addEventListener("click", (e) => {
+            // Ne pas déclencher si c'est le bouton supprimer
+            if ((e.target as HTMLElement).closest("#btn-supprimer-custom"))
+                return;
+
+            buttonsBanniere.forEach((b) => b.classList.remove("selected"));
+            carteBanniereCustom.classList.add("selected");
+            selectedBannerType = customBannerFile ? "custom" : "pb";
+        });
+
+        // Supprimer la bannière custom
+        btnSupprimerCustom?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            customBannerFile = null;
+            inputBanniereCustom.value = "";
+            carteBanniereCustom.classList.add("hidden");
+            carteBanniereCustom.classList.remove("selected");
+            infoBanniereActuelle.classList.add("hidden");
+            selectedBannerType = "predefined";
+            selectedBannerSrc = null;
+        });
+
+        // ── 5. Soumission ─────────────────────────────────────────────────
         const formModifier = document.getElementById("form-modifier");
         const btnSubmit = document.getElementById("btn-submit");
+        const spanSubmit = btnSubmit?.querySelector("span");
 
         formModifier?.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            if (btnSubmit)
-                btnSubmit.querySelector("span")!.textContent =
-                    "Enregistrement en cours...";
+            if (spanSubmit)
+                spanSubmit.textContent = "Enregistrement en cours...";
 
-            const pseudo = inputPseudo.value;
-            const fichierImage = inputPdp.files?.[0] || null;
+            const pseudo = inputPseudo.value.trim();
+            const fichierPhoto = inputPdp.files?.[0] || null;
 
-            // Sauvegarde locale de la bannière
-            if (selectedBannerSrc) {
+            // Sauvegarde locale de la bannière prédéfinie (fallback)
+            if (selectedBannerType === "predefined" && selectedBannerSrc) {
                 localStorage.setItem("user_banner_pref", selectedBannerSrc);
             }
 
             try {
-                // On récupère le profil utilisateur pour avoir son ID de collection (et pas son compte_id)
-                const profil = await pb
-                    .collection("utilisateur")
-                    .getFirstListItem(`compte_id="${userId}"`);
+                // Récupérer l'id du profil si pas encore en cache
+                if (!profilId) {
+                    const profil = await pb
+                        .collection("utilisateur")
+                        .getFirstListItem(`compte_id="${userId}"`);
+                    profilId = profil.id;
+                }
 
-                // Enregistrement Pseudo et Photo dans PocketBase
-                // Note : Ton script backend s'attend à recevoir { pseudo, photo_profil }
-                await updateProfil(profil.id, {
-                    pseudo: pseudo,
-                    photo_profil: fichierImage,
-                });
+                // Construire l'objet de mise à jour
+                const payload: Record<string, unknown> = {
+                    pseudo,
+                };
 
-                alert("Profil et bannière mis à jour !");
+                if (fichierPhoto) payload.photo_profil = fichierPhoto;
+
+                // Bannière custom → on envoie le fichier dans banniere_profil
+                if (selectedBannerType === "custom" && customBannerFile) {
+                    payload.banniere_profil = customBannerFile;
+                }
+
+                // Appel updateProfil (doit accepter un FormData ou un objet avec des File)
+                await updateProfil(profilId, payload);
+
+                alert("Profil mis à jour !");
                 window.location.href = "/application/profil";
             } catch (error) {
                 console.error(error);
                 alert("Erreur lors de l'enregistrement de ton profil.");
-                if (btnSubmit)
-                    btnSubmit.querySelector("span")!.textContent =
-                        "Enregistrer les modifications";
+                if (spanSubmit)
+                    spanSubmit.textContent = "Enregistrer les modifications";
             }
         });
     });
