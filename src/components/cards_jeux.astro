@@ -1,5 +1,5 @@
 ﻿---
-const { count = 3 } = Astro.props;
+const { count = 3, themeActuel = "" } = Astro.props;
 import { getjeux } from "../../backend/backend.mjs";
 const Jeux = await getjeux();
 ---
@@ -12,7 +12,7 @@ const Jeux = await getjeux();
         <div class="text-h4d text-center">Leçon</div>
     </a>
 
-    <div id="liste-jeux">
+    <div id="liste-jeux" data-theme={themeActuel}>
         {
             Jeux.slice(0, count).map((jeu, i) => (
                 <div
@@ -38,7 +38,7 @@ const Jeux = await getjeux();
 
     <div class="flex justify-center mt-6">
         <a
-            href="/application/difficultes"
+            href="/application/jeux/difficultes"
             id="bouton-jouer"
             class="font-body bg-gray-400 text-white text-body3d py-4 px-12 rounded-lg cursor-not-allowed pointer-events-none transition-colors duration-300"
         >
@@ -51,11 +51,12 @@ const Jeux = await getjeux();
     document.addEventListener("DOMContentLoaded", () => {
         const cards = Array.from(document.querySelectorAll(".jeu-card"));
         const boutonJouer = document.getElementById("bouton-jouer");
+        const listeJeux = document.getElementById("liste-jeux");
+        const themeActuel = listeJeux?.getAttribute("data-theme") || "";
 
         let selectedGameName = null;
 
         const selectCard = (card) => {
-
             selectedGameName = card.getAttribute("data-jeu-nom");
 
             cards.forEach((c) => {
@@ -72,7 +73,11 @@ const Jeux = await getjeux();
             );
             boutonJouer.classList.add("bg-red-800", "hover:bg-rose-950");
 
-            boutonJouer.href = `/application/difficultes?jeu=${selectedGameName}`;
+            let url = `/application/jeux/difficultes?jeu=${selectedGameName}`;
+            if (themeActuel) {
+                url += `&theme=${themeActuel}`;
+            }
+            boutonJouer.href = url;
         };
 
         cards.forEach((card) => {
