@@ -5,7 +5,7 @@ import {getUtilisateur} from "../../../backend/backend.mjs";
 const Utilisateur = await getUtilisateur();
 ---
 
-<Layout>
+<Layout titre="Accueil application - Tacita">
     <div class="text-body2d mt-6 mx-5 text-center">
         <p>Ravie de te revoir</p>
         <p>{Utilisateur.pseudo} !</p>

@@ -12,16 +12,17 @@ import imgVote from "../../../assets/image/bannière_vote.webp";
 const Utilisateur = await getUtilisateur();
 
 // On crée une correspondance entre l'ID en base et l'image importée
-const bannièresImages = {
+const bannièresImages: Record<string, string> = {
     ville: imgVille.src,
     espace: imgEspace.src,
     ciel: imgCiel.src,
     vote: imgVote.src,
 };
 
-const banniereCle = Utilisateur?.banniere as
-    | keyof typeof bannièresImages
-    | undefined;
+const banniereCle =
+    typeof Utilisateur?.banniere === "string"
+        ? (Utilisateur.banniere as keyof typeof bannièresImages)
+        : undefined;
 
 // On définit l'image à afficher (soit celle en base, soit ville par défaut)
 const imageBanniereAffichee =
@@ -30,7 +31,7 @@ const imageBanniereAffichee =
         : imgVille.src;
 ---
 
-<LayoutFooter>
+<LayoutFooter titre="Profil - Tacita">
     <div class="bg-[#f8f5f0] min-h-screen pb-25 font-sans">
         <div class="h-48 w-full bg-slate-800 relative">
             <img
