@@ -16,9 +16,11 @@ const { titre = "Tacita - Application" } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{titre}</title>
 	</head>
-	<body>
+	<body class="flex min-h-screen flex-col pb-40">
 		<Header />
-		<slot />
+		<div class="flex-1 pb-24">
+			<slot />
+		</div>
 		<FooterAppli />
 	</body>
 </html>
