@@ -4,7 +4,6 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
 
 <LayoutFooter>
     <div class="bg-[#f8f5f0] min-h-screen pb-32 font-sans px-6 pt-8 md:pt-12">
-        <!-- En-tête avec bouton retour -->
         <div class="flex items-center mb-8 max-w-2xl mx-auto">
             <a
                 href="/application/profil"
@@ -26,7 +25,6 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
             </a>
         </div>
 
-        <!-- Conteneur Principal -->
         <div
             class="max-w-2xl mx-auto bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-slate-100"
         >
@@ -37,7 +35,6 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
             </h1>
 
             <form id="form-contact" class="flex flex-col gap-6">
-                <!-- Grille Prénom / Nom -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="flex flex-col gap-2">
                         <label
@@ -45,7 +42,7 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                             class="text-sm font-medium text-slate-700 ml-1"
                             >Prénom</label
                         >
-                        <!-- Valeur vide par défaut -->
+
                         <input
                             type="text"
                             id="prenom"
@@ -61,7 +58,7 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                             class="text-sm font-medium text-slate-700 ml-1"
                             >Nom</label
                         >
-                        <!-- Valeur vide par défaut -->
+
                         <input
                             type="text"
                             id="nom"
@@ -72,7 +69,6 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                     </div>
                 </div>
 
-                <!-- Grille Téléphone / E-mail -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="flex flex-col gap-2">
                         <label
@@ -105,7 +101,6 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                     </div>
                 </div>
 
-                <!-- Objet -->
                 <div class="flex flex-col gap-2">
                     <label
                         for="objet"
@@ -121,7 +116,6 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                     />
                 </div>
 
-                <!-- Message -->
                 <div class="flex flex-col gap-2">
                     <label
                         for="message"
@@ -137,7 +131,6 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                     ></textarea>
                 </div>
 
-                <!-- Bouton Envoyer -->
                 <div class="mt-4 flex justify-center">
                     <button
                         type="submit"
@@ -157,7 +150,6 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
     const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
 
     document.addEventListener("DOMContentLoaded", async () => {
-        // 🔒 Sécurité
         if (!pb.authStore.isValid) {
             window.location.href = "/application/profil/connexion";
             return;
@@ -169,16 +161,13 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
         const nomInput = document.getElementById("nom") as HTMLInputElement;
         const emailInput = document.getElementById("email") as HTMLInputElement;
 
-        // 🧑‍💻 1. PRÉ-REMPLISSAGE DES DONNÉES DU VRAI UTILISATEUR
         try {
             const userId = pb.authStore.model?.id;
 
-            // On pré-remplit l'e-mail directement avec les infos de connexion
             if (emailInput && pb.authStore.model?.email) {
                 emailInput.value = pb.authStore.model.email;
             }
 
-            // On va chercher le profil pour le Nom et Prénom
             const monProfil = await pb
                 .collection("utilisateur")
                 .getFirstListItem(`compte_id="${userId}"`);
@@ -193,23 +182,19 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
             );
         }
 
-        // ✉️ 2. GESTION DE L'ENVOI DU FORMULAIRE
         const formContact = document.getElementById("form-contact");
         const btnSubmit = document.getElementById("btn-submit");
 
         formContact?.addEventListener("submit", (e) => {
-            e.preventDefault(); // Empêche la page de recharger
+            e.preventDefault();
 
             if (btnSubmit) btnSubmit.textContent = "Envoi en cours...";
 
-            // Simulation d'un envoi (Tu pourras relier ça à PocketBase ou un service d'e-mail plus tard)
             setTimeout(async () => {
                 alert("Ton message a bien été envoyé à l'équipe !");
 
-                // On vide le formulaire (le message et l'objet)
                 (formContact as HTMLFormElement).reset();
 
-                // On remet les infos de base (Nom, Prénom, Email) qui ont été effacées par le reset()
                 try {
                     if (emailInput && pb.authStore.model?.email)
                         emailInput.value = pb.authStore.model.email;

@@ -1,20 +1,10 @@
 ---
 import "../style/global.css";
-import PbImage from "../components/PbImage.astro";
-import {
-    getPseudo,
-    getProgressionUtilisateur,
-} from "../../backend/backend.mjs";
-
-// Ces fonctions vont charger Axium par défaut, mais notre script JS
-// prendra le relais juste en dessous pour afficher la bonne personne !
-const Utilisateur = await getPseudo();
-const stats = getProgressionUtilisateur(Utilisateur);
 ---
 
 <header
     id="header-banniere"
-    class="relative bg-red-100 pb-4 pt-10 bg-cover bg-center transition-all duration-300"
+    class="relative bg-red-100 pb-6 pt-10 px-6 bg-cover bg-center transition-all duration-300"
 >
     <div
         id="header-overlay"
@@ -22,32 +12,31 @@ const stats = getProgressionUtilisateur(Utilisateur);
     >
     </div>
 
-    <div class="relative z-10 flex gap-4 items-center">
-        <!-- On met opacity-0 par défaut pour masquer Axium le temps que le script charge -->
-        <h3
-            id="header-nom"
-            class="m-2 text-slate-900 transition-all duration-300 opacity-0"
-        >
-            {Utilisateur?.pseudo}
-        </h3>
+    <div class="relative z-10 flex justify-between items-center w-full">
+        <div class="flex flex-col gap-1">
+            <h3
+                id="header-nom"
+                class="text-2xl font-bold text-slate-900 transition-all duration-300 drop-shadow-sm"
+            >
+                Nouveau Joueur
+            </h3>
 
-        <p
-            id="header-niveau"
-            class="font-body text-tinyd p-2 text-slate-800 transition-all duration-300 opacity-0"
-        >
-            Niveau {stats.niveau} | Jour {stats.jour}
-        </p>
+            <p
+                id="header-niveau"
+                class="font-body text-sm font-semibold text-slate-800 transition-all duration-300 drop-shadow-sm"
+            >
+                Niveau 1 | Jour 1
+            </p>
+        </div>
 
         <div
             id="header-img-container"
-            class="opacity-0 transition-opacity duration-300"
+            class="hidden transition-opacity duration-300"
         >
-            <PbImage
-                record={Utilisateur}
-                recordImage={Utilisateur?.image?.[0] ||
-                    Utilisateur?.photo_profil ||
-                    ""}
-                class="outline-2 outline-offset-2 outline-solid outline-white h-25 w-25 rounded-full object-cover m-2 shrink-0"
+            <img
+                id="header-avatar"
+                class="outline outline-2 outline-white h-16 w-16 rounded-full object-cover shrink-0 shadow-lg bg-white"
+                alt="Photo de profil"
             />
         </div>
     </div>
@@ -55,69 +44,24 @@ const stats = getProgressionUtilisateur(Utilisateur);
 
 <script>
     import PocketBase from "pocketbase";
+
     const pb = new PocketBase("https://tacita-pb.charlottemettetal.fr:443");
 
-    document.addEventListener("DOMContentLoaded", async () => {
+    function initialiserHeader() {
         const header = document.getElementById("header-banniere");
         const overlay = document.getElementById("header-overlay");
         const texteNom = document.getElementById("header-nom");
         const texteNiveau = document.getElementById("header-niveau");
         const imgContainer = document.getElementById("header-img-container");
+        const avatar = document.getElementById(
+            "header-avatar",
+        ) as HTMLImageElement | null;
 
-        // --- 1. GESTION DU VRAI UTILISATEUR CONNECTÉ ---
-        if (pb.authStore.isValid) {
-            try {
-                // On récupère l'ID du compte de la personne connectée
-                const userId = pb.authStore.model?.id;
-
-                // On va chercher SON vrai profil dans la collection 'utilisateur'
-                const monProfil = await pb
-                    .collection("utilisateur")
-                    .getFirstListItem(`compte_id="${userId}"`);
-
-                // On remplace le nom
-                if (texteNom) {
-                    texteNom.textContent =
-                        monProfil.pseudo || monProfil.prenom_utilisateur;
-                    texteNom.classList.remove("opacity-0");
-                }
-
-                // On affiche le niveau
-                if (texteNiveau) {
-                    texteNiveau.classList.remove("opacity-0");
-                }
-
-                // On remplace l'image de profil AVANT de l'afficher
-                if (imgContainer) {
-                    const imgTag = imgContainer.querySelector("img");
-                    if (imgTag) {
-                        if (monProfil.photo_profil) {
-                            // Si l'utilisateur a une photo, on l'affiche
-                            imgTag.src = pb.files.getUrl(
-                                monProfil,
-                                monProfil.photo_profil,
-                            );
-                        } else {
-                            // Sinon (nouveau compte), on met une image transparente pour cacher Axium
-                            imgTag.src =
-                                "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
-                        }
-                    }
-                    imgContainer.classList.remove("opacity-0");
-                }
-            } catch (error) {
-                console.error(
-                    "Erreur lors du chargement du header appli :",
-                    error,
-                );
-            }
-        }
-
-        // --- 2. GESTION DE LA BANNIÈRE ---
         const savedBanner = localStorage.getItem("user_banner_pref");
 
         if (savedBanner && header && texteNom && texteNiveau && overlay) {
             header.style.backgroundImage = `url('${savedBanner}')`;
+
             const imgPath = savedBanner.toLowerCase();
 
             if (
@@ -125,7 +69,6 @@ const stats = getProgressionUtilisateur(Utilisateur);
                 imgPath.includes("espace") ||
                 imgPath.includes("ville")
             ) {
-                // THÈME SOMBRE
                 texteNom.classList.replace("text-slate-900", "text-white");
                 texteNiveau.classList.replace(
                     "text-slate-800",
@@ -134,7 +77,6 @@ const stats = getProgressionUtilisateur(Utilisateur);
                 overlay.className =
                     "absolute inset-0 z-0 bg-black/40 transition-all duration-300 pointer-events-none";
             } else if (imgPath.includes("vote")) {
-                // THÈME CLAIR
                 texteNom.classList.add("text-slate-900");
                 texteNom.classList.remove("text-white");
                 texteNiveau.classList.add("text-slate-800");
@@ -143,5 +85,40 @@ const stats = getProgressionUtilisateur(Utilisateur);
                     "absolute inset-0 z-0 bg-white/40 transition-all duration-300 pointer-events-none";
             }
         }
-    });
+
+        if (!pb.authStore.isValid || !imgContainer || !avatar) {
+            return;
+        }
+
+        const userId = pb.authStore.model?.id;
+        if (!userId) {
+            return;
+        }
+
+        pb.collection("utilisateur")
+            .getFirstListItem(`compte_id="${userId}"`)
+            .then((monProfil) => {
+                if (texteNom) {
+                    texteNom.textContent = monProfil.pseudo || "Nouveau Joueur";
+                }
+
+                if (texteNiveau) {
+                    const niveau = monProfil.Niveau || 1;
+                    const jour = monProfil.Jour || 1;
+                    texteNiveau.textContent = `Niveau ${niveau} | Jour ${jour}`;
+                }
+
+                const photo = monProfil.photo_profil || monProfil.image?.[0];
+                if (photo) {
+                    avatar.src = pb.files.getUrl(monProfil, photo);
+                    imgContainer.classList.remove("hidden");
+                }
+            })
+            .catch(() => {
+                // Aucun profil ou aucune photo: on garde l'espace vide.
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", initialiserHeader);
+    document.addEventListener("astro:page-load", initialiserHeader);
 </script>

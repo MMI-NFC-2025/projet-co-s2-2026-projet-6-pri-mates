@@ -4,8 +4,7 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
 
 <LayoutFooter title="Nos offres Premium">
     <div class="bg-[#f8f5f0] min-h-screen pb-32 font-sans px-6 pt-8 md:pt-12">
-        <!-- En-tête avec bouton retour -->
-        <!-- Sur PC (md), on élargit la boîte pour laisser la place aux 2 cartes côte à côte -->
+        
         <div class="flex items-center mb-8 max-w-md md:max-w-2xl mx-auto">
             <a
                 href="/application/profil"
@@ -30,11 +29,11 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
             </h1>
         </div>
 
-        <!-- Conteneur Principal (S'adapte PC/Mobile) -->
+        
         <div
             class="max-w-md md:max-w-2xl mx-auto bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-slate-100 flex flex-col items-center"
         >
-            <!-- Textes d'introduction -->
+          
             <div
                 class="w-full text-slate-800 text-base md:text-lg mb-8 space-y-6 text-left"
             >
@@ -45,9 +44,9 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                 <p>C'est sans engagement et résiliable à tout moment.</p>
             </div>
 
-            <!-- Grille des offres : 1 colonne sur Mobile, 2 colonnes sur PC -->
+           
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-10">
-                <!-- Carte 1 : 1 mois -->
+                
                 <button
                     type="button"
                     class="btn-offre w-full bg-[var(--creme)] hover:brightness-95 rounded-2xl py-8 px-6 flex flex-col items-center justify-center transition-all border-2 border-transparent focus:outline-none shadow-sm cursor-pointer"
@@ -65,7 +64,7 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                     </p>
                 </button>
 
-                <!-- Carte 2 : 1 an -->
+               
                 <button
                     type="button"
                     class="btn-offre w-full bg-[var(--creme)] hover:brightness-95 rounded-2xl py-8 px-6 flex flex-col items-center justify-center transition-all border-2 border-transparent focus:outline-none shadow-sm cursor-pointer"
@@ -84,7 +83,7 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                 </button>
             </div>
 
-            <!-- Bouton d'action -->
+           
             <button
                 type="button"
                 id="btn-souscrire"
@@ -103,7 +102,7 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
         const btnSouscrire = document.getElementById("btn-souscrire");
         let offreSelectionnee = null;
 
-        // Logique pour sélectionner une offre
+        
         boutonsOffre.forEach((btn) => {
             btn.addEventListener("click", (e) => {
                 // On enlève la bordure de toutes les cartes
@@ -111,23 +110,23 @@ import LayoutFooter from "../../../layouts/Layout-footer.astro";
                     b.classList.remove("border-[#a40d1a]"),
                 );
 
-                // On ajoute la bordure rouge à la carte cliquée
+                
                 const target = e.currentTarget as HTMLButtonElement;
                 target.classList.add("border-[#a40d1a]");
 
-                // On enregistre le choix
+                
                 offreSelectionnee = target.getAttribute("data-offre");
             });
         });
 
-        // Action clic bouton
+        
         btnSouscrire?.addEventListener("click", () => {
             if (!offreSelectionnee) {
                 alert("Veuillez sélectionner une offre avant de continuer.");
                 return;
             }
 
-            // Redirection future
+            
             alert(
                 `Redirection vers la page de paiement pour l'offre : ${offreSelectionnee}`,
             );
