@@ -2,7 +2,7 @@
 import "../style/global.css";
 import "@fontsource-variable/inter/wght.css";
 import FooterAppli from "../components/footer_appli.astro";
-const { titre } = Astro.props;
+const { titre = "Tacita" } = Astro.props;
 ---
 
 <!doctype html>
@@ -12,7 +12,7 @@ const { titre } = Astro.props;
         <meta name="viewport" content="width=device-width" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="generator" content={Astro.generator} />
-        <title>{ titre }</title>
+        <title>{titre}</title>
     </head>
     <body>
         

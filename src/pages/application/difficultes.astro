@@ -1,9 +1,9 @@
 ﻿---
 import LayoutAppli from "../../layouts/Layout-appli.astro";
 const url = new URL(Astro.request.url);
-import Difficultes from "../../components/card_difficultes.astro";
+import CardsDifficultes from "../../components/card_difficultes.astro";
 ---
-<LayoutAppli>
+<LayoutAppli titre="Choix de la difficulté - Tacita">
     <h4 class="text-center">Avant de démarrer, séléctionne une difficulté</h4>
-    <Difficultes/>
+    <CardsDifficultes/>
 </LayoutAppli>

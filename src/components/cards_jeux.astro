@@ -1,7 +1,7 @@
 ﻿---
 const { count = 3 } = Astro.props;
 import { getjeux } from "../../backend/backend.mjs";
-const Jeux = await getjeux();
+const jeuxList = await getjeux();
 ---
 
 <div>
@@ -14,7 +14,7 @@ const Jeux = await getjeux();
 
     <div id="liste-jeux">
         {
-            Jeux.slice(0, count).map((jeu, i) => (
+            jeuxList.slice(0, count).map((jeu, i) => (
                 <div
                     class="jeu-card bg-red-300 text-white rounded-md mx-6 my-6 p-4 cursor-pointer transition-all border-4 border-transparent hover:bg-red-400"
                     data-jeu-id={jeu.id}

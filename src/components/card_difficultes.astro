@@ -1,7 +1,7 @@
 ---
 const { count = 3 } = Astro.props;
 import { getjeux } from "../../backend/backend.mjs";
-const Jeux = await getjeux();
+const jeuxList = await getjeux();
 ---
 
 <div>
