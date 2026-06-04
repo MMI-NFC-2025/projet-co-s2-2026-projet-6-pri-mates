@@ -44,6 +44,30 @@ export async function getjeux() {
     return await pb.collection('Jeux').getFullList();
 }
 
+export async function getLeconImages(lecon) {
+    const images = await pb.collection('Images').getFullList();
+
+    if (!lecon) {
+        return images;
+    }
+
+    const leconNormalisee = lecon.toLowerCase();
+    const motsCibles = leconNormalisee.includes('alphabet')
+        ? ['lettre']
+        : leconNormalisee.includes('salutation')
+            ? ['bonjour', 'merci', 'pardon', 'excuse']
+            : [leconNormalisee];
+
+    return images.filter((image) => {
+        const description = image.description_image?.toLowerCase() ?? '';
+        const nomImage = image.image?.toLowerCase() ?? '';
+
+        return motsCibles.some((mot) => {
+            return description.includes(mot) || nomImage.includes(mot);
+        });
+    });
+}
+
 export async function updateProfil(id, dataToUpdate) {
     const formData = new FormData();
 

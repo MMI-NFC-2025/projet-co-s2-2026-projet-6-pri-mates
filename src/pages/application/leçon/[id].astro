@@ -1,5 +1,5 @@
 ---
-import Layout from "../../../layouts/Layout.astro";
+import Layoutappli from "../../../layouts/Layout-appli.astro";
 import PbImage from "../../../components/PbImage.astro";
 import { getLeconImages } from "../../../../backend/backend.mjs";
 
@@ -19,7 +19,7 @@ const titrePage =
 const imagesLecon = leconFiltre ? await getLeconImages(leconFiltre) : [];
 ---
 
-<Layout titre={`${titrePage} - Tacita`}>
+<Layoutappli titre={`${titrePage} - Tacita`}>
 	<main class="mx-6 my-10">
 		{imagesLecon.length > 0 ? (
 			<section class="mx-auto max-w-4xl rounded-3xl bg-rose-50 p-6 shadow-sm ring-1 ring-rose-100">
@@ -47,9 +47,9 @@ const imagesLecon = leconFiltre ? await getLeconImages(leconFiltre) : [];
 							<PbImage
 								record={image}
 								recordImage={image.image ?? ""}
-								class="mx-auto w-full max-w-xl rounded-2xl"
-								width={640}
-								height={420}
+								class="rounded-2xl"
+								width="auto"
+								height={200}
 							/>
 
 							{image.description_image ? (
@@ -70,4 +70,4 @@ const imagesLecon = leconFiltre ? await getLeconImages(leconFiltre) : [];
 			</section>
 		)}
 	</main>
-</Layout>
+</Layoutappli>

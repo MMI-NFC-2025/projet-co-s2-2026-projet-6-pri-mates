@@ -1,0 +1,94 @@
+---
+const { count = 3 } = Astro.props;
+---
+
+<div id="boite-secrete" data-jeu="" data-theme="" class="hidden"></div>
+
+<div class="flex flex-col">
+    <div
+        class="difficulte-card bg-green-500 text-white rounded-md mx-6 my-4 p-4 cursor-pointer transition-all border-4 border-transparent hover:opacity-80"
+        data-difficulte="facile"
+    >
+        <div class="text-h4d text-center font-bold pointer-events-none">
+            Facile
+        </div>
+    </div>
+
+    <div
+        class="difficulte-card bg-yellow-500 text-white rounded-md mx-6 my-4 p-4 cursor-pointer transition-all border-4 border-transparent hover:opacity-80"
+        data-difficulte="moyen"
+    >
+        <div class="text-h4d text-center font-bold pointer-events-none">
+            Moyen
+        </div>
+    </div>
+
+    <div
+        class="difficulte-card bg-red-500 text-white rounded-md mx-6 my-4 p-4 cursor-pointer transition-all border-4 border-transparent hover:opacity-80"
+        data-difficulte="difficile"
+    >
+        <div class="text-h4d text-center font-bold pointer-events-none">
+            Difficile
+        </div>
+    </div>
+
+    <div class="flex justify-center mt-10">
+        <a
+            href="#"
+            id="bouton-cest-parti"
+            class="font-body bg-gray-400 text-white text-body3d py-4 px-12 rounded-lg cursor-not-allowed pointer-events-none transition-colors duration-300"
+        >
+            C'est parti
+        </a>
+    </div>
+</div>
+
+<script>
+    function activerCartesDifficultes() {
+        const cards = Array.from(
+            document.querySelectorAll(".difficulte-card"),
+        ) as HTMLElement[];
+        const boutonCestParti = document.getElementById(
+            "bouton-cest-parti",
+        ) as HTMLAnchorElement;
+        const boiteSecrete = document.getElementById("boite-secrete");
+
+        if (!boutonCestParti || !boiteSecrete) return;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const jeuNom = urlParams.get("jeu") || "quizz";
+        const theme = urlParams.get("theme") || "";
+
+        boiteSecrete.setAttribute("data-jeu", jeuNom);
+        boiteSecrete.setAttribute("data-theme", theme);
+
+        cards.forEach((card: HTMLElement) => {
+            card.addEventListener("click", () => {
+                cards.forEach((c) => {
+                    c.classList.remove("border-black", "scale-105");
+                    c.classList.add("border-transparent");
+                });
+
+                card.classList.remove("border-transparent");
+                card.classList.add("border-black", "scale-105");
+
+                const difficulte = card.getAttribute("data-difficulte");
+
+                boutonCestParti.classList.remove(
+                    "bg-gray-400",
+                    "cursor-not-allowed",
+                    "pointer-events-none",
+                );
+                boutonCestParti.classList.add(
+                    "bg-red-800",
+                    "hover:bg-rose-950",
+                );
+
+                boutonCestParti.href = `/application/jeux/${jeuNom}?theme=${encodeURIComponent(theme)}&difficulte=${difficulte}`;
+            });
+        });
+    }
+
+    activerCartesDifficultes();
+    document.addEventListener("astro:page-load", activerCartesDifficultes);
+</script>
