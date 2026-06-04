@@ -9,5 +9,19 @@ import LayoutAppli from "../../layouts/Layout-appli.astro";
             Bienvenue sur la page des leçons. Choisissez une leçon pour
             continuer.
         </p>
+
+        <div class="mx-auto mt-10 grid max-w-4xl gap-4 md:grid-cols-2">
+            <a href="/application/leçon/alphabet" class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-rose-100 transition hover:-translate-y-0.5 hover:shadow-md">
+                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-rose-500">Leçon</p>
+                <h2 class="mt-2 text-2xl font-bold text-rose-950">Alphabet</h2>
+                <p class="mt-3 text-rose-900">Ouvre la page des images liées à la leçon Alphabet.</p>
+            </a>
+
+            <a href="/application/leçon/salutations" class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-rose-100 transition hover:-translate-y-0.5 hover:shadow-md">
+                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-rose-500">Leçon</p>
+                <h2 class="mt-2 text-2xl font-bold text-rose-950">Salutations</h2>
+                <p class="mt-3 text-rose-900">Ouvre la page des images liées à la leçon Salutations.</p>
+            </a>
+        </div>
     </main>
 </LayoutAppli>

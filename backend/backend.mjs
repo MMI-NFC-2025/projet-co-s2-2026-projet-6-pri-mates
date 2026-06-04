@@ -58,3 +58,37 @@ export async function updateProfil(id, dataToUpdate) {
 
     return await pb.collection('utilisateur').update(id, formData);
 }
+
+export async function getLeconImages(lecon) {
+    return await pb.collection('images').getFullList({
+        filter: `Lecon="${lecon}"`,
+        requestKey: null
+    });
+}
+
+export async function getImageLecon(lecon) {
+    const images = await getLeconImages(lecon);
+    return images[0]?.image ?? null;
+}
+
+export async function getDescriptionImageLecon(lecon) {
+    const images = await getLeconImages(lecon);
+    return images[0]?.description_image ?? null;
+}
+
+export async function getNomLecon(lecon) {
+    const images = await getLeconImages(lecon);
+    return images[0]?.nom ?? null;
+}
+
+export async function getInfosImageLecon(lecon) {
+    const images = await getLeconImages(lecon);
+
+    return images.map((image) => ({
+        id: image.id,
+        nom: image.nom ?? null,
+        image: image.image ?? null,
+        description_image: image.description_image ?? null,
+        Lecon: image.Lecon ?? null
+    }));
+}
