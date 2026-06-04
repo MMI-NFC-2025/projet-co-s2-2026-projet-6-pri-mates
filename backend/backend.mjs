@@ -21,9 +21,6 @@ export function getProgressionUtilisateur(utilisateur) {
 
 
 
-
-
-// backend/backend.mjs
 export async function getUtilisateur() {
     if (!pb.authStore.isValid || !pb.authStore.model?.id) {
         return await pb.collection('utilisateur').getOne('h2q4fjfbfazkgle');

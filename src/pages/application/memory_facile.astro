@@ -1,0 +1,12 @@
+---
+import LayoutAppli from "../../layouts/Layout-appli.astro";
+import HeaderJeux from "../../components/header_jeux.astro";
+import PlateauMemory from "../../components/plateau_memory.astro";
+---
+
+<LayoutAppli>
+    <main>
+        <HeaderJeux hrefQuitter="/application/jeux" />
+        <PlateauMemory count={3} />
+    </main>
+</LayoutAppli>
